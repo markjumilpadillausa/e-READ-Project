@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light">
-<title>Baluyan ES School-based Reading Assessment</title>
+<title>e-READ Project</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%230B6B3A'/%3E%3Cellipse cx='32' cy='40' rx='20' ry='14' fill='%235CC27A'/%3E%3Ccircle cx='22' cy='24' r='9' fill='%235CC27A'/%3E%3Ccircle cx='42' cy='24' r='9' fill='%235CC27A'/%3E%3Ccircle cx='22' cy='23' r='6' fill='%23fff'/%3E%3Ccircle cx='42' cy='23' r='6' fill='%23fff'/%3E%3Ccircle cx='23' cy='24' r='3' fill='%231d2b36'/%3E%3Ccircle cx='41' cy='24' r='3' fill='%231d2b36'/%3E%3Cpath d='M24 40 Q32 47 40 40' stroke='%231d2b36' stroke-width='2.5' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='17' cy='37' r='3' fill='%23F59BB0'/%3E%3Ccircle cx='47' cy='37' r='3' fill='%23F59BB0'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#0B6B3A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Atkinson+Hyperlegible:wght@400;700&family=Didact+Gothic&display=swap" rel="stylesheet">
@@ -83,6 +85,37 @@
   .bub.pill{border-radius:999px;font-weight:700}
   /* Standings */
   .adj{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+  /* Sharing switch */
+  .share-card{border-left:6px solid var(--gold)}
+  .share-row{display:flex;align-items:center;gap:14px}
+  .share-row > div{flex:1}
+  .switch{position:relative;width:64px;height:34px;border-radius:999px;border:0;background:#C9D3C0;cursor:pointer;flex:none;padding:0;transition:background .2s}
+  .switch span{position:absolute;top:4px;left:4px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:left .2s}
+  .switch.on{background:var(--check)}
+  .switch.on span{left:34px}
+  .sw-label{min-width:2.4em;color:var(--ink)}
+  .tag.help{background:#E0ECFF;color:#1E4FA8}
+  /* Waiting per class card (made for screenshots) */
+  .wait-card{background:linear-gradient(180deg,#F1FAF3,#FFFFFF);border:2px solid var(--ink)}
+  .wait-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+  .wait-total{text-align:center;background:var(--ink);color:#fff;border-radius:14px;padding:8px 16px}
+  .wait-total b{display:block;font-size:2rem;line-height:1}
+  .wait-total span{font-size:.8rem}
+  .wait-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:12px}
+  .wait-tile{background:#fff;border:2px solid var(--rule);border-bottom:5px solid var(--gold);border-radius:14px;padding:10px;text-align:center}
+  .wait-tile b{display:block;font-size:2.2rem;color:var(--ink);line-height:1.1}
+  .wait-tile.hot{border-bottom-color:var(--margin)}
+  .wait-tile.hot b{color:var(--margin)}
+  .wt-class{font-weight:700;font-size:.92rem}
+  .wt-adv{display:block;font-size:.78rem;color:var(--muted)}
+  .none-wait{font-weight:700;color:var(--check);margin:10px 0 0}
+  /* Checking ranking */
+  .rank-card{border-left:6px solid var(--gold)}
+  .rank-row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--rule)}
+  .rank-row .rk{width:2em;text-align:center;font-weight:700}
+  .rank-row .nm{flex:1}
+  .rank-row.head{background:var(--gold-soft);border-radius:10px;border:1px solid var(--gold)}
+  .rank-row.me{background:var(--ink-soft);border-radius:10px}
   .mywords{margin:4px 0 10px;line-height:2}
   .tchips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
   .tchips span{background:var(--ink-soft);border-radius:999px;padding:5px 12px;font-size:.9rem}
@@ -937,7 +970,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '3.5';
+const APP_VERSION = '3.6';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -3611,7 +3644,7 @@ function renderBank(){
     <div class="addword">
       <h3 style="margin-top:0">Add a Word</h3>
       <p class="hint">Type or paste <b>one English word</b>, choose the grade level, then tap Add Word. ${head ? 'Words you add are approved right away.' : 'The School Head checks every new word first. Once it is approved, learners get it and you earn 1 star.'} If the word is already in the bank, you will be told, and it will not be added again.</p>
-      ${!head ? (() => { const mineW = d.words.filter(x => x.custom && x.addedBy === d.me); return mineW.length ? `<div class="mywords"><b>My added words:</b> ${mineW.map(x => `<span class="tag ${x.wordStatus === 'approved' ? 'ok' : x.wordStatus === 'rejected' ? 'red' : ''}" title="${esc(x.wordNote || '')}">${esc(x.word)}: ${x.wordStatus === 'approved' ? 'Approved' : x.wordStatus === 'rejected' ? 'Not approved' + (x.wordNote ? ' (' + esc(x.wordNote) + ')' : '') : 'Waiting for approval'}</span>`).join(' ')}</div>` : ''; })() : ''}
+      ${!head ? (() => { const mineW = d.words.filter(x => x.custom && x.addedBy === d.me); return mineW.length ? `<div class="mywords"><b>My added words:</b> ${mineW.map(x => `<span class="tag ${x.wordStatus === 'approved' ? 'ok' : x.wordStatus === 'rejected' ? 'red' : ''}" title="${esc(x.wordNote || '')}">${esc(x.word)}: ${x.wordStatus === 'approved' ? 'Approved' + (x.wordAt ? ' ' + esc(fmtDateTime(x.wordAt)) : '') : x.wordStatus === 'rejected' ? 'Not approved' + (x.wordAt ? ' ' + esc(fmtDateTime(x.wordAt)) : '') + (x.wordNote ? ' (' + esc(x.wordNote) + ')' : '') : 'Waiting for approval'}</span>`).join(' ')}</div>` : ''; })() : ''}
       <div class="fields">
         <label>Word<input id="awWord" autocomplete="off" autocapitalize="off" spellcheck="true" maxlength="24" placeholder="Example: bicycle"></label>
         <label>Grade Level<select id="awGrade">${(d.grades || []).map(g => `<option value="${g}"${g === BK.awGrade ? ' selected' : ''}>${gradeLabel(g)}</option>`).join('')}</select></label>
@@ -3684,7 +3717,7 @@ function bankRow(w, head){
     <div class="bw-meta">${statusTag(w)} <span class="sub">KS ${esc(String(w.ks).replace(',', ' and '))}</span>
       <div class="sub">${w.hasAudio ? 'Recorded by ' + esc(w.recordedBy) + ', ' + esc(fmtDateTime(w.recordedAt)) : ''}${w.reviewedAt && w.status !== 'pending' ? '. ' + (w.status === 'approved' ? 'Approved' : 'Sent back') + ' ' + esc(fmtDateTime(w.reviewedAt)) : ''}</div>
       ${w.feedback ? `<div class="fb"><b>School Head's feedback:</b> ${esc(w.feedback)}</div>` : ''}
-      ${w.addedBy ? `<div class="added-by">Added by ${esc(w.addedBy)}, ${esc(fmtDateTime(w.addedAt))}</div>` : ''}
+      ${w.addedBy ? `<div class="added-by">Added by ${esc(w.addedBy)}, ${esc(fmtDateTime(w.addedAt))}${w.wordStatus === 'approved' && w.wordAt ? `. Approved by the School Head, ${esc(fmtDateTime(w.wordAt))}` : w.wordStatus === 'rejected' ? `. Not approved${w.wordAt ? ', ' + esc(fmtDateTime(w.wordAt)) : ''}${w.wordNote ? ': ' + esc(w.wordNote) : ''}` : w.wordStatus === 'pending' ? '. Waiting for the School Head\'s approval' : ''}</div>` : ''}
     </div>
     <div class="bw-actions">
       ${w.hasAudio ? `<button type="button" class="btn small" data-listen="${esc(w.id)}" aria-label="Listen">\uD83D\uDD0A Listen</button>` : ''}
@@ -4293,6 +4326,46 @@ function bindResultsView(){
   });
 }
 
+/* School Head: the switch that lets teachers help check other grades */
+function shareSwitchHtml(d){
+  return `<div class="panel share-card">
+    <div class="share-row"><div><h2 style="margin:0">Let Teachers Help Other Grades</h2>
+      <p class="sub" style="margin:4px 0 0">When ON, a teacher who has checked all of their own learners' recordings can also check recordings from other grade levels.</p></div>
+      <button type="button" class="switch${d.shareOn ? ' on' : ''}" id="shareSw" role="switch" aria-checked="${d.shareOn ? 'true' : 'false'}" aria-label="Let teachers help other grades"><span></span></button>
+      <b class="sw-label">${d.shareOn ? 'ON' : 'OFF'}</b></div>
+    <p class="msg" id="shareMsg"></p></div>`;
+}
+/* School Head: recordings waiting per class, easy to screenshot for the group chat */
+function waitingCardHtml(d){
+  const list = (d.waitingByClass || []).slice().sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade) || String(a.section).localeCompare(String(b.section)));
+  const total = list.reduce((t, x) => t + x.waiting, 0);
+  const now = new Date().toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+  return `<div class="panel wait-card">
+    <div class="wait-head"><div><h2 style="margin:0">\uD83C\uDFA4 Recordings Waiting to Be Checked</h2><p class="sub" style="margin:2px 0 0">e-READ Project, Baluyan Elementary School. As of ${esc(now)}</p></div>
+      <div class="wait-total"><b>${total}</b><span>total waiting</span></div></div>
+    ${list.length ? `<div class="wait-grid">${list.map(x => `<div class="wait-tile${x.waiting >= 10 ? ' hot' : ''}">
+      <span class="wt-class">${esc(classLabel(x.grade, x.section))}</span><b>${x.waiting}</b><span class="wt-adv">${x.advisers.length ? esc(x.advisers.join(', ')) : 'No adviser yet'}</span></div>`).join('')}</div>`
+      : '<p class="none-wait">\uD83C\uDF89 All recordings are checked. Great teamwork!</p>'}
+  </div>`;
+}
+/* Adviser: a note about helping other grades */
+function helpNoteHtml(d){
+  if (!d.shareOn) return '';
+  if (d.helping) return `<div class="notice">\uD83E\uDD1D <b>Thank you for helping!</b> You finished your own learners. Recordings from other grades are marked <b>Helping another grade</b>.</div>`;
+  return `<div class="notice">\uD83E\uDD1D Helping other grades is ON. Finish your <b>${d.ownWaiting}</b> recording${d.ownWaiting === 1 ? '' : 's'} first, then you can help other grades.</div>`;
+}
+/* Everyone: who checked the most recordings. The School Head is shown first and is not ranked. */
+function rankingCardHtml(d){
+  const r = d.checkRanking; if (!r) return '';
+  const medal = n => n === 1 ? '\uD83E\uDD47' : n === 2 ? '\uD83E\uDD48' : n === 3 ? '\uD83E\uDD49' : n;
+  return `<div class="panel rank-card"><h2>\uD83C\uDFC6 Checking Champions</h2>
+    <p class="sub">Recordings checked by each teacher. Every recording checked earns 1 star.</p>
+    <div class="rank-list">
+      <div class="rank-row head"><span class="rk">\u2B50</span><span class="nm">School Head</span><span class="ct"><b>${r.head}</b> checked</span></div>
+      ${r.teachers.map(t => `<div class="rank-row${d.reviewer === t.name ? ' me' : ''}"><span class="rk">${t.checked ? medal(t.rank) : '\u2022'}</span><span class="nm">${esc(t.name)}</span><span class="ct"><b>${t.checked}</b> checked</span></div>`).join('')}
+    </div></div>`;
+}
+
 const REV_STATUS = [['submitted','Waiting for Review'],['redo','Sent Back for Redo'],['correct','Correct'],['all','All Words']];
 function renderReview(){
   const d = REV.data, el = REV.el;
@@ -4329,14 +4402,16 @@ function renderReview(){
     bindResultsView();
     return;
   }
-  const grades = [...new Set(d.learners.map(l => String(l.grade)))].sort((a, b) => gradeOrder(a) - gradeOrder(b));
+  const grades = [...new Set(d.learners.map(l => String(l.grade)).concat(d.items.map(x => String(x.grade))))].sort((a, b) => gradeOrder(a) - gradeOrder(b));
   const items = d.items
     .filter(x => REV.status === 'all' || x.status === REV.status)
     .filter(x => !REV.grade || String(x.grade) === REV.grade)
     .sort((a, b) => String(b.submittedAt || b.week).localeCompare(String(a.submittedAt || a.week)));
   const waiting = d.items.filter(x => x.status === 'submitted').length;
   const summary = d.summary.filter(x => !REV.grade || String(x.grade) === REV.grade).sort((a, b) => b.stars - a.stars || a.learnerName.localeCompare(b.learnerName));
-  el.innerHTML = (isAdviser ? `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1><p class="sub">You earn a star for every word you add to the Word Bank and every word you record.</p>` : '') + tabs + `
+  el.innerHTML = (isAdviser ? `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1><p class="sub">You earn a star for every learner recording you check, every word you add to the Word Bank, and every word you record.</p>` : '') + tabs
+  + (!isAdviser ? shareSwitchHtml(d) + waitingCardHtml(d) : helpNoteHtml(d))
+  + rankingCardHtml(d) + `
   <div class="panel">
     <h2>Practice Review</h2>
     <p class="sub">Signed in as ${esc(d.reviewer)}. ${waiting} recording(s) waiting for review.</p>
@@ -4348,7 +4423,7 @@ function renderReview(){
     <div id="rvList">${items.length ? items.map(x => `
       <div class="rv-item" data-id="${esc(x.id)}">
         <div><div class="rv-word">${esc(x.word)}</div>
-          <div class="sub">${esc(x.learnerName)}, ${gradeLabel(x.grade)}. ${x.submittedAt ? 'Sent ' + esc(fmtDateTime(x.submittedAt)) : 'Not recorded yet'}${x.reviewedBy ? '. Checked by ' + esc(x.reviewedBy) + (x.reviewedAt ? ', ' + esc(fmtDateTime(x.reviewedAt)) : '') : ''}</div></div>
+          <div class="sub">${x.other ? '<span class="tag help">Helping another grade</span> ' : ''}${esc(x.learnerName)}, ${esc(classLabel(x.grade, x.section || ''))}. ${x.submittedAt ? 'Sent ' + esc(fmtDateTime(x.submittedAt)) : 'Not recorded yet'}${x.reviewedBy ? '. Checked by ' + esc(x.reviewedBy) + (x.reviewedAt ? ', ' + esc(fmtDateTime(x.reviewedAt)) : '') : ''}</div></div>
         <div>${x.status === 'correct' ? '<span class="star">\u2605 Correct</span>' : x.status === 'redo' ? '<span class="tag">Redo</span>' : x.status === 'submitted' ? '<span class="tag">Waiting</span>' : '<span class="tag">Not yet</span>'}</div>
         <div class="rv-actions">
           ${x.hasAudio ? `<button type="button" class="btn small" data-play="${esc(x.id)}">Play</button><span data-audio="${esc(x.id)}"></span>` : ''}
@@ -4378,6 +4453,16 @@ function renderReview(){
   </div>`;
   el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
   $('rvStatus').onchange = e => { REV.status = e.target.value; renderReview(); };
+  if ($('shareSw')) $('shareSw').onclick = async () => {
+    const on = !d.shareOn, m = $('shareMsg');
+    setMsg(m, 'Saving');
+    try {
+      const res = await callApi({ action: 'setShareReview', pin: S.pin, on });
+      if (!res || !res.ok){ setMsg(m, (res && res.error) || 'Not saved.', 'err'); return; }
+      d.shareOn = on; renderReview();
+      setMsg($('shareMsg'), on ? 'Sharing is ON. Teachers who finish their own learners can now help other grades.' : 'Sharing is OFF. Advisers see only their own learners.', 'good');
+    } catch(e){ setMsg(m, 'No internet. Try again when you are online.', 'err'); }
+  };
   $('rvGrade').onchange = e => { REV.grade = e.target.value; renderReview(); };
   $('rvReload').onclick = () => loadReview(REV.auth, REV.el);
   $('rvAdd').onclick = addWord;
@@ -4605,11 +4690,11 @@ function renderTeachers(){
   const w = d.rep.weeks.find(x => x.start === d.week) || { start: d.week, end: d.week, week: '' };
   d.el.innerHTML = `<div class="panel">
     <h2>Teacher Stars</h2>
-    <p class="hint">Teachers earn 1 star for every word they add to the Word Bank and every word they record. You can add, deduct, or reset their stars here. Every change is saved in the report below.</p>
-    <div class="tablewrap"><table class="stable"><thead><tr><th>Teacher</th><th>Words Added</th><th>Words Recorded</th><th>Added or Deducted</th><th>Total \u2605</th><th></th></tr></thead>
-      <tbody>${d.stars.map(t => `<tr><td>${esc(t.name)}<div class="sub">${esc(t.email)}</div></td><td>${t.added}</td><td>${t.recorded}${t.redo ? ` <span class="sub">(${t.redo} redo)</span>` : ''}</td><td>${t.adjust > 0 ? '+' : ''}${t.adjust}</td><td class="star">\u2605 ${t.stars}</td>
+    <p class="hint">Teachers earn 1 star for every learner recording they check (Correct or Redo), every approved word they add to the Word Bank, and every word they record. You can add, deduct, or reset their stars here. Every change is saved in the report below.</p>
+    <div class="tablewrap"><table class="stable"><thead><tr><th>Teacher</th><th>Recordings Checked</th><th>Words Added</th><th>Words Recorded</th><th>Added or Deducted</th><th>Total \u2605</th><th></th></tr></thead>
+      <tbody>${d.stars.map(t => `<tr><td>${esc(t.name)}<div class="sub">${esc(t.email)}</div></td><td>${t.checked || 0}</td><td>${t.added}</td><td>${t.recorded}${t.redo ? ` <span class="sub">(${t.redo} redo)</span>` : ''}</td><td>${t.adjust > 0 ? '+' : ''}${t.adjust}</td><td class="star">\u2605 ${t.stars}</td>
         <td><div class="rec-btns"><button type="button" class="btn small" data-tadd="${esc(t.email)}">Add</button><button type="button" class="btn small" data-tsub="${esc(t.email)}">Deduct</button><button type="button" class="btn small" data-treset="${esc(t.email)}">Reset</button></div></td></tr>
-        ${d.adj && d.adj.email === t.email ? `<tr><td colspan="6"><div class="adj">
+        ${d.adj && d.adj.email === t.email ? `<tr><td colspan="7"><div class="adj">
           <label>${d.adj.sign > 0 ? 'Stars to Add' : 'Stars to Deduct'}<select id="tadjN">${[1, 2, 3, 5, 10, 20].map(n => `<option>${n}</option>`).join('')}</select></label>
           <label style="flex:1">Reason<input id="tadjWhy" maxlength="120" placeholder="${d.adj.sign > 0 ? 'Example: Helped record many words' : 'Example: Correction'}"></label>
           <button type="button" class="btn small primary" id="tadjSave">${d.adj.sign > 0 ? 'Add' : 'Deduct'}</button>
@@ -4625,7 +4710,7 @@ function renderTeachers(){
       return `<div class="tchips">${Object.keys(byT).map(k => `<span><b>${esc(k)}</b>: ${byT[k].a} approved, ${byT[k].p} waiting, ${byT[k].r} not approved</span>`).join('') || '<span>No words added by teachers yet.</span>'}</div>
       <div class="tablewrap"><table class="stable"><thead><tr><th>Word</th><th>List</th><th>Added By</th><th>Date and Time</th><th>Status</th><th></th></tr></thead><tbody>
       ${rows.map(x => `<tr><td><b style="font-family:var(--card);font-size:1.15rem">${esc(x.word)}</b></td><td>${esc(x.category)}<div class="sub">KS ${esc(String(x.ks).replace(',', ' and '))}</div></td><td>${esc(x.addedBy)}</td><td>${esc(fmtDateTime(x.addedAt))}</td>
-        <td>${x.status === 'approved' ? '<span class="tag ok">Approved</span>' : x.status === 'rejected' ? '<span class="tag red">Not approved</span>' : '<span class="tag">Waiting</span>'}${x.note ? `<div class="sub">${esc(x.note)}</div>` : ''}</td>
+        <td>${x.status === 'approved' ? '<span class="tag ok">Approved</span>' : x.status === 'rejected' ? '<span class="tag red">Not approved</span>' : '<span class="tag">Waiting</span>'}${x.decidedAt && x.status !== 'pending' ? `<div class="sub">${esc(fmtDateTime(x.decidedAt))}</div>` : ''}${x.note ? `<div class="sub">${esc(x.note)}</div>` : ''}</td>
         <td><div class="rec-btns">${x.status !== 'approved' ? `<button type="button" class="btn small primary" data-wok="${esc(x.id)}">Approve</button>` : ''}${x.status !== 'rejected' ? `<button type="button" class="btn small" data-wno="${esc(x.id)}">Not Approved</button>` : ''}</div></td></tr>`).join('') || '<tr><td colspan="6">Nothing here.</td></tr>'}
       </tbody></table></div>`; })()}
     <p class="msg" id="awfMsg"></p>
@@ -5182,7 +5267,7 @@ function warmUp(){ if (serverAvailable() && navigator.onLine !== false) callApi(
 
 function init(){
   warmUp();
-  $('siteFoot').innerHTML = `<b>${SBRA}</b>, Baluyan Elementary School<br>First created on ${APP_CREATED}. Version ${APP_VERSION}, updated ${APP_UPDATED}.<br>Developer: <b>MARK JUMIL T. PADILLA</b>`;
+  $('siteFoot').innerHTML = `<b>e-READ Project</b>, Baluyan Elementary School<br>First created on ${APP_CREATED}. Version ${APP_VERSION}, updated ${APP_UPDATED}.<br>Developer: <b>MARK JUMIL T. PADILLA</b>`;
   $('homeLink').addEventListener('click', goHome);
   $('adminBack').addEventListener('click', () => { if (S.session === 'admin' && S.pin) enterAdmin(); });
   tickClock(); setInterval(tickClock, 1000);
