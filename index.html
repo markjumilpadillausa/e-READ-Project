@@ -74,6 +74,40 @@
   .build{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4vh;padding:16px}
   .pic.hear{width:min(30vw,120px);height:min(30vw,120px);font-size:min(14vw,60px)}
   .slots{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+  /* Prizes */
+  .prize-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-top:10px}
+  .prize{background:#f3f3f1;border:2px solid #ddd;border-radius:16px;padding:14px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center}
+  .prize .pz-ico{font-size:3rem;line-height:1.1;filter:grayscale(1) brightness(.45);opacity:.75}
+  .prize.soon{opacity:.75}
+  .prize.won{background:linear-gradient(180deg,#FFF8DC,#FFFFFF);border-color:var(--gold);box-shadow:0 0 0 4px rgba(245,166,35,.25),0 8px 20px rgba(245,166,35,.25)}
+  .prize.won .pz-ico{filter:none;opacity:1;animation:glow 1.6s ease-in-out infinite alternate}
+  @keyframes glow{0%{transform:scale(1);text-shadow:0 0 0 rgba(255,212,71,0)}100%{transform:scale(1.12);text-shadow:0 0 18px rgba(255,212,71,.9)}}
+  .pz-ok{font-weight:700;color:var(--check)}
+  .pz-need{width:100%;font-size:.85rem;text-align:left}
+  .pz-need .bar{height:8px;background:#e3e3df;border-radius:999px;overflow:hidden;margin-top:3px}
+  .pz-need .bar i{display:block;height:100%;background:var(--gold)}
+  .won-note{background:#FFF8DC;border:1px solid var(--gold);border-radius:10px;padding:8px 12px;font-weight:700}
+  .next-prize{display:inline-flex;align-items:center;gap:4px;background:#f3f3f1;border-radius:999px;padding:1px 10px 1px 6px;font-size:.95em}
+  .next-prize small{font-size:.75rem;color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){.prize.won .pz-ico{animation:none}}
+  /* Snake Spell */
+  .snake-svg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:1;overflow:visible}
+  .bub.snaked{background:#2E9E5B;color:#fff;border-color:#1F7A44;z-index:3}
+  .spell{font-family:var(--card);font-size:1.4em;letter-spacing:.18em;font-weight:700}
+  .spell .got{color:#FFD447}
+  /* Letter Train */
+  .track{width:100%;overflow:hidden;padding:6px 0 10px;border-bottom:6px solid #8D6E63;margin:6px 0 14px;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(141,110,99,.35) 22px 28px) bottom/100% 10px no-repeat}
+  .train{display:flex;align-items:flex-end;justify-content:center;gap:4px;transition:transform 1.4s ease-in}
+  .train.go{transform:translateX(130vw)}
+  .engine{display:block;line-height:0}
+  .tcar{position:relative;display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:50px;padding:0 8px;border-radius:8px;background:#FFF3C4;border:3px solid #E0A800;
+    font-family:var(--card);font-weight:700;font-size:1.7rem;color:#1d2b36;margin-bottom:8px}
+  .tcar i{position:absolute;bottom:-10px;left:6px;right:6px;height:12px;background:radial-gradient(circle at 8px 6px,#263238 5px,transparent 6px),radial-gradient(circle at calc(100% - 8px) 6px,#263238 5px,transparent 6px)}
+  .tcar.slot{background:#fff;border-style:dashed;color:transparent}
+  .tcar.slot.full{background:#7BD88F;border-style:solid;border-color:#2E9E5B;color:#1d2b36;animation:pop .35s ease-out}
+  button.tcar{cursor:pointer;min-width:58px;height:60px;font-size:2rem}
+  button.tcar.used{opacity:.25}
+  @media (prefers-reduced-motion:reduce){.train{transition:none}}
   .cword{font-family:var(--card);font-weight:700;font-size:clamp(2.8rem,12vw,5rem);color:#1d2b36;display:flex;align-items:flex-end;justify-content:center;gap:2px}
   .blank{display:inline-block;border-bottom:6px solid var(--gold);height:1.05em;margin:0 4px;text-align:center;background:var(--gold-soft);border-radius:8px 8px 0 0}
   .blank.full{background:transparent;border-bottom-color:var(--check);animation:pop .4s ease-out}
@@ -654,6 +688,9 @@
       <h3>Top 10 Readers</h3>
       <p class="hint">Learners earn one star for every practice word read correctly, every reading assessment task finished, and every game level passed.</p>
       <ol class="board" id="boardList"></ol>
+      <h3 style="margin-top:18px">\u2B50 Teacher Stars</h3>
+      <p class="hint">Teachers earn stars for checking learners' recordings, adding words, and recording words for the Word Bank.</p>
+      <ol class="board" id="teacherBoard"></ol>
     </div>
   </section>
 
@@ -970,7 +1007,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '3.6';
+const APP_VERSION = '3.7';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -2438,18 +2475,55 @@ function bindResults(){
   $('padSave').onclick = saveSignature;
 }
 
-const LTABS = [['practice','Practice Words'],['games','Games'],['notebook','My Notebook'],['tasks','Reading Assessment Tasks'],['results','Results'],['comp','Stories (Coming Soon)']];
+const LTABS = [['practice','Practice Words'],['games','Games'],['prizes','Prizes \uD83C\uDF81'],['notebook','My Notebook'],['tasks','Reading Assessment Tasks'],['results','Results'],['comp','Stories (Coming Soon)']];
+/* ---------- Prizes ----------
+   A prize can need Total stars, Practice Word stars, and Game stars (0 means not needed).
+   Stars keep adding up. Qualifying for a prize does not use up any stars. */
+function prizeList(){ const lrn = TV ? TV.learner.lrn : ''; return ((S.rewards[lrn] || {}).prizes || []); }
+function prizeState(p, r){
+  const live = p.active && (p.total || p.practice || p.games);
+  const parts = [];
+  if (p.total) parts.push({ label: 'Total stars', have: r.total, need: p.total });
+  if (p.practice) parts.push({ label: 'Practice Word stars', have: r.practice, need: p.practice });
+  if (p.games) parts.push({ label: 'Game stars', have: r.games, need: p.games });
+  const ok = !!live && parts.every(x => x.have >= x.need);
+  const left = parts.reduce((t, x) => t + Math.max(0, x.need - x.have), 0);
+  return { live: !!live, parts, ok, left };
+}
+function nextPrize(r){
+  const live = prizeList().map(p => Object.assign({ p }, prizeState(p, r))).filter(x => x.live && !x.ok).sort((a, b) => a.left - b.left);
+  return live[0] || null;
+}
+function prizesHtml(){
+  const r = myRewards(), list = prizeList();
+  if (!list.length) return '<div class="panel"><p class="hint">Prizes are loading. Please connect to the internet.</p></div>';
+  const won = list.filter(p => prizeState(p, r).ok).length;
+  return `<div class="panel">
+    <h2>\uD83C\uDF81 My Prizes</h2>
+    <p>You have <span class="star">\u2605 ${r.total}</span> stars: ${r.practice} from Practice Words, ${r.games} from Games${r.tasks ? ', ' + r.tasks + ' from Reading Tasks' : ''}${r.bonus ? ', ' + r.bonus + ' from your teacher' : ''}. Your stars keep adding up!</p>
+    ${won ? `<p class="won-note">\uD83C\uDF89 You are qualified for ${won} prize${won === 1 ? '' : 's'}! Show this page to your teacher to claim.</p>` : ''}
+    <div class="prize-grid">${list.map(p => { const st = prizeState(p, r);
+      return `<div class="prize${st.ok ? ' won' : ''}${!st.live ? ' soon' : ''}">
+        <div class="pz-ico">${esc(p.icon || '\uD83C\uDF81')}</div>
+        <b>${esc(p.name)}</b>
+        ${!st.live ? '<span class="sub">Coming soon</span>'
+          : st.ok ? '<span class="pz-ok">You are qualified to claim this! \uD83C\uDF89</span>'
+          : st.parts.map(x => `<div class="pz-need"><span>${x.label}: <b>${Math.min(x.have, x.need)} of ${x.need}</b></span><div class="bar"><i style="width:${Math.min(100, Math.round(x.have / x.need * 100))}%"></i></div></div>`).join('') + `<span class="sub">${st.left} more star${st.left === 1 ? '' : 's'} to go!</span>`}
+      </div>`; }).join('')}</div>
+  </div>`;
+}
 function renderTeacher(){
   const body = $('teacherBody'); const { learner } = TV;
   const stars = myRewards().total;
   const head = `<h1>${esc(learner.last)}, ${esc(learner.first)}</h1>
-    <p class="sub">${[learner.grade ? classLabel(learner.grade, learner.section || secOf(learner)) : '', learner.lrn ? 'LRN ' + esc(learner.lrn) : ''].filter(Boolean).join(', ')}${stars != null ? ` <span class="star">\u2605 ${stars}</span>` : ''}</p>
+    <p class="sub">${[learner.grade ? classLabel(learner.grade, learner.section || secOf(learner)) : '', learner.lrn ? 'LRN ' + esc(learner.lrn) : ''].filter(Boolean).join(', ')}${stars != null ? ` <span class="star">\u2605 ${stars}</span>${(() => { const n = nextPrize(myRewards()); return n ? ` <span class="next-prize" title="Next prize: ${esc(n.p.name)}, ${n.left} more stars">${esc(n.p.icon)} <small>${n.left} more for ${esc(n.p.name)}</small></span>` : ''; })()}` : ''}</p>
     <div class="ltabs" role="tablist"><button type="button" class="ltab" id="soundBtn" title="Sound and microphone check">\uD83D\uDD0A Sound Check</button>${LTABS.map(t => `<button type="button" class="ltab" role="tab" data-ltab="${t[0]}" aria-selected="${TV.tab === t[0]}">${t[1]}</button>`).join('')}</div>`;
   let main = '';
   if (TV.tab === 'practice') main = practiceHtml();
   else if (TV.tab === 'games') main = gamesHtml();
   else if (TV.tab === 'notebook') main = notebookHtml();
   else if (TV.tab === 'tasks') main = tasksPanel();
+  else if (TV.tab === 'prizes') main = prizesHtml();
   else if (TV.tab === 'comp') main = `<div class="panel" style="text-align:center"><div class="sc-frog" style="width:120px;margin:0 auto">${FROG_SVG}</div>
     <h2>Stories are coming soon! \uD83D\uDCD6</h2><p>Short stories to read, with questions to answer. Keep practicing your words, and you will be ready!</p></div>`;
   else main = resultsHtml();
@@ -2653,7 +2727,7 @@ async function loadRewards(){
   const lrn = TV && TV.learner.lrn; if (!lrn) return;
   try {
     const res = await callApi({ action: 'learnerRewards', lrn });
-    if (res && res.ok){ S.rewards[lrn] = Object.assign({}, S.rewards[lrn] || {}, { practice: res.practice, tasks: res.tasks, games: res.games, bonus: res.bonus || 0, bonusList: res.bonusList || [], frog: res.frog || [], progress: res.progress || { frog: res.frog || [] } }, res.weekStars != null ? { weekStars: res.weekStars, lastWeekStars: res.lastWeekStars, top10Week: res.top10Week } : {}); persist(); }
+    if (res && res.ok){ S.rewards[lrn] = Object.assign({}, S.rewards[lrn] || {}, { practice: res.practice, tasks: res.tasks, games: res.games, bonus: res.bonus || 0, bonusList: res.bonusList || [], frog: res.frog || [], progress: res.progress || { frog: res.frog || [] }, prizes: res.prizes || (S.rewards[lrn] || {}).prizes || [] }, res.weekStars != null ? { weekStars: res.weekStars, lastWeekStars: res.lastWeekStars, top10Week: res.top10Week } : {}); persist(); }
   } catch(e){}
   if (TV && TV.learner.lrn === lrn && $('viewGame').classList.contains('hidden')) renderTeacher();
 }
@@ -3052,7 +3126,9 @@ function howSteps(g){
     build: [['\uD83D\uDC42', 'Listen'], ['\uD83E\uDDF1', 'Build'], ['\u2B50', 'Star']],
     hunt: [['\uD83D\uDC40', 'Read'], ['\uD83D\uDC46', 'Tap'], ['\u2B50', 'Star']],
     choose: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDC46', 'Tap the word'], ['\u2B50', 'Star']],
-    complete: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDC46', 'Tap the missing part'], ['\u2B50', 'Star']]
+    complete: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDC46', 'Tap the missing part'], ['\u2B50', 'Star']],
+    snake: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDC0D', 'Tap letters in order'], ['\u2B50', 'Star']],
+    train: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDE83', 'Fill the train'], ['\u2B50', 'Star']]
   }[base];
   if (!steps) return '';
   return `<div class="howrow">${steps.map(x => `<span class="hstep"><span class="hicon">${x[0]}</span><span>${esc(x[1])}</span></span>`).join('<span class="harrow">\u2192</span>')}</div>`;
@@ -3061,6 +3137,8 @@ function howSteps(g){
 /* A friendly finger shows what to do at the start of each game: it moves to the right answer and taps (or traces). */
 function demoTarget(){
   const base = FG.g.base || FG.gid, root = $('gBubbles');
+  if (base === 'snake' && FG.items){ const need = FG.cur[FG.chain.length]; const b = FG.items.find(x => !x.caught && x.ch === need); return b && b.el; }
+  if (base === 'train'){ const need = FG.cur[FG.pos]; return [...root.querySelectorAll('.tcar.pick')].find(b => !b.disabled && b.dataset.t === need); }
   if (FG.items){ const b = FG.items.find(x => x.target && !x.caught); return b && b.el; }
   if (base === 'mama') return root.querySelector(`.baby[data-ch="${FG.cur}"]`);
   if (base === 'safari') return root.querySelector(`.choice[data-ch="${FG.cur}"]`);
@@ -4004,7 +4082,9 @@ const WORD_GAMES = [
   { id: 'complete', title: 'Complete the Word', blurb: 'Listen, then tap the missing sound part to finish the word.', icon: '<span class="emo">\uD83E\uDDE9</span>' },
   { id: 'build', title: 'Build the Word', blurb: 'Listen, then build the word with its sound parts.', icon: '<span class="emo">\uD83E\uDDF1</span>' },
   { id: 'hunt', title: 'Word Hunt', blurb: 'Help Froggy catch the words from this group.', icon: FROG_SVG },
-  { id: 'choose', title: 'Listen and Choose', blurb: 'Listen, then tap the word you hear.', icon: '<span class="emo">\uD83D\uDC42</span>' }
+  { id: 'choose', title: 'Listen and Choose', blurb: 'Listen, then tap the word you hear.', icon: '<span class="emo">\uD83D\uDC42</span>' },
+  { id: 'snake', title: 'Snake Spell', blurb: 'Listen, then tap the floating letters in order. The snake grows as you spell!', icon: '<span class="emo">\uD83D\uDC0D</span>' },
+  { id: 'train', title: 'Letter Train', blurb: 'Listen, then fill the train cars with the letters in order. Choo choo!', icon: '<span class="emo">\uD83D\uDE82</span>' }
 ];
 function wslug(t){ return String(t).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 function wordCats(){
@@ -4013,7 +4093,7 @@ function wordCats(){
   return lists.filter(x => String(x.ks).split(',').indexOf(String(ks)) >= 0 && x.words.length >= 3);
 }
 function wordGame(id){
-  const m = String(id).match(/^w\.(build|hunt|choose|complete)\.([a-z0-9]+)$/); if (!m) return null;
+  const m = String(id).match(/^w\.(build|hunt|choose|complete|snake|train)\.([a-z0-9]+)$/); if (!m) return null;
   const cat = (S.wordLists || []).find(x => wslug(x.category) === m[2]); if (!cat) return null;
   const base = WORD_GAMES.find(x => x.id === m[1]);
   return { id, base: m[1], title: base.title, blurb: base.blurb, icon: base.icon, cat, words: cat.words, levels: Math.max(1, Math.ceil(cat.words.length / 5)), word: true };
@@ -4129,6 +4209,91 @@ function completeRound(){
   later(() => say(`Complete the word. ${w}.`), 300);
 }
 
+/* ---------- Snake Spell: hear a word, tap the floating letters in order. The snake grows. ---------- */
+const ABC = 'abcdefghijklmnopqrstuvwxyz'.split('');
+GI.snake = {
+  intro: () => 'Listen to the word. Tap the floating letters in order. Each letter you tap joins the snake!',
+  line: () => `Spell ${FG.cur}.`,
+  start(){ FG.list = levelWords(); FG.round = 0; snakeRound(); }
+};
+function snakeRound(){
+  cancelAnimationFrame(FG.raf);
+  const w = FG.cur = String(FG.list[FG.round]).toLowerCase().replace(/[^a-z]/g, '');
+  const letters = w.split('');
+  const extra = shuffle(ABC.filter(c => letters.indexOf(c) < 0)).slice(0, letters.length > 7 ? 2 : 3);
+  FG.chain = []; FG.busy = false;
+  $('gBubbles').innerHTML = '<svg class="snake-svg" id="snakeSvg" aria-hidden="true"></svg>';
+  floatStart(shuffle(letters.concat(extra)).map((ch, i) => ({ ch, id: i })), bubbleEl, snakeTap, 0.16);
+  snakeAsk();
+  later(() => say(`Spell ${w}.`), 300);
+}
+function snakeAsk(){
+  const w = FG.cur, pic = wordPic(w);
+  setAsk(`${pic ? `<span class="askpic">${pic}</span> ` : ''}<span class="spell">${w.split('').map((c, i) => `<span class="${i < FG.chain.length ? 'got' : ''}">${i < FG.chain.length ? esc(c) : '_'}</span>`).join('')}</span>`, FG.list.length, FG.round);
+}
+function snakeDraw(){
+  const svg = $('snakeSvg'); if (!svg || !FG.chain.length) return;
+  const pts = FG.chain.map(b => [b.x + b.w / 2, b.y + b.w / 2]);
+  const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  const head = pts[pts.length - 1];
+  svg.innerHTML = `<path d="${d}" fill="none" stroke="#2E9E5B" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="${d}" fill="none" stroke="#7BD88F" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="2 14"/>
+    <g transform="translate(${head[0]},${head[1] - FG.size * 0.62})"><circle r="16" fill="#2E9E5B"/><circle cx="-6" cy="-4" r="4.5" fill="#fff"/><circle cx="6" cy="-4" r="4.5" fill="#fff"/>
+      <circle cx="-6" cy="-4" r="2.2" fill="#1d2b36"/><circle cx="6" cy="-4" r="2.2" fill="#1d2b36"/><path d="M-5 6 Q0 10 5 6" stroke="#1d2b36" stroke-width="2" fill="none" stroke-linecap="round"/></g>`;
+}
+function snakeTap(b){
+  if (FG.busy || b.caught) return;
+  const need = FG.cur[FG.chain.length];
+  if (b.ch !== need){ gWrong(b.el, `That is ${b.ch.toUpperCase()}. Spell ${FG.cur}.`); return; }
+  b.caught = true; b.el.classList.add('snaked');
+  b.el.style.transform = `translate(${b.x}px,${b.y}px)`;
+  FG.chain.push(b);
+  tone(520 + FG.chain.length * 50, 0.08);
+  snakeDraw(); snakeAsk();
+  if (FG.chain.length === FG.cur.length){
+    FG.busy = true; SFX.yes();
+    later(() => speakWord(FG.cur), 250);
+    later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else snakeRound(); }, 1900);
+  } else say(b.ch.toUpperCase());
+}
+
+/* ---------- Letter Train: hear a word, fill the train cars with its letters in order ---------- */
+const ENGINE_SVG = '<svg viewBox="0 0 90 60" width="78" height="52" aria-hidden="true"><rect x="6" y="18" width="46" height="26" rx="4" fill="#E8412C"/><rect x="10" y="6" width="22" height="16" rx="3" fill="#C62828"/><rect x="14" y="10" width="14" height="9" rx="2" fill="#CDEBFF"/><rect x="52" y="24" width="28" height="20" rx="6" fill="#1E63D6"/><rect x="62" y="12" width="9" height="13" rx="2" fill="#263238"/><path d="M80 44 L88 50 L80 50 Z" fill="#FFD447"/><circle cx="84" cy="32" r="3.5" fill="#FFD447"/><circle cx="20" cy="48" r="8" fill="#263238"/><circle cx="44" cy="48" r="8" fill="#263238"/><circle cx="68" cy="49" r="7" fill="#263238"/><circle cx="20" cy="48" r="3" fill="#B0BEC5"/><circle cx="44" cy="48" r="3" fill="#B0BEC5"/><circle cx="68" cy="49" r="3" fill="#B0BEC5"/></svg>';
+GI.train = {
+  intro: () => 'Listen to the word. Fill the train cars with the letters in order, then the train goes!',
+  line: () => `Build the train for ${FG.cur}.`,
+  start(){ FG.list = levelWords(); FG.round = 0; trainRound(); }
+};
+function trainRound(){
+  const w = FG.cur = String(FG.list[FG.round]).toLowerCase().replace(/[^a-z]/g, '');
+  const letters = w.split('');
+  const extra = shuffle(ABC.filter(c => letters.indexOf(c) < 0)).slice(0, 2);
+  FG.pos = 0; FG.busy = false;
+  const pic = wordPic(w);
+  $('gBubbles').innerHTML = `<div class="build">
+    <button type="button" class="pic hear${pic ? ' haspic' : ''}" id="tHear" aria-label="Hear the word again">${pic || '\uD83D\uDD0A'}${pic ? '<span class="spk">\uD83D\uDD0A</span>' : ''}</button>
+    <div class="track"><div class="train" id="trainRow">${letters.map((c, i) => `<span class="tcar slot" data-i="${i}"><i></i></span>`).join('')}<span class="engine">${ENGINE_SVG}</span></div></div>
+    <div class="choices wrap">${shuffle(letters.concat(extra)).map(c => `<button type="button" class="tcar pick" data-t="${c}">${esc(c)}<i></i></button>`).join('')}</div></div>`;
+  setAsk('Fill the train', FG.list.length, FG.round);
+  $('tHear').onclick = () => speakWord(w);
+  $('gBubbles').querySelectorAll('.tcar.pick').forEach(el => el.onclick = () => {
+    if (FG.busy || el.disabled) return;
+    if (el.dataset.t !== FG.cur[FG.pos]){ gWrong(el, `That is ${el.dataset.t.toUpperCase()}. Listen again. ${w}.`); return; }
+    el.disabled = true; el.classList.add('used');
+    const slot = $('gBubbles').querySelector(`.tcar.slot[data-i="${FG.pos}"]`);
+    slot.classList.add('full'); slot.innerHTML = `${esc(el.dataset.t)}<i></i>`;
+    tone(520 + FG.pos * 50, 0.08);
+    FG.pos++;
+    if (FG.pos >= w.length){
+      FG.busy = true; SFX.yes();
+      later(() => speakWord(w), 200);
+      later(() => { const row = $('trainRow'); if (row) row.classList.add('go'); playSound('win'); }, 1100);
+      later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else trainRound(); }, 2700);
+    } else say(el.dataset.t.toUpperCase());
+  });
+  later(() => say(`Build the train for ${w}.`), 300);
+}
+
 /* Word Hunt (Froggy catches the words that belong) */
 GI.hunt = {
   intro: () => huntLine(FG.g.cat.category) + ' Tap each one, and Froggy will eat it.',
@@ -4190,21 +4355,67 @@ function weekLabel(w){
 }
 async function loadStandings(auth, el){
   const keep = SD && SD.el === el ? SD : null;
-  SD = { auth, el, data: keep ? keep.data : null, week: keep ? keep.week : '', grade: keep ? keep.grade : '', adj: '' };
-  if (!SD.data) el.innerHTML = loaderHtml('Counting the stars.');
+  // Show the last saved standings at once, then refresh them quietly
+  const saved = !keep && S.standCache && S.standCache.role === (auth.pin ? 'head' : auth.email) ? S.standCache.data : null;
+  SD = { auth, el, data: keep ? keep.data : saved, week: keep ? keep.week : '', grade: keep ? keep.grade : '', adj: '' };
+  if (SD.data){ if (!SD.week && SD.data.weeks.length) SD.week = SD.data.weeks[0].start; renderStandings(); }
+  else el.innerHTML = loaderHtml('Counting the stars.');
   try {
-    const res = await callApi(Object.assign({ action: 'starStandings' }, auth));
-    if (!res || !res.ok){ el.innerHTML = `<div class="panel"><p class="msg err">${esc((res && res.error) || 'Could not load the standings.')}</p></div>`; return; }
-    SD.data = res; if (!SD.week && res.weeks.length) SD.week = res.weeks[0].start; renderStandings();
+    const res = await callApi(Object.assign({ action: 'starStandings', fresh: !!keep }, auth));
+    if (!res || !res.ok){ if (!SD.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc((res && res.error) || 'Could not load the standings.')}</p></div>`; return; }
+    if (SD.el !== el) return;
+    S.standCache = { role: auth.pin ? 'head' : auth.email, data: res }; persist();
+    SD.data = res; if (!SD.week && res.weeks.length) SD.week = res.weeks[0].start;
+    if (!(SD.adj || (SD.prizes && document.activeElement && SD.el.contains(document.activeElement)))) renderStandings();
   } catch(e){ el.innerHTML = '<div class="panel"><p class="msg err">The standings need the internet. Connect, then open this tab again.</p></div>'; }
 }
+/* School Head: set the stars needed for each prize, and see who qualified */
+const PRIZE_ICONS = ['\uD83E\uDEAA', '\uD83D\uDC55', '\u270F\uFE0F', '\uD83D\uDD8D\uFE0F', '\uD83D\uDCD3', '\uD83D\uDCCF', '\uD83C\uDF92', '\uD83D\uDCDA', '\uD83C\uDFC5', '\uD83D\uDCDC', '\uD83C\uDF81', '\uD83C\uDFC6', '\uD83E\uDDF8', '\u26BD', '\uD83C\uDF6B', '\uD83E\uDDC3'];
+function prizeAdminHtml(d){
+  const list = SD.prizes = SD.prizes || JSON.parse(JSON.stringify(d.prizes || []));
+  const qual = p => { const live = p.active && (p.total || p.practice || p.games); if (!live) return [];
+    return d.overall.filter(r => (!p.total || r.stars >= p.total) && (!p.practice || r.practice >= p.practice) && (!p.games || r.games >= p.games)); };
+  return `<div class="panel">
+    <h2>\uD83C\uDF81 Prizes</h2>
+    <p class="hint">Set the stars needed for each prize. A prize can need Total stars, Practice Word stars, Game stars, or a mix. Put 0 for what is not needed. Turn on <b>Show</b> when the prize is ready. Learners see prizes that are not ready as "Coming soon." Stars keep adding up, and claiming a prize does not use up stars.</p>
+    <div class="tablewrap"><table class="stable prize-admin"><thead><tr><th>Icon</th><th>Prize</th><th>Total Stars</th><th>Practice Word Stars</th><th>Game Stars</th><th>Show</th><th>Qualified</th><th></th></tr></thead><tbody>
+    ${list.map((p, i) => { const q = qual(p); return `<tr>
+      <td><select data-pz="${i}" data-f="icon">${PRIZE_ICONS.concat(PRIZE_ICONS.indexOf(p.icon) < 0 ? [p.icon] : []).map(ic => `<option${ic === p.icon ? ' selected' : ''}>${ic}</option>`).join('')}</select></td>
+      <td><input data-pz="${i}" data-f="name" value="${esc(p.name)}" maxlength="60"></td>
+      <td><input data-pz="${i}" data-f="total" type="number" min="0" value="${p.total || 0}" style="width:90px"></td>
+      <td><input data-pz="${i}" data-f="practice" type="number" min="0" value="${p.practice || 0}" style="width:90px"></td>
+      <td><input data-pz="${i}" data-f="games" type="number" min="0" value="${p.games || 0}" style="width:90px"></td>
+      <td><input data-pz="${i}" data-f="active" type="checkbox"${p.active ? ' checked' : ''} aria-label="Show this prize"></td>
+      <td>${q.length ? `<details><summary><b>${q.length}</b> learner${q.length === 1 ? '' : 's'}</summary>${q.map(r => `<div class="sub">${esc(r.name)}, ${gradeLabel(r.grade)}</div>`).join('')}</details>` : '<span class="sub">0</span>'}</td>
+      <td><button type="button" class="btn small" data-pzdel="${i}">Remove</button></td></tr>`; }).join('')}
+    </tbody></table></div>
+    <div class="rec-btns" style="margin-top:10px"><button type="button" class="btn" id="pzAdd">Add a Prize</button><button type="button" class="btn primary" id="pzSave">Save Prizes</button></div>
+    <p class="msg" id="pzMsg"></p>
+  </div>`;
+}
+function bindPrizeAdmin(){
+  if (!$('pzSave')) return;
+  SD.el.querySelectorAll('[data-pz]').forEach(el => el.onchange = () => { const p = SD.prizes[+el.dataset.pz], f = el.dataset.f; p[f] = f === 'active' ? el.checked : (f === 'name' || f === 'icon') ? el.value : Math.max(0, parseInt(el.value, 10) || 0); });
+  SD.el.querySelectorAll('[data-pzdel]').forEach(b => b.onclick = () => { if (!ask('Remove this prize?')) return; SD.prizes.splice(+b.dataset.pzdel, 1); renderStandings(); });
+  $('pzAdd').onclick = () => { SD.prizes.push({ id: 'p' + Date.now(), icon: '\uD83C\uDF81', name: 'New Prize', total: 0, practice: 0, games: 0, active: false }); renderStandings(); };
+  $('pzSave').onclick = async () => {
+    const m = $('pzMsg'); setMsg(m, 'Saving');
+    try {
+      const res = await callApi({ action: 'setPrizes', pin: S.pin, prizes: SD.prizes });
+      if (!res || !res.ok){ setMsg(m, (res && res.error) || 'Not saved.', 'err'); return; }
+      SD.data.prizes = res.prizes; SD.prizes = null; renderStandings();
+      setMsg($('pzMsg'), 'Prizes saved. Learners will see them the next time they open their Prizes tab.', 'good');
+    } catch(e){ setMsg(m, 'No internet. Try again when you are online.', 'err'); }
+  };
+}
+
 function renderStandings(){
   const d = SD.data, head = d.role === 'head';
   const grades = [...new Set(d.overall.map(r => String(r.grade)))].sort((a, b) => gradeOrder(a) - gradeOrder(b));
   const rows = d.overall.filter(r => !SD.grade || String(r.grade) === SD.grade);
   const wk = d.weeks.find(w => w.start === SD.week);
   const wrows = wk ? wk.rows.filter(r => !SD.grade || String(r.grade) === SD.grade) : [];
-  SD.el.innerHTML = `<div class="panel">
+  SD.el.innerHTML = (head ? prizeAdminHtml(d) : '') + `<div class="panel">
     <h2>Current Standing</h2>
     <p class="hint">All stars earned so far: practice words, reading assessment tasks, games, and stars you added or deducted. The main page shows only the Top 10. Only you${head ? ' and the advisers' : ' and the School Head'} can see the full list.</p>
     <div class="toolbar"><label>Grade<select id="sdGrade"><option value="">All grades</option>${grades.map(g => `<option value="${g}"${g === SD.grade ? ' selected' : ''}>${gradeLabel(g)}</option>`).join('')}</select></label>
@@ -4228,6 +4439,7 @@ function renderStandings(){
   </div>`;
   $('sdGrade').onchange = e => { SD.grade = e.target.value; renderStandings(); };
   $('sdReload').onclick = () => loadStandings(SD.auth, SD.el);
+  bindPrizeAdmin();
   if ($('sdWeek')) $('sdWeek').onchange = e => { SD.week = e.target.value; renderStandings(); };
   SD.el.querySelectorAll('[data-adj]').forEach(b => b.onclick = () => { SD.adj = SD.adj === b.dataset.adj ? '' : b.dataset.adj; renderStandings(); });
   if ($('adjAdd')){
@@ -4956,7 +5168,7 @@ function renderBoard(){
   const note = $('boardNote');
   if (!b){
     note.textContent = !serverAvailable() ? 'The dashboard needs the server link.' : navigator.onLine === false ? 'Connect to the internet to see the dashboard.' : 'Loading the dashboard.';
-    $('pieChart').innerHTML = pieSvg([]); $('pieLegend').innerHTML = ''; $('gradeBars').innerHTML = ''; $('boardList').innerHTML = '';
+    $('pieChart').innerHTML = pieSvg([]); $('pieLegend').innerHTML = ''; $('gradeBars').innerHTML = ''; $('boardList').innerHTML = ''; $('teacherBoard').innerHTML = '';
     return;
   }
   const notYet = Math.max(0, b.totalLearners - b.assessed);
@@ -4977,6 +5189,9 @@ function renderBoard(){
   $('boardList').innerHTML = (b.top || []).length ? b.top.map((x, i) => `
     <li><span class="rank">${i + 1}</span><span class="who">${esc(x.name)}<small>${gradeLabel(x.grade)}</small></span><span class="star">\u2605 ${x.stars}</span></li>`).join('')
     : '<li><span class="who sub">No stars yet. Practice words to be the first on the list!</span></li>';
+  $('teacherBoard').innerHTML = (b.teachers || []).length ? b.teachers.map((x, i) => `
+    <li><span class="rank">${i + 1}</span><span class="who">${esc(x.name)}</span><span class="star">\u2605 ${x.stars}</span></li>`).join('')
+    : '<li><span class="who sub">Teacher stars will show here.</span></li>';
 }
 
 /* Learner reading session */
