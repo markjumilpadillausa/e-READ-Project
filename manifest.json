@@ -1,0 +1,14 @@
+{
+  "name": "e-READ Project, Baluyan Elementary School",
+  "short_name": "e-READ",
+  "description": "Practice words, reading games, and stars with Froggy.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F7FAF5",
+  "theme_color": "#0B6B3A",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
