@@ -1082,7 +1082,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '4.6';
+const APP_VERSION = '4.7';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1247,7 +1247,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '4.5';
+const NEED_SERVER = '4.7';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
@@ -1336,6 +1336,7 @@ async function flush(){
         aids.forEach(id => { const a = S.assessments[id]; if (!a || a.updatedAt === stamp['a' + id]) delete q.assessments[id]; });
         if (S.advisersUpdated === advStamp) q.advisers = false;
         dL.forEach(id => delete q.delLearners[id]);
+        (res.dupLrn || []).forEach(d => { const l = S.learners[d.id]; if (l && l.lrn === d.lrn){ l.lrn = ''; problem = `The LRN ${d.lrn} already belongs to another learner, so it was not saved for ${l.first} ${l.last}.`; } });
         dA.forEach(id => delete q.delAssessments[id]);
         S.lastSync = nowIso();
       } else problem = (res && res.error) || 'The server did not accept the data.';
@@ -1943,6 +1944,7 @@ function renderLearners(){
         ${sectionsOf(l.grade).length > 1 ? `<label class="lrn-in">Section<select data-sec="${esc(l.id)}">${secOptions(l.grade, l.section || '')}</select></label>` : ''}
         <label class="lrn-in">LRN<input data-id="${esc(l.id)}" value="${esc(l.lrn || '')}" inputmode="numeric" maxlength="12" placeholder="12 digits"></label>
         <span class="lstars star" title="Total stars">\u2605 ${LSTARS ? (LSTARS[l.id] || 0) : '\u2026'}</span>
+        <button type="button" class="btn small" data-lcheck="${esc(l.id)}" title="See this learner's stars as the server counts them">Check Stars</button>
         <button type="button" class="btn small" data-ladd="${esc(l.id)}">Add Star</button>
         <button type="button" class="btn small" data-lsub="${esc(l.id)}">Deduct Star</button>
         <button type="button" class="btn small" data-reset="${esc(l.id)}">Reset Stars</button>
@@ -4803,7 +4805,7 @@ async function loadStandings(auth, el){
   const keep = SD && SD.el === el ? SD : null;
   // Show the last saved standings at once, then refresh them quietly
   const saved = !keep && S.standCache && S.standCache.role === (auth.pin ? 'head' : auth.email) ? S.standCache.data : null;
-  SD = { auth, el, data: keep ? keep.data : saved, week: keep ? keep.week : '', grade: keep ? keep.grade : '', adj: '' };
+  SD = { auth, el, data: keep ? keep.data : saved, week: keep ? keep.week : '', grade: keep ? keep.grade : '', adj: '', recountNote: keep ? keep.recountNote : '' };
   if (SD.data){ if (!SD.week && SD.data.weeks.length) SD.week = SD.data.weeks[0].start; renderStandings(); }
   else el.innerHTML = loaderHtml('Counting the stars.');
   try {
@@ -4862,7 +4864,8 @@ function renderStandings(){
   const rows = d.overall.filter(r => !SD.grade || String(r.grade) === SD.grade);
   const wk = d.weeks.find(w => w.start === SD.week);
   const wrows = wk ? wk.rows.filter(r => !SD.grade || String(r.grade) === SD.grade) : [];
-  SD.el.innerHTML = (head ? prizeAdminHtml(d) : '') + `<div class="panel">
+  SD.el.innerHTML = (head ? `<div class="panel"><h2>Star Totals</h2><p class="hint">Each learner's stars are kept as one running total, so every device shows them quickly. If a number ever looks wrong, Recount All Stars counts every saved star again. No star is lost, and nothing is counted twice.</p>
+    <button type="button" class="btn" id="recountBtn">Recount All Stars</button> <span class="msg${SD.recountNote ? ' good' : ''}" id="recountMsg">${esc(SD.recountNote || '')}</span></div>` + prizeAdminHtml(d) : '') + `<div class="panel">
     <h2>Current Standing</h2>
     <p class="hint">All stars earned so far: practice words, reading assessment tasks, games, and stars you added or deducted. The main page shows only the Top 10. Only you${head ? ' and the advisers' : ' and the School Head'} can see the full list.</p>
     <div class="toolbar"><label>Grade<select id="sdGrade"><option value="">All grades</option>${grades.map(g => `<option value="${g}"${g === SD.grade ? ' selected' : ''}>${gradeLabel(g)}</option>`).join('')}</select></label>
@@ -4886,6 +4889,18 @@ function renderStandings(){
   </div>`;
   $('sdGrade').onchange = e => { SD.grade = e.target.value; renderStandings(); };
   $('sdReload').onclick = () => loadStandings(SD.auth, SD.el);
+  if ($('recountBtn')) $('recountBtn').onclick = async () => {
+    if (!ask('Count every saved star again for all learners? This can take up to a minute.')) return;
+    const b = $('recountBtn'); b.disabled = true; setMsg($('recountMsg'), 'Counting every star. Please wait.');
+    try {
+      const r = await callApi({ action: 'recountStars', pin: S.pin, _wait: 300000 });
+      b.disabled = false;
+      if (!r || !r.ok){ setMsg($('recountMsg'), (r && r.error) || 'Not finished. Try again.', 'err'); return; }
+      SD.recountNote = `Done. Stars recounted for ${r.learners} learners at ${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}.`;
+      setMsg($('recountMsg'), SD.recountNote, 'good');
+      loadStandings(SD.auth, SD.el); loadLearnerStars();
+    } catch(e){ b.disabled = false; setMsg($('recountMsg'), 'The signal dropped. Try again.', 'err'); }
+  };
   bindPrizeAdmin();
   if ($('sdWeek')) $('sdWeek').onchange = e => { SD.week = e.target.value; renderStandings(); };
   SD.el.querySelectorAll('[data-adj]').forEach(b => b.onclick = () => { SD.adj = SD.adj === b.dataset.adj ? '' : b.dataset.adj; renderStandings(); });
@@ -5725,8 +5740,8 @@ let LIVE_BUSY = false, LIVE_AT = 0;
 async function liveStars(force){
   const lrn = TV && TV.learner && TV.learner.lrn;
   if (!lrn || LIVE_BUSY || document.hidden || navigator.onLine === false || !serverAvailable()) return;
-  if ($('viewTeacher').classList.contains('hidden') && $('viewGame').classList.contains('hidden')) return;
-  const gap = SIGNAL.weak ? 60000 : 20000;
+  if ($('viewTeacher').classList.contains('hidden')) return;      // not during games: game stars are sent, and the total refreshes after
+  const gap = SIGNAL.weak ? 60000 : 30000;
   if (!force && Date.now() - LIVE_AT < gap) return;
   LIVE_BUSY = true; LIVE_AT = Date.now();
   try {
@@ -6070,6 +6085,17 @@ function bind(){
   $('nGrade').addEventListener('change', renderAdviserSelect);
   $('learnerList').addEventListener('click', e => {
     const b = e.target.closest('[data-del]'); if (b) deleteLearner(b.dataset.del);
+    const ck = e.target.closest('[data-lcheck]');
+    if (ck){
+      ck.disabled = true; ck.textContent = 'Checking';
+      callApi({ action: 'checkStars', pin: S.pin, learnerId: ck.dataset.lcheck, _wait: 60000 }).then(r => {
+        ck.disabled = false; ck.textContent = 'Check Stars';
+        if (!r || !r.ok){ tell((r && r.error) || 'Could not check right now.'); return; }
+        tell(`${r.name}\n\nStars saved on the server: ${r.total.toLocaleString('en-US')}\n\nPractice words: ${r.practice}\nGames: ${r.games.toLocaleString('en-US')}\nReading tasks: ${r.tasks}\nAdded or deducted: ${r.bonus}\nGame levels finished: ${r.levels.toLocaleString('en-US')}${r.sameLrn > 1 ? '\n\nWarning: ' + r.sameLrn + ' learners share this LRN.' : ''}\n\nAny device that signs in with this LRN will show these numbers within 30 seconds.`);
+        if (LSTARS){ LSTARS[ck.dataset.lcheck] = r.total; renderLearners(); }
+      }).catch(() => { ck.disabled = false; ck.textContent = 'Check Stars'; tell('No internet. Try again when you are online.'); });
+      return;
+    }
     const ad = e.target.closest('[data-ladd]'), sb = e.target.closest('[data-lsub]');
     if (ad || sb){ LADJ = { id: (ad || sb).dataset[ad ? 'ladd' : 'lsub'], sign: ad ? 1 : -1 }; renderLearners(); const f = $('ladjWhy'); if (f) f.focus(); return; }
     const r = e.target.closest('[data-reset]');
