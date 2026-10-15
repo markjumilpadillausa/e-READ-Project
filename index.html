@@ -81,6 +81,31 @@
   .pic.hear{width:min(30vw,120px);height:min(30vw,120px);font-size:min(14vw,60px)}
   .slots{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   /* App install and update */
+  /* Home dashboard */
+  .hm-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0 12px}
+  .hm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+  .hm-tile{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;background:#fff;border:1px solid var(--rule);border-left:6px solid var(--ink);border-radius:14px;padding:14px;cursor:pointer;font:inherit;color:inherit;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+  .hm-tile:hover{box-shadow:0 6px 16px rgba(0,0,0,.1)}
+  .hm-tile.warn{border-left-color:var(--margin)}
+  .hm-ico{font-size:1.6rem}
+  .hm-tile b{font-size:2rem;line-height:1.1;color:var(--ink)}
+  .hm-tile.warn b{color:var(--margin)}
+  .hm-l{font-weight:700}
+  .hm-s{font-size:.82rem;color:var(--muted)}
+  .hm-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
+  .hm-cols .panel{margin:0}
+  .hm-cols h3{margin-top:0}
+  .hm-list{list-style:none;margin:0;padding:0}
+  .hm-list li{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule)}
+  .hm-list .rk{width:1.8em;text-align:center;font-weight:700}
+  .hm-list .nm{flex:1}
+  .hm-list small{color:var(--muted)}
+  .hm-prize{display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--rule)}
+  .hm-pi{font-size:1.8rem;line-height:1}
+  .hm-bar{margin:8px 0}
+  .hm-bar .bar{height:10px;background:#e3e3df;border-radius:999px;overflow:hidden;margin:3px 0}
+  .hm-bar .bar i{display:block;height:100%;background:var(--check)}
+  .hm-bar small{color:var(--muted)}
   .srv-warn{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:55;max-width:min(760px,94vw);background:#FFF3F0;border:2px solid var(--margin);border-radius:12px;padding:10px 14px;box-shadow:0 8px 20px rgba(0,0,0,.15);font-size:.92rem}
   .pending-stars{font-size:.8rem;color:var(--muted);margin-left:6px}
   .more-card{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#FFF8DC,#FFFFFF);border:2px solid var(--gold)}
@@ -734,7 +759,8 @@
   <!-- School Head -->
   <section id="viewAdmin" class="hidden">
     <nav class="tabs" role="tablist">
-      <button class="tab" role="tab" type="button" data-tab="assess" aria-selected="true">Reading Assessment</button>
+      <button class="tab" role="tab" type="button" data-tab="home" aria-selected="true">&#x1F3E0; Home</button>
+      <button class="tab" role="tab" type="button" data-tab="assess" aria-selected="false">Reading Assessment</button>
       <button class="tab" role="tab" type="button" data-tab="learners" aria-selected="false">Learners</button>
       <button class="tab" role="tab" type="button" data-tab="records" aria-selected="false">Records</button>
       <button class="tab" role="tab" type="button" data-tab="print" aria-selected="false">Printables</button>
@@ -749,6 +775,7 @@
     </nav>
 
     <!-- Assessment form -->
+    <div id="tab-home" class="hidden"><div id="homeAdmin"></div></div>
     <div id="tab-assess">
       <div class="panel">
         <h2>Assessment Details</h2>
@@ -1050,7 +1077,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '4.3';
+const APP_VERSION = '4.5';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1215,7 +1242,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '4.3';
+const NEED_SERVER = '4.5';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
@@ -1274,7 +1301,7 @@ function renderSync(){
   else if (navigator.onLine === false){ t = n ? 'Offline, ' + n + ' waiting to sync' : 'Offline, saved on this device'; c = 'warn'; }
   else if (SIGNAL.weak){ t = n ? 'Weak signal. ' + n + ' saved, will send later' : 'Weak signal. Your work is saved'; c = 'warn'; }
   else if (n){ t = n + ' waiting to sync'; c = 'warn'; }
-  else { t = 'Online, all synced'; c = 'ok'; }
+  else { t = 'Online, all synced' + (S.lastSync ? ' ' + new Date(S.lastSync).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) : ''); c = 'ok'; }
   p.textContent = t; p.className = 'pill ' + c;
   p.title = syncError || 'Tap to sync now';
 }
@@ -1346,7 +1373,8 @@ async function flush(){
         (S.signatures[sg.recordId] = S.signatures[sg.recordId] || {})[sg.role] = { name: sg.name, image: sg.image, signedAt: sg.signedAt };
       } else if (res && res.error){ problem = res.error; }
     }
-    persist();
+    S.lastSync = nowIso();
+    persist(); saveOutbox();
   } catch(e){ /* offline or timeout: try again later */ }
   syncError = problem;
   syncing = false; renderSync();
@@ -1409,7 +1437,7 @@ async function adminLogin(pin){
     h.done(); if (h.cancelled) return;
     if (!res || !res.ok){ setMsg(m, (res && res.error) || 'Sign in failed.', 'err'); return; }
     S.pin = pin; S.pinHash = hash(pin); S.wordBank = res.wordBank || [];
-    mergeServer(res); S.session = 'admin'; S.lastSync = nowIso(); persist();
+    mergeServer(res); S.session = 'admin'; S.lastSync = nowIso(); S.pullAt = nowIso(); persist();
     setMsg(m, ''); $('adminPin').value = '';
     enterAdmin(); flush();
   } catch(e){
@@ -1475,14 +1503,16 @@ function enterAdmin(){
   renderLearners();
   renderAdvisers();
   renderRecords();
-  selectTab('assess');
+  selectTab('home');
   renderSync();
 }
 
 function selectTab(name){
   currentTab = name;
   document.querySelectorAll('.tab[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
-  ['assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
+  ['home','assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
+  if (name === 'home') loadHome({ pin: S.pin }, $('homeAdmin'));
+  if (name === 'learners') loadLearnerStars();
   if (name === 'notebooks') loadNotebooks({ pin: S.pin }, $('nbAdmin'));
   if (name === 'teachers') loadTeachers($('teachersAdmin'));
   if (name === 'activity') loadActivity({ pin: S.pin }, $('actAdmin'));
@@ -1898,7 +1928,7 @@ function setLrn(id, lrn){
 function renderLearners(){
   const g = $('lFilter').value; const list = learnersSorted(g);
   const noLrn = list.filter(l => !l.lrn).length;
-  $('learnerCount').textContent = list.length ? `${list.length} learner(s). ${noLrn ? noLrn + ' still without LRN.' : 'All have LRN.'}` : '';
+  $('learnerCount').textContent = list.length ? `${list.length} learner(s). ${noLrn ? noLrn + ' still without LRN.' : 'All have LRN.'}${STAR_AT ? ' Stars updated ' + new Date(STAR_AT).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }) + '.' : ''}` : '';
   $('learnerList').innerHTML = list.length ? list.map(l => `
     <div class="row">
       <div><div class="nm">${esc(learnerName(l))}</div>
@@ -1923,11 +1953,20 @@ function renderLearners(){
 
 /* Star totals for the learner list, and adding or deducting stars */
 let LSTARS = null, LADJ = null;
+/* Every screen uses the same fresh count from the server, so the Learners tab, Stars and Rankings,
+   and Home always show the same totals. */
+let STAR_AT = '';
+function useStandings(overall, at){
+  if (!overall) return;
+  LSTARS = {}; overall.forEach(r => { LSTARS[r.learnerId] = r.stars; });
+  STAR_AT = at || new Date().toISOString();
+  if (SD && SD.data && SD.data.overall !== overall && SD.data.role === 'head'){ SD.data.overall = overall; }
+}
 async function loadLearnerStars(){
   if (!S.pin || navigator.onLine === false || !serverAvailable()) return;
   try {
-    const res = await callApi({ action: 'starStandings', pin: S.pin });
-    if (res && res.ok){ LSTARS = {}; res.overall.forEach(r => { LSTARS[r.learnerId] = r.stars; }); renderLearners(); }
+    const res = await callApi({ action: 'starStandings', pin: S.pin, fresh: true });
+    if (res && res.ok){ useStandings(res.overall); if (currentTab === 'learners') renderLearners(); }
   } catch(e){}
 }
 function bindLearnerAdj(){
@@ -3138,7 +3177,7 @@ function earnStar(key){
     done.push(key);
   }
   S.queue.stars[lrn + '|' + key] = { lrn, key, earnedAt: nowIso() };
-  persist(); renderSync(); flush();
+  persist(); renderSync(); LAST_PUSH = Date.now(); flush(); saveOutbox();
   return true;
 }
 
@@ -4762,11 +4801,12 @@ async function loadStandings(auth, el){
   if (SD.data){ if (!SD.week && SD.data.weeks.length) SD.week = SD.data.weeks[0].start; renderStandings(); }
   else el.innerHTML = loaderHtml('Counting the stars.');
   try {
-    const res = await callApi(Object.assign({ action: 'starStandings', fresh: !!keep }, auth));
+    const res = await callApi(Object.assign({ action: 'starStandings', fresh: true }, auth));
     if (!res || !res.ok){ if (!SD.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc((res && res.error) || 'Could not load the standings.')}</p></div>`; return; }
     if (SD.el !== el) return;
     S.standCache = { role: auth.pin ? 'head' : auth.email, data: res }; persist();
     SD.data = res; if (!SD.week && res.weeks.length) SD.week = res.weeks[0].start;
+    if (auth.pin) useStandings(res.overall);
     if (!(SD.adj || (SD.prizes && document.activeElement && SD.el.contains(document.activeElement)))) renderStandings();
   } catch(e){ el.innerHTML = '<div class="panel"><p class="msg err">The standings need the internet. Connect, then open this tab again.</p></div>'; }
 }
@@ -4990,8 +5030,14 @@ const REV_STATUS = [['submitted','Waiting for Review'],['redo','Sent Back for Re
 function renderReview(){
   const d = REV.data, el = REV.el;
   const isAdviser = d.role === 'adviser';
-  if (!REV.view) REV.view = isAdviser ? 'results' : 'practice';
-  const tabs = isAdviser ? `<div class="rtabs"><button type="button" class="ltab" data-rview="results" aria-selected="${REV.view === 'results'}">Reading Assessment Results</button><button type="button" class="ltab" data-rview="practice" aria-selected="${REV.view === 'practice'}">Practice Review</button><button type="button" class="ltab" data-rview="bank" aria-selected="${REV.view === 'bank'}">Word Bank</button><button type="button" class="ltab" data-rview="rank" aria-selected="${REV.view === 'rank'}">Star Rankings</button><button type="button" class="ltab" data-rview="act" aria-selected="${REV.view === 'act'}">Learner Activity</button><button type="button" class="ltab" data-rview="nb" aria-selected="${REV.view === 'nb'}">Learner Notebooks</button></div>` : '';
+  if (!REV.view) REV.view = isAdviser ? 'home' : 'practice';
+  const tabs = isAdviser ? `<div class="rtabs"><button type="button" class="ltab" data-rview="home" aria-selected="${REV.view === 'home'}">\uD83C\uDFE0 Home</button><button type="button" class="ltab" data-rview="results" aria-selected="${REV.view === 'results'}">Reading Assessment Results</button><button type="button" class="ltab" data-rview="practice" aria-selected="${REV.view === 'practice'}">Practice Review</button><button type="button" class="ltab" data-rview="bank" aria-selected="${REV.view === 'bank'}">Word Bank</button><button type="button" class="ltab" data-rview="rank" aria-selected="${REV.view === 'rank'}">Star Rankings</button><button type="button" class="ltab" data-rview="act" aria-selected="${REV.view === 'act'}">Learner Activity</button><button type="button" class="ltab" data-rview="nb" aria-selected="${REV.view === 'nb'}">Learner Notebooks</button></div>` : '';
+  if (isAdviser && REV.view === 'home'){
+    el.innerHTML = `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1>` + tabs + '<div id="homeHost"></div>';
+    el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
+    loadHome(REV.auth, $('homeHost'));
+    return;
+  }
   if (isAdviser && REV.view === 'nb'){
     el.innerHTML = `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1>` + tabs + '<div id="nbHost"></div>';
     el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
@@ -5495,6 +5541,130 @@ function printNotebooks(learners){
   printHtml(pages);
 }
 
+/* =========================================================
+   HOME: everything at a glance for the School Head and advisers
+   ========================================================= */
+let HM = null;
+async function loadHome(auth, el){
+  const key = 'home_' + (auth.email || 'head');
+  const keep = HM && HM.el === el ? HM : null;
+  HM = { auth, el, data: keep ? keep.data : sideGet(key) };
+  if (HM.data) renderHome(); else el.innerHTML = loaderHtml('Getting your school at a glance.');
+  try {
+    const res = await callApi(Object.assign({ action: 'homeSummary' }, auth));
+    if (!res || !res.ok){ if (!HM.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc((res && res.error) || (serverOld() ? 'Home needs the newest server code. Please update Code.gs and deploy a new version.' : 'Could not load Home.'))}</p></div>`; return; }
+    if (HM.el !== el) return;
+    HM.data = res; sideSet(key, res);
+    if (auth.pin) useStandings(res.overall, res.at);
+    renderHome();
+  } catch(e){ if (!HM.data) el.innerHTML = '<div class="panel"><p class="msg err">Home needs the internet. Your other tabs still work.</p></div>'; }
+}
+function homeGo(t){ if (HM.auth.pin) selectTab(t); else { REV.view = t; renderReview(); } }
+function renderHome(){
+  const d = HM.data, head = d.role === 'head';
+  const pct = d.learners ? Math.round(d.assessed / d.learners * 100) : 0;
+  const tile = (ico, num, label, sub, go, warn) => `<button type="button" class="hm-tile${warn ? ' warn' : ''}"${go ? ` data-go="${go}"` : ''}><span class="hm-ico">${ico}</span><b>${typeof num === 'number' ? num.toLocaleString('en-US') : num}</b><span class="hm-l">${label}</span>${sub ? `<span class="hm-s">${sub}</span>` : ''}</button>`;
+  const at = new Date(d.at).toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  const list = rows => rows.length ? `<ol class="hm-list">${rows.map((r, i) => `<li><span class="rk">${i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span><span class="nm">${esc(r.name)}<small> ${gradeLabel(r.grade)}</small></span><span class="star">★ ${r.stars.toLocaleString('en-US')}</span></li>`).join('')}</ol>` : '<p class="hint">No stars yet.</p>';
+  const waits = (d.waitingByClass || []).slice().sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade));
+  HM.el.innerHTML = `
+  <div class="hm-head"><div><h2 style="margin:0">🏠 ${head ? 'School at a Glance' : 'My Class at a Glance'}</h2><p class="sub" style="margin:2px 0 0">Updated ${esc(at)}. Refreshes by itself.</p></div>
+    <button type="button" class="btn small" id="hmReload">Refresh</button></div>
+  <div class="hm-grid">
+    ${tile('👧', d.learners, 'Learners', `${d.assessed} assessed (${pct}%)`, head ? 'learners' : 'results')}
+    ${tile('⭐', d.totalStars, 'Total Stars', `+${d.weekStars.toLocaleString('en-US')} this week`, head ? 'stars' : 'rank')}
+    ${tile('🎤', d.waitingTotal, 'Recordings to Check', `${d.checkedToday} checked today`, 'practice', d.waitingTotal >= 10)}
+    ${tile('📱', d.signedToday, 'Active Today', `${d.activeWeek} this week, ${d.never} never signed in`, head ? 'activity' : 'act', d.never > 0)}
+    ${tile('✅', d.correctTotal, 'Words Mastered', `${d.sentThisWeek} recordings sent this week`, head ? 'notebooks' : 'nb')}
+    ${head ? tile('📝', d.wordsToApprove, 'Words to Approve', `${d.recordingsToApprove} teacher recordings to approve`, 'teachers', d.wordsToApprove + d.recordingsToApprove > 0) : tile('🌟', d.myStars || 0, 'My Teacher Stars', 'for checking, adding, and recording words', 'practice')}
+  </div>
+  <div class="hm-cols">
+    <div class="panel"><h3>🎤 Recordings Waiting per Class</h3>
+      ${waits.length ? `<div class="wait-grid">${waits.map(x => `<div class="wait-tile${x.waiting >= 10 ? ' hot' : ''}"><span class="wt-class">${esc(classLabel(x.grade, x.section))}</span><b>${x.waiting}</b><span class="wt-adv">${esc(x.advisers.join(', ') || 'No adviser yet')}</span></div>`).join('')}</div>` : '<p class="none-wait">🎉 All recordings are checked!</p>'}</div>
+    <div class="panel"><h3>⭐ Top Readers, All Time</h3>${list(d.top)}</div>
+    <div class="panel"><h3>🔥 Top Readers, This Week</h3>${list(d.weekTop)}</div>
+    <div class="panel"><h3>🎁 Prizes to Claim</h3>
+      ${(d.prizes || []).length ? d.prizes.map(p => `<div class="hm-prize"><span class="hm-pi">${esc(p.icon)}</span><div><b>${esc(p.name)}</b>: ${p.qualified.length} learner${p.qualified.length === 1 ? '' : 's'} qualified
+        ${p.qualified.length ? `<details><summary class="sub">See names</summary>${p.qualified.map(q => `<div class="sub">${esc(q.name)}, ${gradeLabel(q.grade)}</div>`).join('')}</details>` : ''}</div></div>`).join('') : '<p class="hint">No prizes are turned on yet.</p>'}</div>
+    <div class="panel"><h3>📊 By Grade</h3>
+      ${(d.byGrade || []).sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade)).map(g => `<div class="hm-bar"><span>${gradeLabel(g.grade)}</span><div class="bar"><i style="width:${g.learners ? Math.round(g.assessed / g.learners * 100) : 0}%"></i></div><small>${g.assessed} of ${g.learners} assessed, ★ ${g.stars.toLocaleString('en-US')}</small></div>`).join('')}</div>
+    ${head && d.teachers ? `<div class="panel"><h3>👩‍🏫 Teacher Stars</h3><ol class="hm-list">${d.teachers.map((t, i) => `<li><span class="rk">${i + 1}</span><span class="nm">${esc(t.name)}<small> ${t.checked} checked</small></span><span class="star">★ ${t.stars}</span></li>`).join('')}</ol></div>` : ''}
+  </div>`;
+  $('hmReload').onclick = () => loadHome(HM.auth, HM.el);
+  HM.el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => homeGo(b.dataset.go));
+}
+
+/* =========================================================
+   DATA HIGHWAY: everything saved on a device travels to the server quickly,
+   and every device pulls the newest data, so all devices show the same thing.
+   1. Push: waiting work is sent every 8 seconds (15 on a weak signal), not every 30.
+   2. Leaving the app: waiting stars are sent one last time as the page closes.
+   3. Closed app: on phones that support it, the saved app sends waiting stars by itself
+      when the signal comes back, even if e-READ is closed.
+   4. Pull: the School Head's devices get changed learners and assessments every 30 seconds;
+      advisers' and learners' pages refresh on their own.
+   ========================================================= */
+let LAST_PUSH = 0, LAST_PULL = 0, PULL_BUSY = false;
+function startHighway(){
+  setInterval(() => {
+    if (navigator.onLine === false || !serverAvailable()) return;
+    const waiting = pendingCount() > 0;
+    const gap = waiting ? (SIGNAL.weak ? 15000 : 8000) : 30000;
+    if (Date.now() - LAST_PUSH >= gap){ LAST_PUSH = Date.now(); flush(); }
+    if (!$('viewAdmin').classList.contains('hidden') && !document.hidden && Date.now() - LAST_PULL >= (SIGNAL.weak ? 60000 : 30000)) pullAdmin();
+    if (!$('viewAdviser').classList.contains('hidden') && !document.hidden && REV && REV.el && REV.view === 'practice' && Date.now() - (REV.pulled || 0) > 45000){ REV.pulled = Date.now(); loadReview(REV.auth, REV.el); }
+  }, 4000);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) sendOnLeave(); else { flush(); if (S.pin) pullAdmin(true); } });
+  window.addEventListener('pagehide', sendOnLeave);
+}
+function starBatches(){
+  const by = {};
+  Object.values(S.queue.stars).forEach(st => { (by[st.lrn] = by[st.lrn] || []).push({ key: st.key, earnedAt: st.earnedAt }); });
+  return Object.keys(by).map(lrn => ({ action: 'earnStars', lrn, stars: by[lrn].slice(0, 200) }));
+}
+/* The page is closing: send waiting stars one more time. The server never counts a star twice. */
+function sendOnLeave(){
+  saveOutbox();
+  if (!API_URL || !navigator.sendBeacon) return;
+  starBatches().forEach(b => { try { navigator.sendBeacon(API_URL, new Blob([JSON.stringify(b)], { type: 'text/plain' })); } catch(e){} });
+}
+/* Outbox for the saved app (background sending when the signal returns) */
+function idb(){ return new Promise((ok, no) => { try { const r = indexedDB.open('eread', 1); r.onupgradeneeded = () => r.result.createObjectStore('outbox'); r.onsuccess = () => ok(r.result); r.onerror = no; } catch(e){ no(e); } }); }
+function saveOutbox(){
+  if (!window.indexedDB || !API_URL) return;
+  const batches = starBatches();
+  idb().then(db => { const tx = db.transaction('outbox', 'readwrite'); tx.objectStore('outbox').put({ api: API_URL, batches, at: Date.now() }, 'stars'); }).catch(() => {});
+  if (batches.length && navigator.serviceWorker && navigator.serviceWorker.ready){
+    navigator.serviceWorker.ready.then(r => { if (r.sync) r.sync.register('eread-outbox').catch(() => {}); }).catch(() => {});
+  }
+}
+/* School Head: pull only the learners and assessments that changed */
+async function pullAdmin(force){
+  if (!S.pin || PULL_BUSY || navigator.onLine === false) return;
+  if (!force && Date.now() - LAST_PULL < 10000) return;
+  PULL_BUSY = true; LAST_PULL = Date.now();
+  try {
+    const since = S.pullAt ? new Date(new Date(S.pullAt).getTime() - 120000).toISOString() : '';
+    const res = await callApi({ action: 'adminDelta', pin: S.pin, since });
+    if (!res || !res.ok){ if (res && res.error === 'Unknown request.') LAST_PULL = Date.now() + 600000; return; }
+    const q = S.queue; let changed = false;
+    (res.learners || []).forEach(l => { if (!q.learners[l.id] && !q.delLearners[l.id] && JSON.stringify(S.learners[l.id]) !== JSON.stringify(l)){ S.learners[l.id] = l; changed = true; } });
+    (res.assessments || []).forEach(a => { if (!q.assessments[a.id] && !q.delAssessments[a.id] && (!S.assessments[a.id] || S.assessments[a.id].updatedAt !== a.updatedAt)){ S.assessments[a.id] = a; changed = true; } });
+    // removed on another device
+    const L = {}; (res.learnerIds || []).forEach(id => { L[id] = true; });
+    const A = {}; (res.assessmentIds || []).forEach(id => { A[id] = true; });
+    if (res.learnerIds) Object.keys(S.learners).forEach(id => { if (!L[id] && !q.learners[id]){ delete S.learners[id]; changed = true; } });
+    if (res.assessmentIds) Object.keys(S.assessments).forEach(id => { if (!A[id] && !q.assessments[id]){ delete S.assessments[id]; changed = true; } });
+    if (Array.isArray(res.advisers) && !q.advisers && JSON.stringify(S.adviserList) !== JSON.stringify(res.advisers)){ S.adviserList = res.advisers; advDraft = null; changed = true; }
+    S.pullAt = res.serverTime; S.lastSync = nowIso(); persist();
+    if (changed){
+      const typing = document.activeElement && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName);
+      if (!typing){ renderLearnerSelect(); renderLearners(); renderRecords(); if (currentTab === 'learners') renderAdvisers(); }
+    }
+    renderSync();
+  } catch(e){} finally { PULL_BUSY = false; }
+}
+
 /* ---------- Real time stars ----------
    While a learner page is open, the true tally is fetched from the server every 20 seconds
    (every 60 seconds on a weak signal), and right away when the learner comes back to the page.
@@ -5530,6 +5700,13 @@ setInterval(() => liveStars(false), 5000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) liveStars(true); });
 window.addEventListener('focus', () => liveStars(true));
 window.addEventListener('online', () => { flush(); liveStars(true); });
+
+/* Learners tab and Home refresh their stars every 30 seconds while open */
+setInterval(() => {
+  if (document.hidden || navigator.onLine === false || $('viewAdmin').classList.contains('hidden')) return;
+  if (currentTab === 'learners' && !LADJ && !($('learnerList').contains(document.activeElement) && /INPUT|SELECT/.test(document.activeElement.tagName))) loadLearnerStars();
+}, 30000);
+setInterval(() => { if (!document.hidden && HM && HM.el && HM.el.offsetParent && navigator.onLine !== false) loadHome(HM.auth, HM.el); }, 45000);
 
 /* School Head and advisers: Stars and Rankings refresh by themselves every 30 seconds while open */
 setInterval(() => {
@@ -5901,7 +6078,7 @@ function bind(){
 
   window.addEventListener('online', () => { renderSync(); flush(); silentRefresh(); });
   window.addEventListener('offline', renderSync);
-  setInterval(flush, 30000);
+  startHighway();
 }
 
 /* Current date and time at the top, so screenshots show when they were taken */
@@ -5953,7 +6130,7 @@ function installApp(){
     fetch('index.html?check=' + Date.now(), { cache: 'no-store' }).then(r => r.text()).then(t => {
       const m = t.match(/APP_VERSION = '([0-9.]+)'/);
       if (m && m[1] !== APP_VERSION){
-        caches.open('eread-v4').then(c => c.put('./index.html', new Response(t, { headers: { 'Content-Type': 'text/html; charset=utf-8' } }))).catch(() => {});
+        caches.open('eread-v5').then(c => c.put('./index.html', new Response(t, { headers: { 'Content-Type': 'text/html; charset=utf-8' } }))).catch(() => {});
         showUpdateNote();
       }
     }).catch(() => {});

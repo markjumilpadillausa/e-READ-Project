@@ -1,6 +1,6 @@
 /* e-READ Project: saves the app on the phone so it opens even with a weak signal or no signal.
    The saved page opens at once. A newer page is downloaded quietly in the background. */
-const CACHE = 'eread-v4';
+const CACHE = 'eread-v5';
 const CORE = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', e => {
@@ -26,5 +26,21 @@ self.addEventListener('fetch', e => {
       return res;
     }).catch(() => saved);
     return saved || fresh;
+  }));
+});
+
+/* Data highway: when the signal comes back, waiting stars are sent even if e-READ is closed.
+   The server never counts the same star twice, so sending again is always safe. */
+function outboxDb(){ return new Promise((ok, no) => { const r = indexedDB.open('eread', 1); r.onupgradeneeded = () => r.result.createObjectStore('outbox'); r.onsuccess = () => ok(r.result); r.onerror = no; }); }
+self.addEventListener('sync', e => {
+  if (e.tag !== 'eread-outbox') return;
+  e.waitUntil(outboxDb().then(db => new Promise(ok => {
+    const g = db.transaction('outbox').objectStore('outbox').get('stars');
+    g.onsuccess = () => ok({ db, box: g.result });
+    g.onerror = () => ok({ db, box: null });
+  })).then(({ db, box }) => {
+    if (!box || !box.api || !box.batches || !box.batches.length) return;
+    return Promise.all(box.batches.map(b => fetch(box.api, { method: 'POST', body: JSON.stringify(b) }).then(r => r.json())))
+      .then(() => { db.transaction('outbox', 'readwrite').objectStore('outbox').put({ api: box.api, batches: [], at: Date.now() }, 'stars'); });
   }));
 });
