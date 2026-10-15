@@ -81,6 +81,8 @@
   .pic.hear{width:min(30vw,120px);height:min(30vw,120px);font-size:min(14vw,60px)}
   .slots{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   /* App install and update */
+  .srv-warn{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:55;max-width:min(760px,94vw);background:#FFF3F0;border:2px solid var(--margin);border-radius:12px;padding:10px 14px;box-shadow:0 8px 20px rgba(0,0,0,.15);font-size:.92rem}
+  .pending-stars{font-size:.8rem;color:var(--muted);margin-left:6px}
   .more-card{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#FFF8DC,#FFFFFF);border:2px solid var(--gold)}
   .more-frog{width:90px;flex:none;animation:byejump .8s ease-in-out infinite alternate}
   .more-frog svg{width:100%;height:auto;display:block}
@@ -1004,6 +1006,12 @@
 
 <div id="printArea" aria-hidden="true"></div>
 
+ <div id="srvWarn" class="srv-warn hidden" role="alert">
+  &#x26A0;&#xFE0F; <b>The server code is older than this page.</b> Stars, levels, and new words may not save the same on every device.
+  Fix: in Apps Script, paste the newest Code.gs, then <b>Deploy, Manage deployments, the pencil, Version: New version, Deploy</b>.
+  Do not choose New deployment, because that makes a different link.
+</div>
+
 <div id="soundCheck" class="busy hidden" role="dialog" aria-modal="true" aria-label="Sound and microphone check">
   <div class="busy-card sc-body"></div>
 </div>
@@ -1042,7 +1050,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '4.2';
+const APP_VERSION = '4.3';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1206,6 +1214,16 @@ function sigsFor(recordId, base){
 /* =========================================================
    SERVER CONNECTION AND SYNC
    ========================================================= */
+/* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
+const NEED_SERVER = '4.3';
+function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
+function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
+function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
+function serverBanner(){
+  const el = $('srvWarn'); if (!el) return;
+  const staff = !$('viewAdmin').classList.contains('hidden') || !$('viewAdviser').classList.contains('hidden') || !$('viewLogin').classList.contains('hidden');
+  el.classList.toggle('hidden', !(S.serverChecked && serverOld() && staff));
+}
 function hasGAS(){ return typeof google !== 'undefined' && google.script && google.script.run; }
 function serverAvailable(){ return !!(hasGAS() || API_URL); }
 
@@ -1224,11 +1242,20 @@ function callApi(req){
     const timer = setTimeout(() => { if (!finished){ finished = true; noteSpeed(45000, true); reject(new Error('timeout')); } }, 45000);
     const ok = v => { if (!finished){ finished = true; clearTimeout(timer); noteSpeed(Date.now() - t0, false); resolve(v); } };
     const bad = e => { if (!finished){ finished = true; clearTimeout(timer); noteSpeed(Date.now() - t0, true); reject(e); } };
-    if (hasGAS()){
+    // ONE server for everyone: every device and both links use the same API_URL, so all stars,
+    // levels, and words are saved in the same Google Sheet. The Apps Script link only falls back
+    // to its own connection if the internet request itself cannot be made.
+    if (API_URL && typeof fetch === 'function'){
+      fetch(API_URL, { method: 'POST', body: JSON.stringify(req) }).then(r => r.json()).then(v => {
+        if (v && v.serverVersion) noteServer(v.serverVersion);
+        ok(v);
+      }, e => {
+        if (hasGAS()) google.script.run.withSuccessHandler(ok).withFailureHandler(bad).api(req);
+        else bad(e);
+      });
+    } else if (hasGAS()){
       google.script.run.withSuccessHandler(ok).withFailureHandler(bad).api(req);
-    } else {
-      fetch(API_URL, { method: 'POST', body: JSON.stringify(req) }).then(r => r.json()).then(ok, bad);
-    }
+    } else bad(new Error('noserver'));
   });
 }
 
@@ -1356,6 +1383,7 @@ let currentTab = 'assess';
 function show(view){
   ['viewLogin','viewAdmin','viewTeacher','viewReader','viewAdviser','viewGame'].forEach(v => $(v).classList.toggle('hidden', v !== view));
   document.body.classList.toggle('reading', view === 'viewReader' || view === 'viewGame');
+  try { serverBanner(); } catch(e){}
   $('logoutBtn').classList.toggle('hidden', view === 'viewLogin');
   if (view === 'viewLogin' && S.session === 'admin' && S.pin){ $('logoutBtn').classList.remove('hidden'); $('logoutBtn').textContent = 'Log Out'; }
   $('logoutBtn').textContent = view === 'viewTeacher' ? 'Back' : 'Log Out';
@@ -2621,7 +2649,7 @@ function renderTeacher(){
   const body = $('teacherBody'); const { learner } = TV;
   const stars = myRewards().total;
   const head = `<h1>${esc(learner.last)}, ${esc(learner.first)}</h1>
-    <p class="sub">${[learner.grade ? classLabel(learner.grade, learner.section || secOf(learner)) : '', learner.lrn ? 'LRN ' + esc(learner.lrn) : ''].filter(Boolean).join(', ')}${stars != null ? ` <span class="star">\u2605 ${stars}</span>${(() => { const n = nextPrize(myRewards()); return n ? ` <button type="button" class="next-prize" data-ltab="prizes" title="Next prize: ${esc(n.p.name)}"><span class="np-ico">${esc(n.p.icon)}</span> <small>${n.left} more for ${esc(n.p.name)}</small></button>` : ` <button type="button" class="next-prize" data-ltab="prizes" title="Prizes"><span class="np-ico">\uD83C\uDFC6</span> <small>See my prizes</small></button>`; })()}` : ''}</p>
+    <p class="sub">${[learner.grade ? classLabel(learner.grade, learner.section || secOf(learner)) : '', learner.lrn ? 'LRN ' + esc(learner.lrn) : ''].filter(Boolean).join(', ')}${stars != null ? ` <span class="star">\u2605 ${stars}</span>${(() => { const n = Object.values(S.queue.stars).filter(q => q.lrn === learner.lrn).length; return n ? `<span class="pending-stars" title="These stars are saved on this device and are being sent">(${n} sending)</span>` : ''; })()}${(() => { const n = nextPrize(myRewards()); return n ? ` <button type="button" class="next-prize" data-ltab="prizes" title="Next prize: ${esc(n.p.name)}"><span class="np-ico">${esc(n.p.icon)}</span> <small>${n.left} more for ${esc(n.p.name)}</small></button>` : ` <button type="button" class="next-prize" data-ltab="prizes" title="Prizes"><span class="np-ico">\uD83C\uDFC6</span> <small>See my prizes</small></button>`; })()}` : ''}</p>
     <div class="ltabs" role="tablist"><button type="button" class="ltab" id="soundBtn" title="Sound and microphone check">\uD83D\uDD0A Sound Check</button>${LTABS.map(t => `<button type="button" class="ltab" role="tab" data-ltab="${t[0]}" aria-selected="${TV.tab === t[0]}">${t[1]}</button>`).join('')}</div>`;
   let main = '';
   if (TV.tab === 'practice') main = practiceHtml();
@@ -2742,21 +2770,31 @@ function practiceCardHtml(list){
   </div>`;
 }
 
-async function getMoreWords(){
+async function getMoreWords(auto){
   const b = $('moreWords'), m = $('moreMsg'), lrn = PR.lrn;
+  if (!b || PR.moreBusy) return;
+  PR.moreBusy = true; setTimeout(() => { if (PR) PR.moreBusy = false; }, 4000);
   if (navigator.onLine === false){ setMsg(m, 'Getting new words needs the internet. Try again when you have signal.', 'err'); return; }
   b.disabled = true; b.textContent = 'Getting your new words';
   try {
     const res = await callApi({ action: 'morePractice', lrn });
-    if (!res || !res.ok){ setMsg(m, (res && res.error) || 'No new words right now.', 'err'); b.disabled = false; b.textContent = '\u2795 Get 10 More Words'; return; }
+    if (!res || !res.ok){
+      const e = res && res.error === 'Unknown request.' ? 'New words need the latest school update. Please tell your teacher. You can play the games while waiting!' : (res && res.error) || 'No new words right now.';
+      if (PR) PR.moreFailed = true;
+      setMsg(m, e, 'err'); b.disabled = false; b.textContent = '\u2795 Get 10 More Words'; return;
+    }
     S.practiceCache[lrn] = { items: res.items, week: res.week }; persist();
-    PR.items = res.items; PR.week = res.week; PR.idx = 0; markQueued(lrn);
+    PR.items = res.items; PR.week = res.week; PR.idx = 0; PR.moreTried = false; markQueued(lrn);
     SFX.win(); say(`Yehey! ${res.added} new words. Let's read!`);
     renderTeacher();
   } catch(e){ setMsg(m, 'The signal is weak. Please try again.', 'err'); b.disabled = false; b.textContent = '\u2795 Get 10 More Words'; }
 }
 function bindPractice(){
-  if ($('moreWords')) $('moreWords').onclick = getMoreWords;
+  if ($('moreWords')){
+    $('moreWords').onclick = () => getMoreWords(false);
+    // the next 10 words come by themselves, so practice never stops
+    if (!PR.moreFailed && !PR.moreTried && navigator.onLine !== false){ PR.moreTried = true; setTimeout(() => getMoreWords(true), 600); }
+  }
   if (!$('micBtn') && !$('pBack')) return;
   const list = practiceList(); const x = list[PR.idx];
   if ($('micBtn')) $('micBtn').onclick = () => (REC && REC.id === x.id) ? recStop() : recStart(x);
@@ -5892,7 +5930,12 @@ function goHome(e){
 }
 
 /* Wakes the server as soon as the page opens, so the first sign in is quicker */
-function warmUp(){ if (serverAvailable() && navigator.onLine !== false) callApi({ action: 'ping' }).catch(() => {}); }
+function warmUp(){
+  if (serverAvailable() && navigator.onLine !== false) callApi({ action: 'ping' }).then(r => {
+    S.serverChecked = true;
+    if (r && r.serverVersion) noteServer(r.serverVersion); else { S.serverVer = ''; serverBanner(); }
+  }).catch(() => {});
+}
 
 /* The page is saved on the phone (GitHub link only), so it opens even with no signal.
    When a newer version is downloaded in the background, a small note offers to switch. */
