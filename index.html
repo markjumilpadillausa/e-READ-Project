@@ -81,6 +81,10 @@
   .pic.hear{width:min(30vw,120px);height:min(30vw,120px);font-size:min(14vw,60px)}
   .slots{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
   /* App install and update */
+  .more-card{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#FFF8DC,#FFFFFF);border:2px solid var(--gold)}
+  .more-frog{width:90px;flex:none;animation:byejump .8s ease-in-out infinite alternate}
+  .more-frog svg{width:100%;height:auto;display:block}
+  @media (max-width:520px){.more-card{flex-direction:column;text-align:center}}
   .install-btn{display:block;margin:0 auto 14px;background:#FFF8DC;border:2px solid var(--gold);color:var(--ink);font-weight:700}
   .upd-note{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:60;background:#fff;border:2px solid var(--ink);border-radius:14px;padding:10px 14px;box-shadow:0 8px 24px rgba(0,0,0,.2);display:flex;gap:10px;align-items:center;max-width:92vw;font-weight:700}
   /* Prizes */
@@ -100,6 +104,21 @@
   .next-prize .np-ico{font-size:1.4em;line-height:1;filter:grayscale(1) brightness(.5)}
   .next-prize small{font-size:.8rem;color:var(--graphite);font-weight:700}
   @media (prefers-reduced-motion:reduce){.prize.won .pz-ico{animation:none}}
+  /* Mixed-Up Word, Rhyme Time, Sort It Out, Word Memory */
+  .slots{display:flex;gap:8px;justify-content:center;margin:10px 0 16px}
+  .slot{width:54px;height:62px;border-bottom:5px solid var(--gold);background:#fff;border-radius:8px 8px 0 0;font-family:var(--card);font-weight:700;font-size:2.2rem;display:flex;align-items:center;justify-content:center;color:#1d2b36}
+  .slot.full{background:#D8F0E2;border-color:#2E9E5B;animation:pop .35s ease-out}
+  .tile.mix{font-size:2rem;min-width:58px;height:62px}
+  .tile.mix.used{opacity:.25}
+  .rhyme-q{font-size:1.15rem;margin:0 0 12px}
+  .baskets{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+  .basket{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:140px;padding:14px 18px;border-radius:18px;border:3px solid #C99A55;background:#FFF3DD;cursor:pointer;font:700 1.2rem var(--card);color:#1d2b36}
+  .basket .bk-ico{font-size:3rem;line-height:1}
+  .basket.right{background:#7BD88F;border-color:#2E9E5B}
+  .basket.no{animation:shake .4s}
+  .sort-word.drop{animation:drop .6s ease-in forwards}
+  @keyframes drop{100%{transform:translateY(90px) scale(.5);opacity:0}}
+  .mcard.wcard{font-size:clamp(1.1rem,5vw,1.8rem)}
   /* Real or Silly, Read and Match */
   .silly-word{margin:10px 0 18px}
   .big-ans{font-size:1.6rem;padding:16px 22px;min-width:140px}
@@ -1023,7 +1042,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '4.0';
+const APP_VERSION = '4.2';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1261,11 +1280,25 @@ async function flush(){
         S.lastSync = nowIso();
       } else problem = (res && res.error) || 'The server did not accept the data.';
     }
-    for (const k of stKeys){
-      const st = q.stars[k]; if (!st) continue;
-      const res = await callApi({ action: 'earnStar', lrn: st.lrn, key: st.key, earnedAt: st.earnedAt });
-      if (res && res.ok){ delete q.stars[k]; S.rewards[st.lrn] = Object.assign({}, S.rewards[st.lrn] || {}, { practice: res.practice, tasks: res.tasks, games: res.games, bonus: res.bonus || 0, bonusList: res.bonusList || [], frog: res.frog || [], progress: res.progress || { frog: res.frog || [] } }, res.weekStars != null ? { weekStars: res.weekStars, lastWeekStars: res.lastWeekStars, top10Week: res.top10Week } : {}); }
-      else if (res && res.error){ delete q.stars[k]; }
+    // Stars: all waiting stars of a learner go in ONE trip, and the server sends back the true total
+    const byLrn = {};
+    stKeys.forEach(k => { const st = q.stars[k]; if (st) (byLrn[st.lrn] = byLrn[st.lrn] || []).push(k); });
+    for (const lrn of Object.keys(byLrn)){
+      const keys = byLrn[lrn];
+      const res = await callApi({ action: 'earnStars', lrn, stars: keys.map(k => ({ key: q.stars[k].key, earnedAt: q.stars[k].earnedAt })) });
+      if (res && res.ok && res.results){
+        keys.forEach(k => { const st = q.stars[k]; if (st && res.results[st.key]) delete q.stars[k]; });
+        applyRewards(lrn, res);
+      } else if (res && res.error === 'Unknown request.'){
+        // older server: one star at a time
+        for (const k of keys){
+          const st = q.stars[k]; if (!st) continue;
+          const r1 = await callApi({ action: 'earnStar', lrn: st.lrn, key: st.key, earnedAt: st.earnedAt });
+          if (r1 && r1.ok){ delete q.stars[k]; applyRewards(lrn, r1); }
+          else if (r1 && /Unknown star|code is not correct|No learner/.test(r1.error || '')) delete q.stars[k];   // only stars that can never count are dropped
+        }
+      } else if (res && /No learner/.test(res.error || '')) keys.forEach(k => delete q.stars[k]);
+      // anything else (busy server, weak signal): the stars stay saved and are sent again
     }
     if (stKeys.length && TV && $('viewGame').classList.contains('hidden') && !$('viewTeacher').classList.contains('hidden')) renderTeacher();
     for (const k of rKeys){
@@ -1290,6 +1323,8 @@ async function flush(){
   } catch(e){ /* offline or timeout: try again later */ }
   syncError = problem;
   syncing = false; renderSync();
+  // stars earned while this was sending go out right away, not 30 seconds later
+  if (Object.keys(S.queue.stars).length && navigator.onLine !== false) setTimeout(flush, 800);
   if (!$('viewAdmin').classList.contains('hidden')){ renderRecords(); renderLearners(); }
 }
 
@@ -2598,7 +2633,7 @@ function renderTeacher(){
     <h2>Stories are coming soon! \uD83D\uDCD6</h2><p>Short stories to read, with questions to answer. Keep practicing your words, and you will be ready!</p></div>`;
   else main = resultsHtml();
   body.innerHTML = head + main;
-  body.querySelectorAll('[data-ltab]').forEach(b => b.onclick = () => { recCancel(); TV.tab = b.dataset.ltab; renderTeacher(); });
+  body.querySelectorAll('[data-ltab]').forEach(b => b.onclick = () => { recCancel(); TV.tab = b.dataset.ltab; renderTeacher(); if (/notebook|prizes/.test(TV.tab)) liveStars(true); });
   if ($('soundBtn')) $('soundBtn').onclick = soundCheck;
   if (TV.tab === 'practice') bindPractice();
   else if (TV.tab === 'games') bindGames();
@@ -2647,13 +2682,27 @@ function practiceList(){
   return PR.items.filter(x => x.status !== 'correct').sort((a, b) => (rank[a.status] - rank[b.status]) || String(a.week).localeCompare(String(b.week)));
 }
 
+/* All words are sent or correct: offer 10 more words right away */
+function moreWordsHtml(){
+  return `<div class="panel more-card">
+    <div class="more-frog">${FROG_SVG}</div>
+    <div><h2 style="margin:0">\uD83C\uDF89 You finished all your words!</h2>
+      <p style="margin:4px 0 10px">Want to keep reading? Get 10 more words now. Every word your teacher marks correct earns a star.</p>
+      <button type="button" class="btn primary big" id="moreWords">\u2795 Get 10 More Words</button>
+      <p class="msg" id="moreMsg"></p></div></div>`;
+}
 function practiceHtml(){
   if (!PR || !PR.items) return PR && /ready/.test(PR.msg) ? loaderHtml(PR.msg) : `<div class="panel"><p class="msg err">${esc(PR ? PR.msg : '')}</p></div>`;
   const list = practiceList();
+  const allDone = !PR.items.some(x => x.status === 'new' || x.status === 'redo');
   if (!list.length){
     const stars = PR.items.reduce((s, x) => s + (x.stars || 0), 0);
-    return `<div class="panel pcard"><div class="pword">\u2605 ${stars}</div><p>Great job! You finished all your practice words. New words come every Monday.</p></div>`;
+    return moreWordsHtml() + `<div class="panel pcard"><div class="pword">\u2605 ${stars}</div><p>Great job! Your teacher has checked all your words.</p></div>`;
   }
+  if (allDone && PR.idx === 0) return moreWordsHtml() + practiceCardHtml(list);
+  return practiceCardHtml(list);
+}
+function practiceCardHtml(list){
   if (PR.idx >= list.length) PR.idx = list.length - 1;
   const x = list[PR.idx]; const d = PR.drafts[x.id];
   const recording = REC && REC.id === x.id;
@@ -2693,7 +2742,21 @@ function practiceHtml(){
   </div>`;
 }
 
+async function getMoreWords(){
+  const b = $('moreWords'), m = $('moreMsg'), lrn = PR.lrn;
+  if (navigator.onLine === false){ setMsg(m, 'Getting new words needs the internet. Try again when you have signal.', 'err'); return; }
+  b.disabled = true; b.textContent = 'Getting your new words';
+  try {
+    const res = await callApi({ action: 'morePractice', lrn });
+    if (!res || !res.ok){ setMsg(m, (res && res.error) || 'No new words right now.', 'err'); b.disabled = false; b.textContent = '\u2795 Get 10 More Words'; return; }
+    S.practiceCache[lrn] = { items: res.items, week: res.week }; persist();
+    PR.items = res.items; PR.week = res.week; PR.idx = 0; markQueued(lrn);
+    SFX.win(); say(`Yehey! ${res.added} new words. Let's read!`);
+    renderTeacher();
+  } catch(e){ setMsg(m, 'The signal is weak. Please try again.', 'err'); b.disabled = false; b.textContent = '\u2795 Get 10 More Words'; }
+}
 function bindPractice(){
+  if ($('moreWords')) $('moreWords').onclick = getMoreWords;
   if (!$('micBtn') && !$('pBack')) return;
   const list = practiceList(); const x = list[PR.idx];
   if ($('micBtn')) $('micBtn').onclick = () => (REC && REC.id === x.id) ? recStop() : recStart(x);
@@ -3210,7 +3273,11 @@ function howSteps(g){
     snake: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDC0D', 'Tap letters in order'], ['\u2B50', 'Star']],
     train: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDE83', 'Fill the train'], ['\u2B50', 'Star']],
     silly: [['\uD83D\uDC40', 'Read'], ['\uD83D\uDC4D', 'Real or silly?'], ['\u2B50', 'Star']],
-    match: [['\uD83D\uDC40', 'Read'], ['\uD83D\uDDBC\uFE0F', 'Tap the picture'], ['\u2B50', 'Star']]
+    match: [['\uD83D\uDC40', 'Read'], ['\uD83D\uDDBC\uFE0F', 'Tap the picture'], ['\u2B50', 'Star']],
+    mixup: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDD00', 'Fix the order'], ['\u2B50', 'Star']],
+    rhyme: [['\uD83D\uDC40', 'Read'], ['\uD83C\uDFB5', 'Find the rhyme'], ['\u2B50', 'Star']],
+    sort: [['\uD83D\uDC40', 'Read'], ['\uD83E\uDDFA', 'Pick the basket'], ['\u2B50', 'Star']],
+    wmem: [['\uD83D\uDC46', 'Flip two'], ['\uD83D\uDC40', 'Read the pair'], ['\u2B50', 'Star']]
   }[base];
   if (!steps) return '';
   return `<div class="howrow">${steps.map(x => `<span class="hstep"><span class="hicon">${x[0]}</span><span>${esc(x[1])}</span></span>`).join('<span class="harrow">\u2192</span>')}</div>`;
@@ -3220,6 +3287,10 @@ function howSteps(g){
 function demoTarget(){
   const base = FG.g.base || FG.gid, root = $('gBubbles');
   if (base === 'snake' && FG.items){ const need = FG.cur[FG.chain.length]; const b = FG.items.find(x => !x.caught && x.ch === need); return b && b.el; }
+  if (base === 'mixup'){ const need = FG.cur[FG.pos]; return [...root.querySelectorAll('.tile.mix')].find(b => !b.disabled && b.dataset.t === need); }
+  if (base === 'rhyme') return [...root.querySelectorAll('.wordc')].find(b => b.dataset.w === FG.ans);
+  if (base === 'sort') return root.querySelector(`.basket[data-b="${FG.ans}"]`);
+  if (base === 'wmem') return root.querySelector('.mcard');
   if (base === 'silly') return $('gBubbles').querySelector(FG.isReal ? '[data-ans="real"]' : '[data-ans="silly"]');
   if (base === 'match') return [...root.querySelectorAll('.pmatch')].find(b => b.dataset.w === FG.cur);
   if (base === 'train'){ const need = FG.cur[FG.pos]; return [...root.querySelectorAll('.tcar.pick')].find(b => !b.disabled && b.dataset.t === need); }
@@ -4175,7 +4246,11 @@ const WORD_GAMES = [
   { id: 'snake', title: 'Snake Spell', blurb: 'Listen, then tap the floating letters in order. The snake grows as you spell!', icon: '<span class="emo">\uD83D\uDC0D</span>' },
   { id: 'train', title: 'Letter Train', blurb: 'Listen, then fill the train cars with the letters in order. Choo choo!', icon: '<span class="emo">\uD83D\uDE82</span>' },
   { id: 'silly', title: 'Real or Silly?', blurb: 'Read the word. Is it a real word or a silly word?', icon: '<span class="emo">\uD83E\uDD2A</span>' },
-  { id: 'match', title: 'Read and Match', blurb: 'Read the word, then tap the picture that matches.', icon: '<span class="emo">\uD83D\uDDBC\uFE0F</span>' }
+  { id: 'match', title: 'Read and Match', blurb: 'Read the word, then tap the picture that matches.', icon: '<span class="emo">\uD83D\uDDBC\uFE0F</span>' },
+  { id: 'mixup', title: 'Mixed-Up Word', blurb: 'The letters are mixed up! Tap them in the right order to fix the word.', icon: '<span class="emo">\uD83D\uDD00</span>' },
+  { id: 'rhyme', title: 'Rhyme Time', blurb: 'Read the word, then tap the word that rhymes with it.', icon: '<span class="emo">\uD83C\uDFB5</span>' },
+  { id: 'sort', title: 'Sort It Out', blurb: 'Read each word, then drop it into the right basket.', icon: '<span class="emo">\uD83E\uDDFA</span>' },
+  { id: 'wmem', title: 'Word Memory', blurb: 'Flip two cards. Find the two cards with the same word, and read it.', icon: '<span class="emo">\uD83C\uDCCF</span>' }
 ];
 function wslug(t){ return String(t).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 function wordCats(){
@@ -4184,7 +4259,7 @@ function wordCats(){
   return lists.filter(x => String(x.ks).split(',').indexOf(String(ks)) >= 0 && x.words.length >= 3);
 }
 function wordGame(id){
-  const m = String(id).match(/^w\.(build|hunt|choose|complete|snake|train|silly|match)\.([a-z0-9]+)$/); if (!m) return null;
+  const m = String(id).match(/^w\.(build|hunt|choose|complete|snake|train|silly|match|mixup|rhyme|sort|wmem)\.([a-z0-9]+)$/); if (!m) return null;
   const cat = (S.wordLists || []).find(x => wslug(x.category) === m[2]); if (!cat) return null;
   const base = WORD_GAMES.find(x => x.id === m[1]);
   return { id, base: m[1], title: base.title, blurb: base.blurb, icon: base.icon, cat, words: cat.words, levels: Math.max(1, Math.ceil(cat.words.length / 5)), word: true };
@@ -4456,6 +4531,130 @@ function matchRound(){
     later(() => speakWord(w), 200);
     later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else matchRound(); }, 1500);
   });
+}
+
+/* All words in the word lists, for picking look-alikes */
+function allListWords(){ const out = []; (S.wordLists || []).forEach(l => (l.words || []).forEach(w => { if (/^[a-z]+$/i.test(w)) out.push(w.toLowerCase()); })); return [...new Set(out)]; }
+
+/* ---------- Mixed-Up Word: the letters are scrambled, tap them in order ---------- */
+GI.mixup = {
+  intro: () => 'The letters are mixed up! Listen to the word, then tap the letters in the right order.',
+  line: () => `Fix the word ${FG.cur}.`,
+  start(){ FG.list = levelWords().map(w => w.toLowerCase().replace(/[^a-z]/g, '')).filter(w => w.length > 1); FG.round = 0; mixupRound(); }
+};
+function mixupRound(){
+  const w = FG.cur = FG.list[FG.round]; FG.pos = 0; FG.busy = false;
+  let mixed = shuffle(w.split('')); for (let i = 0; i < 5 && mixed.join('') === w; i++) mixed = shuffle(w.split(''));
+  const pic = wordPic(w);
+  $('gBubbles').innerHTML = `<div class="build">
+    <button type="button" class="pic hear${pic ? ' haspic' : ''}" id="xHear" aria-label="Hear the word again">${pic || '🔊'}${pic ? '<span class="spk">🔊</span>' : ''}</button>
+    <div class="slots">${w.split('').map((c, i) => `<span class="slot" data-i="${i}"></span>`).join('')}</div>
+    <div class="choices wrap">${mixed.map(c => `<button type="button" class="tile mix" data-t="${c}">${esc(c)}</button>`).join('')}</div></div>`;
+  setAsk('Fix the word', FG.list.length, FG.round);
+  $('xHear').onclick = () => speakWord(w);
+  $('gBubbles').querySelectorAll('.tile.mix').forEach(el => el.onclick = () => {
+    if (FG.busy || el.disabled) return;
+    if (el.dataset.t !== w[FG.pos]){ gWrong(el, `Listen again. ${w}.`); return; }
+    el.disabled = true; el.classList.add('used');
+    const slot = $('gBubbles').querySelector(`.slot[data-i="${FG.pos}"]`); slot.textContent = el.dataset.t; slot.classList.add('full');
+    tone(520 + FG.pos * 50, 0.08); FG.pos++;
+    if (FG.pos >= w.length){ FG.busy = true; SFX.yes(); later(() => speakWord(w), 200); later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else mixupRound(); }, 1700); }
+  });
+  later(() => say(`Fix the word. ${w}.`), 300);
+}
+
+/* ---------- Rhyme Time: tap the word that rhymes ---------- */
+function rimeOf(w){ const m = String(w).toLowerCase().match(/[aeiou]+[^aeiou]*e?$/); return m ? m[0] : ''; }
+GI.rhyme = {
+  intro: () => 'Words that rhyme end with the same sound, like cat and hat. Read the word, then tap the word that rhymes.',
+  line: () => `What rhymes with ${FG.cur}?`,
+  start(){
+    const pool = [...new Set(FG.g.words.map(x => x.toLowerCase()).concat(allListWords()))].filter(x => /^[a-z]{2,}$/.test(x));
+    FG.pool = pool;
+    FG.list = levelWords().map(w => w.toLowerCase()).filter(w => rimeOf(w) && pool.some(x => x !== w && rimeOf(x) === rimeOf(w)));
+    if (FG.list.length < 3) FG.list = shuffle(FG.g.words.map(w => w.toLowerCase()).filter(w => rimeOf(w) && pool.some(x => x !== w && rimeOf(x) === rimeOf(w)))).slice(0, 5);
+    if (!FG.list.length){ FG.list = levelWords().map(w => w.toLowerCase()); FG.noRhyme = true; }
+    FG.round = 0; rhymeRound();
+  }
+};
+function rhymeRound(){
+  const w = FG.cur = FG.list[FG.round], r = rimeOf(w); FG.busy = false;
+  const same = shuffle(FG.pool.filter(x => x !== w && rimeOf(x) === r));
+  const ans = FG.ans = FG.noRhyme ? w : same[0];
+  const wrong = shuffle(FG.pool.filter(x => rimeOf(x) !== r && x[0] !== ans[0])).slice(0, 2);
+  const opts = shuffle([ans].concat(wrong));
+  $('gBubbles').innerHTML = `<div class="build">
+    <div class="cword">${esc(w)}</div>
+    <p class="rhyme-q">Which word rhymes with <b>${esc(w)}</b>?</p>
+    <div class="choices wrap">${opts.map(o => `<button type="button" class="choice wordc" data-w="${esc(o)}">${esc(o)}</button>`).join('')}</div></div>`;
+  setAsk('Find the rhyme', FG.list.length, FG.round);
+  $('gBubbles').querySelectorAll('.wordc').forEach(el => el.onclick = () => {
+    if (FG.busy) return;
+    if (el.dataset.w !== ans){ gWrong(el, `Listen. ${w}. Which one ends the same way?`); return; }
+    FG.busy = true; SFX.yes(); el.classList.add('right');
+    later(() => say(`${w}, ${ans}. They rhyme!`), 200);
+    later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else rhymeRound(); }, 1800);
+  });
+  later(() => say(`What rhymes with ${w}?`), 300);
+}
+
+/* ---------- Sort It Out: two baskets, this group and another group ---------- */
+function shortName(c){ const m = String(c).match(/\(([^)]+)\)/); return m ? '-' + m[1] : String(c).replace(/ Pattern| Words/g, ''); }
+GI.sort = {
+  intro: () => 'Read each word. Then tap the basket where it belongs.',
+  line: () => 'Which basket?',
+  start(){
+    const me = FG.g.cat, lists = (S.wordLists || []).filter(l => l.category !== me.category && l.category !== 'Letters' && (l.words || []).length >= 3);
+    const sameGroup = lists.filter(l => l.group === me.group);
+    const other = shuffle(sameGroup.length ? sameGroup : lists)[0];
+    const mine = shuffle(levelWords().map(w => w.toLowerCase())).slice(0, 4);
+    const theirs = other ? shuffle(other.words.map(w => w.toLowerCase()).filter(w => FG.g.words.map(x => x.toLowerCase()).indexOf(w) < 0)).slice(0, 3) : [];
+    FG.baskets = [{ id: 'a', name: shortName(me.category) }, { id: 'b', name: other ? shortName(other.category) : 'Other' }];
+    FG.list = shuffle(mine.map(w => ({ w, b: 'a' })).concat(theirs.map(w => ({ w, b: 'b' }))));
+    FG.round = 0; sortRound();
+  }
+};
+function sortRound(){
+  const it = FG.list[FG.round]; FG.cur = it.w; FG.ans = it.b; FG.busy = false;
+  $('gBubbles').innerHTML = `<div class="build">
+    <div class="cword sort-word">${esc(it.w)}</div>
+    <div class="baskets">${FG.baskets.map(b => `<button type="button" class="basket" data-b="${b.id}"><span class="bk-ico">🧺</span><b>${esc(b.name)}</b></button>`).join('')}</div></div>`;
+  setAsk('Pick the basket', FG.list.length, FG.round);
+  $('gBubbles').querySelectorAll('.basket').forEach(el => el.onclick = () => {
+    if (FG.busy) return;
+    if (el.dataset.b !== it.b){ gWrong(el, `Read it again. ${it.w}.`); return; }
+    FG.busy = true; SFX.yes(); el.classList.add('right');
+    const wd = $('gBubbles').querySelector('.sort-word'); if (wd) wd.classList.add('drop');
+    later(() => speakWord(it.w), 200);
+    later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else sortRound(); }, 1500);
+  });
+}
+
+/* ---------- Word Memory: find two cards with the same word ---------- */
+GI.wmem = {
+  intro: () => 'Flip two cards at a time. Find the two cards with the same word. Froggy reads each word you flip.',
+  line: () => 'Flip two cards. Find the same words.',
+  start(){
+    const words = shuffle(levelWords().map(w => w.toLowerCase())).slice(0, 4);
+    const cards = shuffle(words.flatMap(w => [{ w }, { w }]));
+    FG.open = []; FG.pairs = words.length; FG.matched = 0; FG.lock = false;
+    $('gBubbles').innerHTML = `<div class="mgrid" style="grid-template-columns:repeat(4,1fr)">${cards.map((c, i) => `<button type="button" class="mcard wcard" data-i="${i}" data-k="${esc(c.w)}" aria-label="Card"><span>${esc(c.w)}</span></button>`).join('')}</div>`;
+    setAsk('Find the pairs', FG.pairs, 0);
+    $('gBubbles').querySelectorAll('.mcard').forEach(el => el.onclick = () => wmemFlip(el));
+    say(GI.wmem.line());
+  }
+};
+function wmemFlip(el){
+  if (!FG || FG.lock || el.classList.contains('up')) return;
+  el.classList.add('up'); FG.open.push(el); tone(520, 0.08);
+  speakWord(el.dataset.k);
+  if (FG.open.length < 2) return;
+  const [a, b] = FG.open; FG.open = [];
+  if (a.dataset.k === b.dataset.k){
+    a.classList.add('done'); b.classList.add('done'); SFX.yes();
+    FG.matched++; setAsk('Find the pairs', FG.pairs, FG.matched);
+    if (FG.matched >= FG.pairs) later(gWin, 1100);
+  } else { FG.lock = true; later(() => { a.classList.remove('up'); b.classList.remove('up'); FG.lock = false; }, 1300); }
 }
 
 /* Word Hunt (Froggy catches the words that belong) */
@@ -5257,6 +5456,49 @@ function printNotebooks(learners){
   }).join('');
   printHtml(pages);
 }
+
+/* ---------- Real time stars ----------
+   While a learner page is open, the true tally is fetched from the server every 20 seconds
+   (every 60 seconds on a weak signal), and right away when the learner comes back to the page.
+   Every phone, tablet, and computer then shows the same stars, including stars from teacher checks. */
+let LIVE_BUSY = false, LIVE_AT = 0;
+async function liveStars(force){
+  const lrn = TV && TV.learner && TV.learner.lrn;
+  if (!lrn || LIVE_BUSY || document.hidden || navigator.onLine === false || !serverAvailable()) return;
+  if ($('viewTeacher').classList.contains('hidden') && $('viewGame').classList.contains('hidden')) return;
+  const gap = SIGNAL.weak ? 60000 : 20000;
+  if (!force && Date.now() - LIVE_AT < gap) return;
+  LIVE_BUSY = true; LIVE_AT = Date.now();
+  try {
+    const before = myRewards().total;
+    const res = await callApi({ action: 'liveStars', lrn });
+    if (!res || !res.ok || !TV || TV.learner.lrn !== lrn) return;
+    applyRewards(lrn, res);
+    let changed = false;
+    if (res.practiceItems && PR && PR.lrn === lrn && PR.items){
+      const map = {}; res.practiceItems.forEach(x => { map[x.id] = x; });
+      const ids = {}; PR.items.forEach(x => { ids[x.id] = true; });
+      PR.items = PR.items.map(x => { const n = map[x.id]; if (n && (n.status !== x.status || n.stars !== x.stars || n.remark !== x.remark)){ changed = true; return Object.assign({}, x, n); } return x; });
+      res.practiceItems.forEach(x => { if (!ids[x.id]){ PR.items.push(x); changed = true; } });
+      markQueued(lrn);
+      S.practiceCache[lrn] = { items: PR.items, week: PR.week }; persist();
+    }
+    if ((changed || myRewards().total !== before) && safeToRender()) renderTeacher();
+    else if (!$('viewGame').classList.contains('hidden')) updateGameStars();
+  } catch(e){} finally { LIVE_BUSY = false; }
+}
+function updateGameStars(){ const el = document.querySelector('#viewGame .gstars'); if (el) el.textContent = '\u2605 ' + myRewards().total; }
+setInterval(() => liveStars(false), 5000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) liveStars(true); });
+window.addEventListener('focus', () => liveStars(true));
+window.addEventListener('online', () => { flush(); liveStars(true); });
+
+/* School Head and advisers: Stars and Rankings refresh by themselves every 30 seconds while open */
+setInterval(() => {
+  if (document.hidden || !SD || !SD.el || !SD.el.offsetParent || SD.adj || navigator.onLine === false) return;
+  if (SD.el.contains(document.activeElement) && /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  loadStandings(SD.auth, SD.el);
+}, 30000);
 
 /* Learner page open: check in every 2 minutes to count time online */
 setInterval(() => {
