@@ -90,6 +90,9 @@
   .hm-ico{font-size:1.6rem}
   .hm-tile b{font-size:2rem;line-height:1.1;color:var(--ink)}
   .hm-tile.warn b{color:var(--margin)}
+  .hm-tile.wait b{color:#B8C2B9}
+  .hm-status{background:var(--ink-soft);border-radius:10px;padding:8px 12px;margin:0 0 12px;font-size:.92rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .hm-status.warn{background:#FFF8DC;border:1px solid var(--gold)}
   .hm-l{font-weight:700}
   .hm-s{font-size:.82rem;color:var(--muted)}
   .hm-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;align-items:start}
@@ -106,7 +109,8 @@
   .hm-bar .bar{height:10px;background:#e3e3df;border-radius:999px;overflow:hidden;margin:3px 0}
   .hm-bar .bar i{display:block;height:100%;background:var(--check)}
   .hm-bar small{color:var(--muted)}
-  .srv-warn{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:55;max-width:min(760px,94vw);background:#FFF3F0;border:2px solid var(--margin);border-radius:12px;padding:10px 14px;box-shadow:0 8px 20px rgba(0,0,0,.15);font-size:.92rem}
+  .srv-warn{position:fixed;left:50%;bottom:12px;padding-right:44px!important;transform:translateX(-50%);z-index:55;max-width:min(760px,94vw);background:#FFF3F0;border:2px solid var(--margin);border-radius:12px;padding:10px 14px;box-shadow:0 8px 20px rgba(0,0,0,.15);font-size:.92rem}
+  .srv-x{position:absolute;right:8px;top:8px;border:0;background:transparent;font-size:1.1rem;cursor:pointer;color:var(--graphite)}
   .pending-stars{font-size:.8rem;color:var(--muted);margin-left:6px}
   .more-card{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#FFF8DC,#FFFFFF);border:2px solid var(--gold)}
   .more-frog{width:90px;flex:none;animation:byejump .8s ease-in-out infinite alternate}
@@ -1037,6 +1041,7 @@
   &#x26A0;&#xFE0F; <b>The server code is older than this page.</b> Stars, levels, and new words may not save the same on every device.
   Fix: in Apps Script, paste the newest Code.gs, then <b>Deploy, Manage deployments, the pencil, Version: New version, Deploy</b>.
   Do not choose New deployment, because that makes a different link.
+  <button type="button" class="srv-x" aria-label="Hide this message" onclick="this.parentNode.classList.add('hidden');S.srvHidden=S.serverVer||'none';">&#x2715;</button>
 </div>
 
 <div id="soundCheck" class="busy hidden" role="dialog" aria-modal="true" aria-label="Sound and microphone check">
@@ -1077,7 +1082,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '4.5';
+const APP_VERSION = '4.6';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1249,7 +1254,7 @@ function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_S
 function serverBanner(){
   const el = $('srvWarn'); if (!el) return;
   const staff = !$('viewAdmin').classList.contains('hidden') || !$('viewAdviser').classList.contains('hidden') || !$('viewLogin').classList.contains('hidden');
-  el.classList.toggle('hidden', !(S.serverChecked && serverOld() && staff));
+  el.classList.toggle('hidden', !(S.serverChecked && serverOld() && staff && S.srvHidden !== (S.serverVer || 'none')));
 }
 function hasGAS(){ return typeof google !== 'undefined' && google.script && google.script.run; }
 function serverAvailable(){ return !!(hasGAS() || API_URL); }
@@ -1266,7 +1271,8 @@ function callApi(req){
   return new Promise((resolve, reject) => {
     if (!serverAvailable()){ reject(new Error('noserver')); return; }
     let finished = false; const t0 = Date.now();
-    const timer = setTimeout(() => { if (!finished){ finished = true; noteSpeed(45000, true); reject(new Error('timeout')); } }, 45000);
+    const wait = req._wait || 45000;
+    const timer = setTimeout(() => { if (!finished){ finished = true; noteSpeed(wait, true); reject(new Error('timeout')); } }, wait);
     const ok = v => { if (!finished){ finished = true; clearTimeout(timer); noteSpeed(Date.now() - t0, false); resolve(v); } };
     const bad = e => { if (!finished){ finished = true; clearTimeout(timer); noteSpeed(Date.now() - t0, true); reject(e); } };
     // ONE server for everyone: every device and both links use the same API_URL, so all stars,
@@ -5545,52 +5551,98 @@ function printNotebooks(learners){
    HOME: everything at a glance for the School Head and advisers
    ========================================================= */
 let HM = null;
-async function loadHome(auth, el){
+/* Home never shows an empty error: it opens at once from what this device already has,
+   then fills in the newest numbers when the server answers, and keeps trying on a weak signal. */
+function localHome(auth){
+  const top = rows => rows.slice().sort((a, b) => b.stars - a.stars).slice(0, 5);
+  if (auth.pin){
+    const ls = Object.values(S.learners), done = {};
+    Object.values(S.assessments).forEach(a => { done[a.learnerId] = true; });
+    const known = (SD && SD.data && SD.data.role === 'head' && SD.data.overall) || (S.standCache && S.standCache.role === 'head' && S.standCache.data && S.standCache.data.overall)
+      || (LSTARS ? ls.map(l => ({ learnerId: l.id, name: learnerName(l), grade: l.grade, stars: LSTARS[l.id] || 0 })) : null);
+    const overall = known || [];
+    const byGrade = {};
+    ls.forEach(l => { const g = byGrade[l.grade] = byGrade[l.grade] || { grade: l.grade, learners: 0, assessed: 0, stars: 0 }; g.learners++; if (done[l.id]) g.assessed++; });
+    overall.forEach(r => { if (byGrade[r.grade]) byGrade[r.grade].stars += r.stars || 0; });
+    return { ok: true, local: true, role: 'head', at: S.lastSync || new Date().toISOString(), learners: ls.length, assessed: ls.filter(l => done[l.id]).length,
+      totalStars: known ? overall.reduce((t, r) => t + (r.stars || 0), 0) : null, weekStars: null, weekTop: [], top: top(overall), noStars: !known,
+      waitingTotal: null, waitingByClass: null, checkedToday: null, correctTotal: null, sentThisWeek: null, signedToday: null, activeWeek: null, never: null,
+      prizes: null, byGrade: Object.keys(byGrade).map(k => byGrade[k]), teachers: null, wordsToApprove: null, recordingsToApprove: null };
+  }
+  const d = REV && REV.data; if (!d) return null;
+  const done = {}; (d.results || []).forEach(a => { done[a.learnerId] = true; });
+  const items = d.items || [];
+  return { ok: true, local: true, role: 'adviser', at: new Date().toISOString(), learners: (d.learners || []).length, assessed: (d.learners || []).filter(l => done[l.id]).length,
+    totalStars: null, weekStars: null, weekTop: [], top: [], waitingTotal: items.filter(x => x.status === 'submitted' && !x.other).length, waitingByClass: null,
+    checkedToday: null, correctTotal: items.filter(x => x.status === 'correct').length, sentThisWeek: null, signedToday: null, activeWeek: null, never: null,
+    prizes: null, byGrade: [], myStars: d.myStars || 0 };
+}
+async function loadHome(auth, el, tries){
   const key = 'home_' + (auth.email || 'head');
   const keep = HM && HM.el === el ? HM : null;
-  HM = { auth, el, data: keep ? keep.data : sideGet(key) };
+  if (keep){ clearTimeout(keep.retry); clearInterval(keep.tick); }
+  HM = { auth, el, data: keep ? keep.data : (sideGet(key) || localHome(auth)), state: 'loading' };
   if (HM.data) renderHome(); else el.innerHTML = loaderHtml('Getting your school at a glance.');
+  // the star totals are a small, quick request, so they fill in first on a weak signal
+  if (auth.pin && HM.data && HM.data.local) loadLearnerStars().then(() => { if (HM && HM.el === el && HM.state !== 'ok'){ HM.data = localHome(auth); renderHome(); } });
   try {
-    const res = await callApi(Object.assign({ action: 'homeSummary' }, auth));
-    if (!res || !res.ok){ if (!HM.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc((res && res.error) || (serverOld() ? 'Home needs the newest server code. Please update Code.gs and deploy a new version.' : 'Could not load Home.'))}</p></div>`; return; }
+    const res = await callApi(Object.assign({ action: 'homeSummary', _wait: 90000 }, auth));
     if (HM.el !== el) return;
-    HM.data = res; sideSet(key, res);
+    if (!res || !res.ok){ homeRetry(auth, el, tries, (res && res.error) || ''); return; }
+    HM.data = res; HM.state = 'ok'; sideSet(key, res);
     if (auth.pin) useStandings(res.overall, res.at);
     renderHome();
-  } catch(e){ if (!HM.data) el.innerHTML = '<div class="panel"><p class="msg err">Home needs the internet. Your other tabs still work.</p></div>'; }
+  } catch(e){ if (HM.el === el) homeRetry(auth, el, tries, ''); }
+}
+function homeRetry(auth, el, tries, err){
+  const n = (tries || 0) + 1, wait = Math.min(120, 15 * Math.pow(2, n - 1));
+  const old = err === 'Unknown request.';
+  HM.state = 'retry'; HM.err = old ? 'Home needs the newest server code. Please update Code.gs and deploy a new version.' : err;
+  HM.next = Date.now() + wait * 1000;
+  if (!HM.data) HM.data = localHome(auth) || { ok: true, local: true, role: auth.pin ? 'head' : 'adviser', at: new Date().toISOString(), learners: null, assessed: null, totalStars: null, weekStars: null, top: [], weekTop: [], byGrade: [] };
+  renderHome();
+  if (!old) HM.retry = setTimeout(() => { if (HM && HM.el === el && el.offsetParent) loadHome(auth, el, n); }, wait * 1000);
 }
 function homeGo(t){ if (HM.auth.pin) selectTab(t); else { REV.view = t; renderReview(); } }
 function renderHome(){
   const d = HM.data, head = d.role === 'head';
-  const pct = d.learners ? Math.round(d.assessed / d.learners * 100) : 0;
-  const tile = (ico, num, label, sub, go, warn) => `<button type="button" class="hm-tile${warn ? ' warn' : ''}"${go ? ` data-go="${go}"` : ''}><span class="hm-ico">${ico}</span><b>${typeof num === 'number' ? num.toLocaleString('en-US') : num}</b><span class="hm-l">${label}</span>${sub ? `<span class="hm-s">${sub}</span>` : ''}</button>`;
+  const pct = d.learners ? Math.round((d.assessed || 0) / d.learners * 100) : 0;
+  const status = HM.state === 'ok' ? '' : HM.state === 'retry'
+    ? `<div class="hm-status warn">\uD83D\uDCF6 ${HM.err ? esc(HM.err) : 'The signal is weak, so Home is showing what this device already has.'} ${HM.err && /newest server/.test(HM.err) ? '' : `Trying again in <b id="hmCount">${Math.max(0, Math.round((HM.next - Date.now()) / 1000))}</b> seconds.`} <button type="button" class="btn small" id="hmTry">Try Again Now</button></div>`
+    : `<div class="hm-status">\u23F3 ${d.local ? 'Showing what this device already has.' : 'Showing the last saved numbers.'} Getting the newest numbers\u2026</div>`;
+  const N = v => v == null ? '\u2026' : Number(v).toLocaleString('en-US');
+  const tile = (ico, num, label, sub, go, warn) => `<button type="button" class="hm-tile${warn ? ' warn' : ''}${num == null ? ' wait' : ''}"${go ? ` data-go="${go}"` : ''}><span class="hm-ico">${ico}</span><b>${N(num)}</b><span class="hm-l">${label}</span>${sub ? `<span class="hm-s">${sub}</span>` : ''}</button>`;
   const at = new Date(d.at).toLocaleString('en-US', { weekday: 'long', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   const list = rows => rows.length ? `<ol class="hm-list">${rows.map((r, i) => `<li><span class="rk">${i < 3 ? ['🥇', '🥈', '🥉'][i] : i + 1}</span><span class="nm">${esc(r.name)}<small> ${gradeLabel(r.grade)}</small></span><span class="star">★ ${r.stars.toLocaleString('en-US')}</span></li>`).join('')}</ol>` : '<p class="hint">No stars yet.</p>';
   const waits = (d.waitingByClass || []).slice().sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade));
   HM.el.innerHTML = `
   <div class="hm-head"><div><h2 style="margin:0">🏠 ${head ? 'School at a Glance' : 'My Class at a Glance'}</h2><p class="sub" style="margin:2px 0 0">Updated ${esc(at)}. Refreshes by itself.</p></div>
     <button type="button" class="btn small" id="hmReload">Refresh</button></div>
+  ${status}
   <div class="hm-grid">
-    ${tile('👧', d.learners, 'Learners', `${d.assessed} assessed (${pct}%)`, head ? 'learners' : 'results')}
-    ${tile('⭐', d.totalStars, 'Total Stars', `+${d.weekStars.toLocaleString('en-US')} this week`, head ? 'stars' : 'rank')}
-    ${tile('🎤', d.waitingTotal, 'Recordings to Check', `${d.checkedToday} checked today`, 'practice', d.waitingTotal >= 10)}
-    ${tile('📱', d.signedToday, 'Active Today', `${d.activeWeek} this week, ${d.never} never signed in`, head ? 'activity' : 'act', d.never > 0)}
-    ${tile('✅', d.correctTotal, 'Words Mastered', `${d.sentThisWeek} recordings sent this week`, head ? 'notebooks' : 'nb')}
-    ${head ? tile('📝', d.wordsToApprove, 'Words to Approve', `${d.recordingsToApprove} teacher recordings to approve`, 'teachers', d.wordsToApprove + d.recordingsToApprove > 0) : tile('🌟', d.myStars || 0, 'My Teacher Stars', 'for checking, adding, and recording words', 'practice')}
+    ${tile('\uD83D\uDC67', d.learners, 'Learners', d.learners != null ? `${d.assessed} assessed (${pct}%)` : '', head ? 'learners' : 'results')}
+    ${tile('\u2B50', d.totalStars, 'Total Stars', d.weekStars != null ? `+${N(d.weekStars)} this week` : '', head ? 'stars' : 'rank')}
+    ${tile('\uD83C\uDFA4', d.waitingTotal, 'Recordings to Check', d.checkedToday != null ? `${d.checkedToday} checked today` : '', 'practice', d.waitingTotal >= 10)}
+    ${tile('\uD83D\uDCF1', d.signedToday, 'Active Today', d.activeWeek != null ? `${d.activeWeek} this week, ${d.never} never signed in` : '', head ? 'activity' : 'act', d.never > 0)}
+    ${tile('\u2705', d.correctTotal, 'Words Mastered', d.sentThisWeek != null ? `${d.sentThisWeek} recordings sent this week` : '', head ? 'notebooks' : 'nb')}
+    ${head ? tile('\uD83D\uDCDD', d.wordsToApprove, 'Words to Approve', d.recordingsToApprove != null ? `${d.recordingsToApprove} teacher recordings to approve` : '', 'teachers', (d.wordsToApprove || 0) + (d.recordingsToApprove || 0) > 0) : tile('🌟', d.myStars || 0, 'My Teacher Stars', 'for checking, adding, and recording words', 'practice')}
   </div>
   <div class="hm-cols">
     <div class="panel"><h3>🎤 Recordings Waiting per Class</h3>
-      ${waits.length ? `<div class="wait-grid">${waits.map(x => `<div class="wait-tile${x.waiting >= 10 ? ' hot' : ''}"><span class="wt-class">${esc(classLabel(x.grade, x.section))}</span><b>${x.waiting}</b><span class="wt-adv">${esc(x.advisers.join(', ') || 'No adviser yet')}</span></div>`).join('')}</div>` : '<p class="none-wait">🎉 All recordings are checked!</p>'}</div>
-    <div class="panel"><h3>⭐ Top Readers, All Time</h3>${list(d.top)}</div>
-    <div class="panel"><h3>🔥 Top Readers, This Week</h3>${list(d.weekTop)}</div>
+      ${d.waitingByClass == null ? '<p class="hint">Waiting for the newest numbers\u2026</p>' : waits.length ? `<div class="wait-grid">${waits.map(x => `<div class="wait-tile${x.waiting >= 10 ? ' hot' : ''}"><span class="wt-class">${esc(classLabel(x.grade, x.section))}</span><b>${x.waiting}</b><span class="wt-adv">${esc(x.advisers.join(', ') || 'No adviser yet')}</span></div>`).join('')}</div>` : '<p class="none-wait">🎉 All recordings are checked!</p>'}</div>
+    <div class="panel"><h3>⭐ Top Readers, All Time</h3>${d.noStars ? '<p class="hint">Waiting for the newest numbers\u2026</p>' : list(d.top || [])}</div>
+    <div class="panel"><h3>\uD83D\uDD25 Top Readers, This Week</h3>${d.weekStars == null ? '<p class="hint">Waiting for the newest numbers\u2026</p>' : list(d.weekTop || [])}</div>
     <div class="panel"><h3>🎁 Prizes to Claim</h3>
-      ${(d.prizes || []).length ? d.prizes.map(p => `<div class="hm-prize"><span class="hm-pi">${esc(p.icon)}</span><div><b>${esc(p.name)}</b>: ${p.qualified.length} learner${p.qualified.length === 1 ? '' : 's'} qualified
+      ${d.prizes == null ? '<p class="hint">Waiting for the newest numbers\u2026</p>' : (d.prizes || []).length ? d.prizes.map(p => `<div class="hm-prize"><span class="hm-pi">${esc(p.icon)}</span><div><b>${esc(p.name)}</b>: ${p.qualified.length} learner${p.qualified.length === 1 ? '' : 's'} qualified
         ${p.qualified.length ? `<details><summary class="sub">See names</summary>${p.qualified.map(q => `<div class="sub">${esc(q.name)}, ${gradeLabel(q.grade)}</div>`).join('')}</details>` : ''}</div></div>`).join('') : '<p class="hint">No prizes are turned on yet.</p>'}</div>
     <div class="panel"><h3>📊 By Grade</h3>
       ${(d.byGrade || []).sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade)).map(g => `<div class="hm-bar"><span>${gradeLabel(g.grade)}</span><div class="bar"><i style="width:${g.learners ? Math.round(g.assessed / g.learners * 100) : 0}%"></i></div><small>${g.assessed} of ${g.learners} assessed, ★ ${g.stars.toLocaleString('en-US')}</small></div>`).join('')}</div>
     ${head && d.teachers ? `<div class="panel"><h3>👩‍🏫 Teacher Stars</h3><ol class="hm-list">${d.teachers.map((t, i) => `<li><span class="rk">${i + 1}</span><span class="nm">${esc(t.name)}<small> ${t.checked} checked</small></span><span class="star">★ ${t.stars}</span></li>`).join('')}</ol></div>` : ''}
   </div>`;
   $('hmReload').onclick = () => loadHome(HM.auth, HM.el);
+  if ($('hmTry')) $('hmTry').onclick = () => loadHome(HM.auth, HM.el);
+  clearInterval(HM.tick);
+  if ($('hmCount')) HM.tick = setInterval(() => { const c = $('hmCount'); if (!c){ clearInterval(HM.tick); return; } c.textContent = Math.max(0, Math.round((HM.next - Date.now()) / 1000)); }, 1000);
   HM.el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => homeGo(b.dataset.go));
 }
 
