@@ -112,6 +112,23 @@
   .srv-warn{position:fixed;left:50%;bottom:12px;padding-right:44px!important;transform:translateX(-50%);z-index:55;max-width:min(760px,94vw);background:#FFF3F0;border:2px solid var(--margin);border-radius:12px;padding:10px 14px;box-shadow:0 8px 20px rgba(0,0,0,.15);font-size:.92rem}
   .srv-x{position:absolute;right:8px;top:8px;border:0;background:transparent;font-size:1.1rem;cursor:pointer;color:var(--graphite)}
   .pending-stars{font-size:.8rem;color:var(--muted);margin-left:6px}
+  /* recordings player */
+  .aud audio{max-width:260px;height:36px;vertical-align:middle}
+  .aud-err{color:var(--margin);font-size:.85rem;margin-left:6px}
+  /* School Head feedback for teachers */
+  .hf-card{border-left:6px solid var(--gold)}
+  .hf-card.new{background:#FFFDF3}
+  .hf-item{padding:10px 0;border-bottom:1px solid var(--rule)}
+  .hf-item.seen{opacity:.7}
+  .hf-act{font-weight:700;margin:3px 0}
+  .hf-note{background:#fff;border:1px solid var(--gold);border-radius:10px;padding:6px 10px;margin:4px 0;font-style:italic}
+  /* Checked Recordings */
+  .ck-teachers{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+  .ck-t{display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--rule);border-left:5px solid var(--ink);background:#fff;cursor:pointer;font:inherit;color:inherit}
+  .ck-t.on{background:var(--ink-soft);border-left-color:var(--gold)}
+  .ck-item{padding:12px 0;border-bottom:1px solid var(--rule)}
+  .ck-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start}
+  .ck-fields{margin:8px 0}
   .more-card{display:flex;gap:14px;align-items:center;background:linear-gradient(135deg,#FFF8DC,#FFFFFF);border:2px solid var(--gold)}
   .more-frog{width:90px;flex:none;animation:byejump .8s ease-in-out infinite alternate}
   .more-frog svg{width:100%;height:auto;display:block}
@@ -774,6 +791,7 @@
       <button class="tab" role="tab" type="button" data-tab="activity" aria-selected="false">Sign In Activity</button>
       <button class="tab" role="tab" type="button" data-tab="teachers" aria-selected="false">Teachers</button>
       <button class="tab" role="tab" type="button" data-tab="notebooks" aria-selected="false">Learner Notebooks</button>
+      <button class="tab" role="tab" type="button" data-tab="checked" aria-selected="false">Checked Recordings</button>
       <button class="tab" role="tab" type="button" disabled>Numeracy <small>(Coming Soon)</small></button>
       <button class="tab" role="tab" type="button" disabled>Comprehension <small>(Coming Soon)</small></button>
     </nav>
@@ -956,6 +974,9 @@
     <!-- Learner Notebooks by grade -->
     <div id="tab-notebooks" class="hidden"><div id="nbAdmin"></div></div>
 
+    <!-- Checked Recordings: the School Head reviews each teacher's checks -->
+    <div id="tab-checked" class="hidden"><div id="ckAdmin"></div></div>
+
     <!-- Printables -->
     <div id="tab-print" class="hidden">
       <div class="panel">
@@ -1078,11 +1099,11 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxow520bER1W7qn2FW__VQU
 
 // The link of the copy that allows the microphone (for example, your GitHub Pages link).
 // Learners are sent there when recording does not work on the page they opened.
-const PRACTICE_URL = 'https://markjumilpadillausa.github.io/sbra/';
+const PRACTICE_URL = 'https://markjumilpadillausa.github.io/e-READ-Project/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '4.7';
+const APP_VERSION = '4.9';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1247,7 +1268,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '4.7';
+const NEED_SERVER = '4.9';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
@@ -1517,7 +1538,8 @@ function enterAdmin(){
 function selectTab(name){
   currentTab = name;
   document.querySelectorAll('.tab[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
-  ['home','assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
+  ['home','assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks','checked'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
+  if (name === 'checked') loadChecked($('ckAdmin'));
   if (name === 'home') loadHome({ pin: S.pin }, $('homeAdmin'));
   if (name === 'learners') loadLearnerStars();
   if (name === 'notebooks') loadNotebooks({ pin: S.pin }, $('nbAdmin'));
@@ -4951,7 +4973,7 @@ async function loadReview(auth, el){
   const sideKey = 'rev_' + (auth.email || 'head');
   const saved = !keep ? sideGet(sideKey) : null;
   REV = { auth, el, data: keep ? keep.data : saved, status: keep ? keep.status : 'submitted', grade: keep ? keep.grade : '', view: keep ? keep.view : '' };
-  if (REV.data) renderReview(); else el.innerHTML = loaderHtml('Getting the recordings ready.');
+  if (REV.data){ if (keep) renderReviewWhenFree(el); else renderReview(); } else el.innerHTML = loaderHtml('Getting the recordings ready.');
   try {
     const res = await callApi(Object.assign({ action: 'reviewList' }, auth));
     if (res && res.error === 'CHANGE_PIN'){ showChangePin(auth.email, auth.pin, ''); return false; }
@@ -4959,8 +4981,7 @@ async function loadReview(auth, el){
     if (!REV || REV.el !== el) return true;
     REV.data = res; sideSet(sideKey, res);
     // do not redraw while a teacher is typing a remark or listening to a recording
-    const busyNow = el.contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
-    if (!busyNow) renderReview();
+    renderReviewWhenFree(el);
     return true;
   } catch(e){
     if (!REV.data) el.innerHTML = '<div class="panel"><p class="msg err">Reviewing recordings needs the internet. Connect, then open this tab again.</p></div>';
@@ -5054,8 +5075,11 @@ function renderReview(){
   if (!REV.view) REV.view = isAdviser ? 'home' : 'practice';
   const tabs = isAdviser ? `<div class="rtabs"><button type="button" class="ltab" data-rview="home" aria-selected="${REV.view === 'home'}">\uD83C\uDFE0 Home</button><button type="button" class="ltab" data-rview="results" aria-selected="${REV.view === 'results'}">Reading Assessment Results</button><button type="button" class="ltab" data-rview="practice" aria-selected="${REV.view === 'practice'}">Practice Review</button><button type="button" class="ltab" data-rview="bank" aria-selected="${REV.view === 'bank'}">Word Bank</button><button type="button" class="ltab" data-rview="rank" aria-selected="${REV.view === 'rank'}">Star Rankings</button><button type="button" class="ltab" data-rview="act" aria-selected="${REV.view === 'act'}">Learner Activity</button><button type="button" class="ltab" data-rview="nb" aria-selected="${REV.view === 'nb'}">Learner Notebooks</button></div>` : '';
   if (isAdviser && REV.view === 'home'){
-    el.innerHTML = `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1>` + tabs + '<div id="homeHost"></div>';
+    const hfNew = (d.headFeedback || []).filter(x => !x.seen).length;
+    const hfBar = hfNew ? `<div class="panel hf-card new"><b>\uD83D\uDCEC The School Head sent you ${hfNew} ${hfNew === 1 ? 'note' : 'notes'} about recordings you checked.</b> <button type="button" class="btn small primary" id="hfGo">Read Now</button></div>` : '';
+    el.innerHTML = `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1>` + tabs + hfBar + '<div id="homeHost"></div>';
     el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
+    if ($('hfGo')) $('hfGo').onclick = () => { REV.view = 'practice'; renderReview(); };
     loadHome(REV.auth, $('homeHost'));
     return;
   }
@@ -5097,7 +5121,7 @@ function renderReview(){
   const waiting = d.items.filter(x => x.status === 'submitted').length;
   const summary = d.summary.filter(x => !REV.grade || String(x.grade) === REV.grade).sort((a, b) => b.stars - a.stars || a.learnerName.localeCompare(b.learnerName));
   el.innerHTML = (isAdviser ? `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1><p class="sub">You earn a star for every learner recording you check, every word you add to the Word Bank, and every word you record.</p>` : '') + tabs
-  + (!isAdviser ? shareSwitchHtml(d) + waitingCardHtml(d) : helpNoteHtml(d))
+  + (!isAdviser ? shareSwitchHtml(d) + waitingCardHtml(d) : headFeedbackHtml(d) + helpNoteHtml(d))
   + rankingCardHtml(d) + `
   <div class="panel">
     <h2>Practice Review</h2>
@@ -5107,17 +5131,18 @@ function renderReview(){
       <label>Grade<select id="rvGrade"><option value="">All grades</option>${grades.map(g => `<option value="${g}"${g === REV.grade ? ' selected' : ''}>${gradeLabel(g)}</option>`).join('')}</select></label>
       <button type="button" class="btn" id="rvReload">Refresh</button>
     </div>
-    <div id="rvList">${items.length ? items.map(x => `
+    <div id="rvList">${items.length ? items.slice(0, REV.show || 40).map(x => `
       <div class="rv-item" data-id="${esc(x.id)}">
         <div><div class="rv-word">${esc(x.word)}</div>
           <div class="sub">${x.other ? '<span class="tag help">Helping another grade</span> ' : ''}${esc(x.learnerName)}, ${esc(classLabel(x.grade, x.section || ''))}. ${x.submittedAt ? 'Sent ' + esc(fmtDateTime(x.submittedAt)) : 'Not recorded yet'}${x.reviewedBy ? '. Checked by ' + esc(x.reviewedBy) + (x.reviewedAt ? ', ' + esc(fmtDateTime(x.reviewedAt)) : '') : ''}</div></div>
         <div>${x.status === 'correct' ? '<span class="star">\u2605 Correct</span>' : x.status === 'redo' ? '<span class="tag">Redo</span>' : x.status === 'submitted' ? '<span class="tag">Waiting</span>' : '<span class="tag">Not yet</span>'}</div>
         <div class="rv-actions">
-          ${x.hasAudio ? `<button type="button" class="btn small" data-play="${esc(x.id)}">Play</button><span data-audio="${esc(x.id)}"></span>` : ''}
-          <input data-remark="${esc(x.id)}" placeholder="Remark (optional)" value="${esc(x.remark || '')}">
+          ${x.hasAudio ? playBtn(x.id, 'data-play') : ''}
+          <input data-remark=""${esc(x.id)}" placeholder="Remark (optional)" value="${esc(x.remark || '')}">
           ${x.hasAudio ? `<button type="button" class="btn small primary" data-ok="${esc(x.id)}">\u2605 Correct</button><button type="button" class="btn small" data-redo="${esc(x.id)}">Redo</button>` : ''}
         </div>
-      </div>`).join('') : '<p class="hint">Nothing here right now.</p>'}</div>
+      </div>`).join('') : '<p class="hint">Nothing here right now.</p>'}
+      ${items.length > (REV.show || 40) ? `<button type="button" class="btn" id="rvMore" style="margin:10px 0">Show ${Math.min(40, items.length - (REV.show || 40))} more (${items.length - (REV.show || 40)} left)</button>` : ''}</div>
     <p class="msg" id="rvMsg"></p>
   </div>
   <div class="panel">
@@ -5139,7 +5164,9 @@ function renderReview(){
     <p class="msg" id="rvAddMsg"></p>
   </div>`;
   el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
-  $('rvStatus').onchange = e => { REV.status = e.target.value; renderReview(); };
+  $('rvStatus').onchange = e => { REV.status = e.target.value; REV.show = 40; renderReview(); };
+  if ($('rvMore')) $('rvMore').onclick = () => { REV.show = (REV.show || 40) + 40; renderReview(); };
+  wireAudio(el); bindHeadFeedback(el);
   if ($('shareSw')) $('shareSw').onclick = async () => {
     const on = !d.shareOn, m = $('shareMsg');
     setMsg(m, 'Saving');
@@ -5150,7 +5177,7 @@ function renderReview(){
       setMsg($('shareMsg'), on ? 'Sharing is ON. Teachers who finish their own learners can now help other grades.' : 'Sharing is OFF. Advisers see only their own learners.', 'good');
     } catch(e){ setMsg(m, 'No internet. Try again when you are online.', 'err'); }
   };
-  $('rvGrade').onchange = e => { REV.grade = e.target.value; renderReview(); };
+  $('rvGrade').onchange = e => { REV.grade = e.target.value; REV.show = 40; renderReview(); };
   $('rvReload').onclick = () => loadReview(REV.auth, REV.el);
   $('rvAdd').onclick = addWord;
   el.querySelector('#rvList').onclick = e => {
@@ -5161,15 +5188,80 @@ function renderReview(){
   };
 }
 
-async function playAudio(id, btn){
-  const slot = REV.el.querySelector(`[data-audio="${id}"]`);
-  btn.disabled = true; btn.textContent = 'Loading';
+/* ---------- Learner recordings player (Practice Review, Checked Recordings, Notebooks) ----------
+   Each recording is fetched once and kept while the page is open, so a list refresh never
+   stops it. If the first try is slow, it tries once more and waits longer. Problems show
+   right beside the Play button. */
+const AUDIO = {}, AUDIO_ORDER = [];
+let AUDIO_BUSY = 0;
+async function fetchAudio(id, auth){
+  if (AUDIO[id]) return AUDIO[id];
+  let res;
+  try { res = await callApi(Object.assign({ action: 'getAudio', id, _wait: 60000 }, auth)); }
+  catch(e){ res = await callApi(Object.assign({ action: 'getAudio', id, _wait: 120000 }, auth)); }
+  if (!res || !res.ok) throw new Error((res && res.error) || 'Could not open the recording.');
+  AUDIO[id] = `data:${res.mime || 'audio/webm'};base64,${res.audio}`;
+  AUDIO_ORDER.push(id);
+  while (AUDIO_ORDER.length > 40){ delete AUDIO[AUDIO_ORDER.shift()]; }
+  return AUDIO[id];
+}
+function audioTag(id, auto){ return `<audio controls${auto ? ' autoplay' : ''} preload="auto" src="${AUDIO[id]}" data-aid="${esc(id)}"></audio>`; }
+function playBtn(id, attr){ return AUDIO[id] ? `<span class="aud">${audioTag(id)}</span>` : `<button type="button" class="btn small" ${attr}="${esc(id)}">\u25B6 Play</button><span class="aud" data-audio="${esc(id)}"></span>`; }
+function audioPlaying(el){ return [...el.querySelectorAll('audio')].some(a => !a.paused && !a.ended); }
+async function playInto(id, btn, auth, root){
+  const slot = root.querySelector(`[data-audio="${id}"]`) || btn.nextElementSibling;
+  btn.disabled = true; btn.textContent = 'Loading\u2026'; AUDIO_BUSY++;
   try {
-    const res = await callApi(Object.assign({ action: 'getAudio', id }, REV.auth));
-    if (!res || !res.ok){ setMsg($('rvMsg'), (res && res.error) || 'Could not play the recording.', 'err'); btn.disabled = false; btn.textContent = 'Play'; return; }
-    slot.innerHTML = `<audio controls autoplay src="data:${esc(res.mime)};base64,${res.audio}"></audio>`;
+    await fetchAudio(id, auth);
+    if (slot){ slot.innerHTML = audioTag(id, true); wireAudio(slot); }
     btn.remove();
-  } catch(e){ setMsg($('rvMsg'), 'No internet. Try again when you are online.', 'err'); btn.disabled = false; btn.textContent = 'Play'; }
+  } catch(e){
+    btn.disabled = false; btn.textContent = '\u25B6 Play';
+    if (slot) slot.innerHTML = `<span class="aud-err">${esc(navigator.onLine === false ? 'No internet. Try again when you have signal.' : (e.message === 'timeout' ? 'The signal is slow. Tap Play again.' : e.message))}</span>`;
+  } finally { AUDIO_BUSY--; }
+}
+function wireAudio(root){
+  root.querySelectorAll('audio').forEach(a => { a.onerror = () => { const n = document.createElement('span'); n.className = 'aud-err';
+    n.textContent = 'This phone cannot play this recording. Please try Chrome, or a laptop.'; a.replaceWith(n); }; });
+}
+async function playAudio(id, btn){ return playInto(id, btn, REV.auth, REV.el); }
+
+function renderReviewWhenFree(el){
+  const busy = () => AUDIO_BUSY > 0 || audioPlaying(el) || (el.contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName));
+  if (!busy()){ renderReview(); return; }
+  clearTimeout(REV.waitDraw);
+  REV.waitDraw = setTimeout(() => { if (REV && REV.el === el && el.offsetParent) renderReviewWhenFree(el); }, 3000);
+}
+
+/* Teachers: notes and changes from the School Head on recordings they checked */
+const HEAD_ACT = { comment: '\uD83D\uDCDD Note from the School Head', changed: '\u270F\uFE0F The School Head changed the result', recheck: '\uD83D\uDD01 Sent back to you to check again' };
+function headFeedbackHtml(d){
+  const list = d.headFeedback || []; if (!list.length) return '';
+  const fresh = list.filter(x => !x.seen);
+  return `<div class="panel hf-card${fresh.length ? ' new' : ''}">
+    <h2 style="margin-top:0">\uD83D\uDCEC From the School Head ${fresh.length ? `<span class="tag red">${fresh.length} new</span>` : ''}</h2>
+    <p class="hint">The School Head reviewed some of the recordings you checked. Please read each note. Words sent back to you are in your list below as Waiting. Check them again so the learner gets an answer.</p>
+    ${list.map(x => `<div class="hf-item${x.seen ? ' seen' : ''}">
+      <div><b class="rv-word" style="font-size:1.3rem">${esc(x.word)}</b> <span class="sub">${esc(x.learnerName)}, ${gradeLabel(x.grade)}</span></div>
+      <div class="hf-act">${HEAD_ACT[x.headAction] || 'Note'}${x.headAction === 'changed' ? ': now <b>' + (x.status === 'correct' ? '\u2605 Correct' : 'Redo, returned to the learner') + '</b>' : ''} <span class="sub">${esc(fmtDateTime(x.headAt))}</span></div>
+      ${x.headNote ? `<div class="hf-note">\u201C${esc(x.headNote)}\u201D</div>` : ''}
+      ${x.remark ? `<div class="sub">Remark for the learner: ${esc(x.remark)}</div>` : ''}
+      <div class="rec-btns">${x.hasAudio ? playBtn(x.id, 'data-hfplay') : ''}
+        ${!x.seen && x.headAction !== 'recheck' ? `<button type="button" class="btn small primary" data-hfseen="${esc(x.id)}">Mark as Read</button>` : x.seen ? '<span class="sub">\u2713 Read</span>' : '<span class="sub">Check it again in your list below.</span>'}</div>
+    </div>`).join('')}
+    ${fresh.filter(x => x.headAction !== 'recheck').length > 1 ? '<button type="button" class="btn small" id="hfAll">Mark All as Read</button>' : ''}
+  </div>`;
+}
+function bindHeadFeedback(el){
+  el.querySelectorAll('[data-hfplay]').forEach(b => b.onclick = () => playInto(b.dataset.hfplay, b, REV.auth, el));
+  const mark = async ids => {
+    try {
+      const r = await callApi(Object.assign({ action: 'ackHead', ids }, REV.auth));
+      if (r && r.ok){ (REV.data.headFeedback || []).forEach(x => { if (ids.indexOf(x.id) >= 0) x.seen = true; }); renderReview(); }
+    } catch(e){ tell('No internet. Try again when you are online.'); }
+  };
+  el.querySelectorAll('[data-hfseen]').forEach(b => b.onclick = () => mark([b.dataset.hfseen]));
+  if ($('hfAll')) $('hfAll').onclick = () => mark((REV.data.headFeedback || []).filter(x => !x.seen && x.headAction !== 'recheck').map(x => x.id));
 }
 
 async function judge(id, verdict){
@@ -5181,6 +5273,7 @@ async function judge(id, verdict){
     const res = await callApi(Object.assign({ action: 'reviewItem', id, verdict, remark }, REV.auth));
     if (!res || !res.ok){ setMsg($('rvMsg'), (res && res.error) || 'Not saved.', 'err'); return; }
     REV.data.items = REV.data.items.map(x => x.id === id ? res.item : x);
+    (REV.data.headFeedback || []).forEach(x => { if (x.id === id && x.headAction === 'recheck'){ x.seen = true; x.status = res.item.status; } });
     const s = REV.data.summary.find(x => x.learnerId === res.item.learnerId);
     if (s){ const mine = REV.data.items.filter(x => x.learnerId === s.learnerId); s.stars = mine.reduce((t, x) => t + (x.stars || 0), 0); s.weekCorrect = mine.filter(x => x.week === REV.data.week && x.status === 'correct').length; }
     renderReview();
@@ -5499,14 +5592,9 @@ function renderNotebooks(){
   $('nbPrintAll').onclick = () => printNotebooks(list);
   NB.el.querySelectorAll('[data-nbprint]').forEach(b => b.onclick = () => printNotebooks(d.learners.filter(l => l.id === b.dataset.nbprint)));
   NB.el.querySelectorAll('[data-nbopen]').forEach(b => b.onclick = () => { NB.open = NB.open === b.dataset.nbopen ? '' : b.dataset.nbopen; renderNotebooks(); });
-  NB.el.querySelectorAll('[data-nbplay]').forEach(b => b.onclick = async () => {
-    b.disabled = true; b.textContent = 'Loading';
-    try {
-      const res = await callApi(Object.assign({ action: 'getAudio', id: b.dataset.nbplay }, NB.auth));
-      if (!res || !res.ok){ b.textContent = 'Not available'; return; }
-      NB.el.querySelector(`[data-nbaudio="${b.dataset.nbplay}"]`).innerHTML = `<audio controls autoplay src="data:${esc(res.mime)};base64,${res.audio}"></audio>`;
-      b.remove();
-    } catch(e){ b.disabled = false; b.textContent = '\uD83D\uDD0A Play'; }
+  NB.el.querySelectorAll('[data-nbplay]').forEach(b => b.onclick = () => {
+    const slot = NB.el.querySelector(`[data-nbaudio="${b.dataset.nbplay}"]`); if (slot) slot.setAttribute('data-audio', b.dataset.nbplay);
+    playInto(b.dataset.nbplay, b, NB.auth, NB.el);
   });
 }
 
@@ -5730,6 +5818,94 @@ async function pullAdmin(force){
     }
     renderSync();
   } catch(e){} finally { PULL_BUSY = false; }
+}
+
+/* =========================================================
+   CHECKED RECORDINGS (School Head): every recording each teacher checked, by teacher name.
+   Listen, leave a note for the teacher, change the result (Redo returns the word to the
+   learner), or send it back to the teacher to check again.
+   ========================================================= */
+let CK = null;
+async function loadChecked(el, teacher){
+  const keep = CK && CK.el === el ? CK : null;
+  CK = { el, data: keep ? keep.data : sideGet('checked'), teacher: teacher != null ? teacher : (keep ? keep.teacher : ''), items: keep && (teacher == null || teacher === keep.teacher) ? keep.items : null,
+    filter: keep ? keep.filter : '', q: keep ? keep.q : '', show: 40 };
+  if (CK.data) renderChecked(); else el.innerHTML = loaderHtml('Getting the checked recordings.');
+  try {
+    const res = await callApi({ action: 'checkedList', pin: S.pin, teacher: CK.teacher || '', _wait: 90000 });
+    if (!res || !res.ok){ if (!CK.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc((res && res.error === 'Unknown request.') ? 'This tab needs the newest server code. Please update Code.gs and deploy a new version.' : (res && res.error) || 'Could not load the checked recordings.')}</p></div>`; return; }
+    if (CK.el !== el) return;
+    CK.data = { teachers: res.teachers }; sideSet('checked', CK.data);
+    if (res.items) CK.items = res.items;
+    if (!(AUDIO_BUSY > 0 || audioPlaying(el) || (el.contains(document.activeElement) && /INPUT|TEXTAREA/.test(document.activeElement.tagName)))) renderChecked();
+  } catch(e){ if (!CK.data) el.innerHTML = '<div class="panel"><p class="msg err">This tab needs the internet. Connect, then open it again.</p></div>'; }
+}
+const CK_FILTERS = [['', 'All checked'], ['correct', 'Marked Correct'], ['redo', 'Marked Redo'], ['noted', 'With my notes or changes'], ['recheck', 'Sent back to the teacher']];
+function renderChecked(){
+  const d = CK.data, ts = d.teachers || [];
+  const q = CK.q.trim().toLowerCase();
+  const items = (CK.items || []).filter(x => (!CK.filter || (CK.filter === 'noted' ? !!x.headAction : CK.filter === 'recheck' ? x.headAction === 'recheck' && x.status === 'submitted' : x.status === CK.filter))
+    && (!q || (x.learnerName + ' ' + x.word).toLowerCase().indexOf(q) >= 0));
+  const tag = x => x.status === 'correct' ? '<span class="tag ok">★ Correct</span>' : x.status === 'redo' ? '<span class="tag red">Redo</span>' : '<span class="tag">Waiting for the teacher</span>';
+  CK.el.innerHTML = `<div class="panel">
+    <h2>Checked Recordings</h2>
+    <p class="hint">Choose a teacher to see every recording they checked. Listen, then leave a note for the teacher, change the result, or send it back to the teacher to check again. The teacher sees your note and every change in their Practice Review.</p>
+    <div class="ck-teachers">${ts.map(t => `<button type="button" class="ck-t${t.name === CK.teacher ? ' on' : ''}" data-ckt="${esc(t.name)}"><b>${esc(t.name)}</b>
+      <span>${t.checked} checked: ${t.correct} correct, ${t.redo} redo</span>${t.noted ? `<span class="sub">${t.noted} with your notes${t.recheck ? ', ' + t.recheck + ' waiting for recheck' : ''}</span>` : ''}</button>`).join('') || '<p class="hint">No teacher has checked a recording yet.</p>'}</div>
+  </div>
+  ${CK.teacher ? `<div class="panel">
+    <h2 style="margin-top:0">${esc(CK.teacher)}</h2>
+    <div class="toolbar">
+      <label>Show<select id="ckFilter">${CK_FILTERS.map(f => `<option value="${f[0]}"${f[0] === CK.filter ? ' selected' : ''}>${f[1]}</option>`).join('')}</select></label>
+      <label>Search<input id="ckQ" value="${esc(CK.q)}" placeholder="Learner or word"></label>
+      <button type="button" class="btn" id="ckReload">Refresh</button>
+    </div>
+    ${CK.items == null ? loaderHtml('Getting this teacher\'s checks.') : items.length ? items.slice(0, CK.show).map(x => `
+      <div class="ck-item" data-id="${esc(x.id)}">
+        <div class="ck-top"><div><span class="rv-word">${esc(x.word)}</span> ${tag(x)}
+          <div class="sub">${esc(x.learnerName)}, ${esc(classLabel(x.grade, x.section || ''))}. Checked ${esc(fmtDateTime(x.reviewedAt))}${x.remark ? '. Remark: ' + esc(x.remark) : ''}</div>
+          ${x.headAction ? `<div class="hf-act">${HEAD_ACT[x.headAction] ? HEAD_ACT[x.headAction].replace('The School Head changed', 'You changed').replace('Note from the School Head', 'Your note').replace('Sent back to you', 'Sent back to the teacher') : ''} <span class="sub">${esc(fmtDateTime(x.headAt))}${x.teacherSeenAt ? ', read by the teacher' : x.headAction ? ', not yet read by the teacher' : ''}</span></div>` : ''}</div>
+          <div>${x.hasAudio ? playBtn(x.id, 'data-ckplay') : ''}</div></div>
+        <div class="fields ck-fields">
+          <label>Note to the teacher<input data-cknote="${esc(x.id)}" value="${esc(x.headNote || '')}" maxlength="300" placeholder="Example: Listen again to the ending sound"></label>
+          <label>Remark for the learner<input data-ckrem="${esc(x.id)}" value="${esc(x.remark || '')}" maxlength="300"></label>
+        </div>
+        <div class="rec-btns">
+          <button type="button" class="btn small" data-ckact="comment" data-ckid="${esc(x.id)}">Save Note</button>
+          <button type="button" class="btn small primary" data-ckact="correct" data-ckid="${esc(x.id)}">★ Change to Correct</button>
+          <button type="button" class="btn small" data-ckact="redo" data-ckid="${esc(x.id)}">Redo, Return to the Learner</button>
+          <button type="button" class="btn small" data-ckact="recheck" data-ckid="${esc(x.id)}">🔁 Send Back to the Teacher</button>
+          <span class="msg" data-ckmsg="${esc(x.id)}"></span>
+        </div>
+      </div>`).join('') + (items.length > CK.show ? `<button type="button" class="btn" id="ckMore">Show ${Math.min(40, items.length - CK.show)} more (${items.length - CK.show} left)</button>` : '')
+      : '<p class="hint">Nothing here.</p>'}
+  </div>` : ''}`;
+  wireAudio(CK.el);
+  CK.el.querySelectorAll('[data-ckt]').forEach(b => b.onclick = () => { CK.items = null; CK.filter = ''; CK.q = ''; loadChecked(CK.el, b.dataset.ckt); });
+  if ($('ckFilter')) $('ckFilter').onchange = e => { CK.filter = e.target.value; CK.show = 40; renderChecked(); };
+  if ($('ckQ')) $('ckQ').oninput = e => { CK.q = e.target.value; clearTimeout(CK.qt); CK.qt = setTimeout(() => { renderChecked(); const f = $('ckQ'); f.focus(); f.setSelectionRange(f.value.length, f.value.length); }, 300); };
+  if ($('ckReload')) $('ckReload').onclick = () => loadChecked(CK.el, CK.teacher);
+  if ($('ckMore')) $('ckMore').onclick = () => { CK.show += 40; renderChecked(); };
+  CK.el.querySelectorAll('[data-ckplay]').forEach(b => b.onclick = () => playInto(b.dataset.ckplay, b, { pin: S.pin }, CK.el));
+  CK.el.querySelectorAll('[data-ckact]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.ckid, action = b.dataset.ckact, m = CK.el.querySelector(`[data-ckmsg="${id}"]`);
+    const note = CK.el.querySelector(`[data-cknote="${id}"]`).value.trim(), remark = CK.el.querySelector(`[data-ckrem="${id}"]`).value.trim();
+    if (action === 'comment' && !note){ setMsg(m, 'Type a note first.', 'err'); return; }
+    if (action === 'recheck' && !note && !ask('Send this back to the teacher without a note?')) return;
+    if (action === 'redo' && !ask('Return this word to the learner to record again? The learner loses the star for this word until it is marked correct.')) return;
+    setMsg(m, 'Saving');
+    try {
+      const r = await callApi({ action: 'headReview', pin: S.pin, id, act: action, note, remark });
+      if (!r || !r.ok){ setMsg(m, (r && r.error) || 'Not saved.', 'err'); return; }
+      const x = (CK.items || []).find(i => i.id === id);
+      if (x) Object.assign(x, r.item);
+      const t = (CK.data.teachers || []).find(t => t.name === CK.teacher);
+      if (t && x){ t.noted = (CK.items || []).filter(i => i.headAction).length; t.correct = (CK.items || []).filter(i => i.status === 'correct').length; t.redo = (CK.items || []).filter(i => i.status === 'redo').length; t.recheck = (CK.items || []).filter(i => i.headAction === 'recheck' && i.status === 'submitted').length; }
+      renderChecked();
+      const done = { comment: 'Note saved. The teacher will see it.', correct: 'Changed to Correct. The learner gets the star, and the teacher is told.', redo: 'Returned to the learner to record again. The teacher is told.', recheck: 'Sent back to the teacher to check again.' }[action];
+      const m2 = CK.el.querySelector(`[data-ckmsg="${id}"]`); if (m2) setMsg(m2, done, 'good');
+    } catch(e){ setMsg(m, 'No internet. Try again when you are online.', 'err'); }
+  });
 }
 
 /* ---------- Real time stars ----------
