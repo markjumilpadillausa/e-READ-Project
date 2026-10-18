@@ -117,6 +117,44 @@
   .aud-err{color:var(--margin);font-size:.85rem;margin-left:6px}
   /* School Head feedback for teachers */
   .hf-card{border-left:6px solid var(--gold)}
+  .msg-tab{color:var(--ink)!important;font-weight:800}
+  .ins-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-start}
+  .ins-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden}
+  .seg button{font:700 .85rem var(--ui);border:0;background:#fff;color:var(--ink);padding:7px 12px;cursor:pointer}
+  .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+  .ins-sums{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}
+  .ins-sum{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:12px;border-radius:14px;border:1.5px solid #E2E8E3;background:#fff;cursor:pointer;text-align:left;font:inherit}
+  .ins-sum span{font-size:1.4rem}.ins-sum b{font-size:1.6rem;line-height:1.1}.ins-sum small{color:var(--muted);font-weight:700}
+  .ins-sum.on{outline:3px solid var(--ink)}
+  .ins-sum.ins-risk{border-left:6px solid #C62828}.ins-sum.ins-help{border-left:6px solid #EF6C00}.ins-sum.ins-attention{border-left:6px solid #F9A825}.ins-sum.ins-star{border-left:6px solid #6A1B9A}.ins-sum.ins-track{border-left:6px solid #2E7D32}.ins-sum.ins-up{border-left:6px solid #1565C0}
+  .ins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+  .ins-card{border:1.5px solid #E2E8E3;border-radius:14px;padding:12px;background:#fff}
+  .ins-b-risk{border-left:6px solid #C62828}.ins-b-help{border-left:6px solid #EF6C00}.ins-b-attention{border-left:6px solid #F9A825}.ins-b-star{border-left:6px solid #6A1B9A}.ins-b-track{border-left:6px solid #2E7D32}
+  .ins-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+  .ins-name{font-size:1.05rem}
+  .ins-tag{white-space:nowrap;font-size:.78rem;font-weight:800;padding:3px 8px;border-radius:999px;background:#F1F5F2}
+  .ins-tag.ins-risk{background:#FDECEC;color:#B71C1C}.ins-tag.ins-help{background:#FFF1E3;color:#B35400}.ins-tag.ins-attention{background:#FFF8DC;color:#8A6D00}.ins-tag.ins-star{background:#F3E8FA;color:#5B1786}.ins-tag.ins-track{background:#E8F5E9;color:#1B5E20}
+  .ins-chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+  .ins-chip{font-size:.8rem;padding:3px 8px;border-radius:999px;background:#F4FBF5;border:1px solid #DCEBDF}
+  .ins-chip.warn{background:#FFF3F3;border-color:#F2C4C4}
+  .ins-why{margin:4px 0 6px 18px;padding:0;font-size:.9rem}
+  .ins-good{margin:4px 0;font-size:.9rem;color:#2E7D32}
+  .ins-act{margin:6px 0 0;font-size:.88rem;background:#F7F9FF;border-radius:8px;padding:6px 8px}
+  body.modal-open{overflow:hidden}
+  .msg-modal{position:fixed;inset:0;z-index:70;background:rgba(20,40,28,.45);display:flex;align-items:flex-start;justify-content:center;padding:24px 12px;overflow:auto}
+  .msg-modal.hidden{display:none}
+  .msg-box{background:#fff;border-radius:18px;max-width:860px;width:100%;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .msg-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .msg-bar{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-bottom:12px}
+  .msg-pick{display:flex;flex-direction:column;gap:4px;font-weight:700;font-size:.85rem;flex:1;min-width:200px}
+  .msg-pick textarea{font:inherit;font-weight:400}
+  .msg-item{border:1.5px solid #E2E8E3;border-radius:14px;padding:10px;margin:10px 0;background:#FCFDFB}
+  .msg-item-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+  .msg-item textarea{width:100%;box-sizing:border-box;font:.92rem/1.45 var(--ui);border:1px solid #D9E6DC;border-radius:10px;padding:10px;resize:vertical;white-space:pre-wrap}
+  .msg-ai{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#F6F1FF;border:1.5px dashed #B9A3E3;margin-top:10px}
+  .msg-help{margin-top:8px;font-size:.9rem}
+  @media (max-width:600px){ .msg-box{padding:12px} .ins-grid{grid-template-columns:1fr} }
   .tab-badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:#C62828;color:#fff;font-size:.75rem;line-height:20px;text-align:center;margin-left:4px}
   .rec-card{border-left:6px solid #6A1B9A}
   .rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
@@ -129,6 +167,8 @@
   .ck-bar label{min-width:140px}
   .ck-stats{margin:0 0 8px;padding:8px 12px;border-radius:10px;background:#F4FBF5}
   .hf-card.new{background:#FFFDF3}
+  .hf-recheck{margin-top:6px;padding:10px 12px;border:1.5px dashed #E0B44C;border-radius:12px;background:#FFF8E6}
+  .hf-recheck input{flex:1;min-width:180px}
   .hf-item{padding:10px 0;border-bottom:1px solid var(--rule)}
   .hf-item.seen{opacity:.7}
   .hf-act{font-weight:700;margin:3px 0}
@@ -803,6 +843,8 @@
       <button class="tab" role="tab" type="button" data-tab="teachers" aria-selected="false">&#x1F469;&#x200D;&#x1F3EB; Teachers</button>
       <button class="tab" role="tab" type="button" data-tab="notebooks" aria-selected="false">&#x1F4D2; Learner Notebooks</button>
       <button class="tab" role="tab" type="button" data-tab="checked" aria-selected="false">&#x2705; Checked Recordings</button>
+      <button class="tab" role="tab" type="button" data-tab="insights" aria-selected="false">&#x1F9E0; Learner Insights</button>
+      <button class="tab msg-tab" type="button" id="msgOpen">&#x1F4AC; Messages</button>
       <button class="tab" role="tab" type="button" disabled>&#x1F522; Numeracy <small>(Coming Soon)</small></button>
       <button class="tab" role="tab" type="button" disabled>&#x1F4DA; Comprehension <small>(Coming Soon)</small></button>
     </nav>
@@ -987,6 +1029,8 @@
 
     <!-- Checked Recordings: the School Head reviews each teacher's checks -->
     <div id="tab-checked" class="hidden"><div id="ckAdmin"></div></div>
+    <div id="tab-insights" class="hidden"><div id="insAdmin"></div></div>
+    <div id="msgModal" class="msg-modal hidden" role="dialog" aria-modal="true" aria-label="Messages"><div class="msg-box" id="msgBox"></div></div>
 
     <!-- Printables -->
     <div id="tab-print" class="hidden">
@@ -1114,7 +1158,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/e-READ-Project/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '5.1';
+const APP_VERSION = '5.3';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1279,7 +1323,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '5.0';
+const NEED_SERVER = '5.3';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
@@ -1549,8 +1593,9 @@ function enterAdmin(){
 function selectTab(name){
   currentTab = name;
   document.querySelectorAll('.tab[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
-  ['home','assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks','checked'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
+  ['home','assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks','checked','insights'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
   if (name === 'checked') loadChecked($('ckAdmin'));
+  if (name === 'insights') loadInsights($('insAdmin'));
   if (name === 'home') loadHome({ pin: S.pin }, $('homeAdmin'));
   if (name === 'learners') loadLearnerStars();
   if (name === 'notebooks') loadNotebooks({ pin: S.pin }, $('nbAdmin'));
@@ -5317,8 +5362,16 @@ function headFeedbackHtml(d){
       <div class="hf-act">${HEAD_ACT[x.headAction] || 'Note'}${x.headAction === 'changed' ? ': now <b>' + (x.status === 'correct' ? '\u2605 Correct' : 'Redo, returned to the learner') + '</b>' : ''} <span class="sub">${esc(fmtDateTime(x.headAt))}</span></div>
       ${x.headNote ? `<div class="hf-note">\u201C${esc(x.headNote)}\u201D</div>` : ''}
       ${x.remark ? `<div class="sub">Remark for the learner: ${esc(x.remark)}</div>` : ''}
-      <div class="rec-btns">${x.hasAudio ? playBtn(x.id, 'data-hfplay') : ''}
-        ${!x.seen && x.headAction !== 'recheck' ? `<button type="button" class="btn small primary" data-hfseen="${esc(x.id)}">Mark as Read</button>` : x.seen ? '<span class="sub">\u2713 Read</span>' : '<span class="sub">Check it again in your list below.</span>'}</div>
+      ${x.headAction === 'recheck' && x.status === 'submitted' ? `<div class="hf-recheck">
+        <p class="sub" style="margin:0 0 6px">The learner's star and your check for this word are on hold. Listen, then choose. <b>Correct</b> gives the star back. <b>Redo</b> sends the word back to the learner to record again.</p>
+        <div class="rec-btns">${x.hasAudio ? playBtn(x.id, 'data-hfplay') : ''}
+          <input data-remark="${esc(x.id)}" placeholder="Remark for the learner (optional)" value="${esc(x.remark || '')}" maxlength="300">
+          <button type="button" class="btn small primary" data-hfok="${esc(x.id)}">\u2605 Correct</button>
+          <button type="button" class="btn small" data-hfredo="${esc(x.id)}">\u21A9\uFE0F Redo</button></div>
+        <p class="msg" data-hfmsg="${esc(x.id)}"></p></div>`
+      : `<div class="rec-btns">${x.hasAudio ? playBtn(x.id, 'data-hfplay') : ''}
+        ${x.headAction === 'recheck' ? `<span class="tag ${x.status === 'correct' ? 'ok' : 'red'}">\u2713 Checked again: ${x.status === 'correct' ? '\u2605 Correct' : 'Redo, returned to the learner'}</span>`
+          : !x.seen ? `<button type="button" class="btn small primary" data-hfseen="${esc(x.id)}">Mark as Read</button>` : '<span class="sub">\u2713 Read</span>'}</div>`}
     </div>`).join('')}
     ${fresh.filter(x => x.headAction !== 'recheck').length > 1 ? '<button type="button" class="btn small" id="hfAll">Mark All as Read</button>' : ''}
   </div>`;
@@ -5332,17 +5385,25 @@ function bindHeadFeedback(el){
     } catch(e){ tell('No internet. Try again when you are online.'); }
   };
   el.querySelectorAll('[data-hfseen]').forEach(b => b.onclick = () => mark([b.dataset.hfseen]));
+  el.querySelectorAll('[data-hfok]').forEach(b => b.onclick = () => judge(b.dataset.hfok, 'correct', b));
+  el.querySelectorAll('[data-hfredo]').forEach(b => b.onclick = () => judge(b.dataset.hfredo, 'redo', b));
   if ($('hfAll')) $('hfAll').onclick = () => mark((REV.data.headFeedback || []).filter(x => !x.seen && x.headAction !== 'recheck').map(x => x.id));
 }
 
-async function judge(id, verdict){
-  const remarkEl = REV.el.querySelector(`[data-remark="${id}"]`);
+async function judge(id, verdict, btn){
+  const boxes = [...REV.el.querySelectorAll(`[data-remark="${id}"]`)];
+  const remarkEl = (btn && btn.closest('.hf-recheck') && btn.closest('.hf-recheck').querySelector('[data-remark]')) || boxes.find(b => b.value.trim()) || boxes[0];
   const remark = remarkEl ? remarkEl.value.trim() : '';
   if (verdict === 'redo' && !remark && !ask('Send this word back for redo without a remark?')) return;
+  const wasHeld = (REV.data.headFeedback || []).some(x => x.id === id && x.headAction === 'recheck' && x.status === 'submitted');
+  const cardMsg = REV.el.querySelector(`[data-hfmsg="${id}"]`);
+  if (btn) btn.disabled = true;
+  if (cardMsg) setMsg(cardMsg, 'Saving');
   setMsg($('rvMsg'), 'Saving');
   try {
     const res = await callApi(Object.assign({ action: 'reviewItem', id, verdict, remark }, REV.auth));
-    if (!res || !res.ok){ setMsg($('rvMsg'), (res && res.error) || 'Not saved.', 'err'); return; }
+    if (!res || !res.ok){ if (btn) btn.disabled = false; if (cardMsg) setMsg(cardMsg, (res && res.error) || 'Not saved.', 'err'); setMsg($('rvMsg'), (res && res.error) || 'Not saved.', 'err'); return; }
+    if (wasHeld) REV.data.myStars = (REV.data.myStars || 0) + 1;   // the check counts again
     const before = REV.data.items.find(x => x.id === id);
     const delta = (res.item.stars || 0) - ((before && before.stars) || 0);
     const wasCorrect = before && before.status === 'correct', nowCorrect = res.item.status === 'correct';
@@ -5352,8 +5413,9 @@ async function judge(id, verdict){
     if (s){ s.stars = (s.stars || 0) + delta; if (s.practiceStars != null) s.practiceStars += delta;
       if (res.item.week === REV.data.week && wasCorrect !== nowCorrect) s.weekCorrect = (s.weekCorrect || 0) + (nowCorrect ? 1 : -1); }
     renderReview();
-    setMsg($('rvMsg'), verdict === 'correct' ? 'Marked correct. The learner earned a star.' : 'Sent back for redo.', 'good');
-  } catch(e){ setMsg($('rvMsg'), 'No internet. Try again when you are online.', 'err'); }
+    const done = verdict === 'correct' ? 'Marked correct. The learner earned a star.' : 'Sent back to the learner to record again.';
+    setMsg($('rvMsg'), done, 'good');
+  } catch(e){ if (btn) btn.disabled = false; if (cardMsg) setMsg(cardMsg, 'No internet. Try again when you are online.', 'err'); setMsg($('rvMsg'), 'No internet. Try again when you are online.', 'err'); }
 }
 
 async function addWord(){
@@ -6009,6 +6071,360 @@ function renderChecked(){
     } catch(e){ setMsg(m, 'No internet. Try again when you are online.', 'err'); }
   });
 }
+
+
+/* =========================================================
+   LEARNER INSIGHTS AND MESSAGES (School Head only)
+   The server checks every learner against clear rules (reading level, recordings,
+   stars, sign ins). Messages are ready to copy, in English or Filipino.
+   An optional AI writer (Claude) can write a personal class message.
+   ========================================================= */
+let INS = null;
+const INS_CATS = [
+  ['risk', '🔴', 'At Risk', 'Nanganganib'],
+  ['help', '🟠', 'Needs Reading Help', 'Kailangan ng Tulong sa Pagbasa'],
+  ['attention', '🟡', 'Needs Attention', 'Kailangang Bantayan'],
+  ['star', '🌟', 'Doing Great', 'Mahusay'],
+  ['track', '✅', 'On Track', 'Maayos ang Takbo']
+];
+function insLang(){ try { return localStorage.getItem('sbra_msg_lang') || 'en'; } catch(e){ return 'en'; } }
+function setInsLang(v){ try { localStorage.setItem('sbra_msg_lang', v); } catch(e){} }
+function signOff(){ try { return localStorage.getItem('sbra_signoff') || 'MARK JUMIL T. PADILLA\nSchool Head'; } catch(e){ return 'MARK JUMIL T. PADILLA\nSchool Head'; } }
+function catInfo(k){ return INS_CATS.find(c => c[0] === k) || INS_CATS[4]; }
+function catName(k, lang){ const c = catInfo(k); return lang === 'fil' ? c[3] : c[2]; }
+function firstName(n){ return String(n || '').trim().split(/\s+/)[0] || ''; }
+function niceName(n){ return String(n || '').toLowerCase().replace(/(^|[\s,.\-'])([a-zñ])/g, (m, a, b) => a + b.toUpperCase()); }
+function todayText(lang){ try { return new Date().toLocaleDateString(lang === 'fil' ? 'fil-PH' : 'en-US', { month: 'long', day: 'numeric', year: 'numeric' }); } catch(e){ return new Date().toDateString(); } }
+function reasonText(w, lang){
+  const F = lang === 'fil';
+  switch (w.k){
+    case 'notAssessed': return F ? 'wala pang reading assessment' : 'not yet assessed';
+    case 'low': return F ? `ang reading level ay ${w.v}${w.n != null ? ' (index ' + w.n + ')' : ''}` : `reading level is ${w.v}${w.n != null ? ' (index ' + w.n + ')' : ''}`;
+    case 'lowIdx': return F ? `ang literacy index ay ${w.n} lamang` : `literacy index is only ${w.n}`;
+    case 'mid': return F ? `patuloy pang umuunlad (${w.v || 'index ' + w.n})` : `still developing (${w.v || 'index ' + w.n})`;
+    case 'never': return F ? 'hindi pa kailanman nag-sign in sa e-READ' : 'has never signed in to e-READ';
+    case 'idle': return F ? `${w.d} araw nang hindi nag-sign in` : `no sign in for ${w.d} days`;
+    case 'noRec': return F ? 'walang naipadalang recording sa nakaraang 7 araw' : 'no recordings sent in the last 7 days';
+    case 'redoRate': return F ? `${w.p}% ng mga na-check na salita ay kailangang ulitin` : `${w.p}% of checked words needed a redo`;
+    case 'redoPend': return F ? `${w.n} salitang kailangang i-record muli` : `${w.n} words waiting to be recorded again`;
+    case 'noStars': return F ? 'walang nakuhang star ngayong linggo' : 'no stars earned this week';
+    case 'drop': return F ? `bumaba ang stars mula ${w.a} naging ${w.b} ngayong linggo` : `stars dropped from ${w.a} last week to ${w.b} this week`;
+    case 'gamesOnly': return F ? 'madalas maglaro pero bihirang mag-record ng practice words' : 'plays games a lot but rarely records practice words';
+    case 'up': return F ? `tumaas ng ${w.n} puntos ang literacy index` : `literacy index went up by ${w.n} points`;
+    case 'accurate': return F ? `${w.p}% ng mga salita ay nabasa nang tama` : `${w.p}% of words read correctly`;
+    case 'rise': return F ? `tumaas ang stars mula ${w.a} naging ${w.b}` : `stars went up from ${w.a} to ${w.b}`;
+    case 'top': return F ? `isa sa top ${w.n === 1 ? '1' : '3'} na mambabasa ng grade ngayong linggo` : `${w.n === 1 ? 'top reader' : 'one of the top 3 readers'} of the grade this week`;
+  }
+  return '';
+}
+function focusText(f, lang){
+  if (!f) return '';
+  const parts = [];
+  if (f.sounds && f.sounds.length) parts.push((lang === 'fil' ? 'tunog ng ' : 'sounds of ') + f.sounds.join(', '));
+  else if (f.letters && f.letters.length) parts.push((lang === 'fil' ? 'mga letrang ' : 'letters ') + f.letters.join(', '));
+  if (f.patterns && f.patterns.length) parts.push((lang === 'fil' ? 'word patterns na ' : 'word patterns ') + f.patterns.join(', '));
+  return parts.join(lang === 'fil' ? ' at ' : ' and ');
+}
+function improving(x){ return x.good.some(g => g.k === 'up' || g.k === 'rise'); }
+function actionText(x, lang){
+  const F = lang === 'fil', out = [];
+  if (x.never || (x.idle != null && x.idle >= 7)) out.push(F ? 'kausapin ang magulang para makabalik sa e-READ' : 'contact the parents so the learner comes back to e-READ');
+  if (!x.assessed) out.push(F ? 'isagawa ang reading assessment' : 'give the reading assessment');
+  if (x.why.some(w => w.k === 'low' || w.k === 'lowIdx' || w.k === 'mid')){ const f = focusText(x.focus, lang); out.push((F ? '10 minutong pagbasa araw-araw' : '10 minutes of reading every day') + (f ? (F ? ', pagtuunan ang ' : ', focusing on ') + f : '')); }
+  if (x.redo >= 3) out.push(F ? 'paalalahanang i-record muli ang Redo words' : 'remind the learner to record the Redo words again');
+  if (x.why.some(w => w.k === 'gamesOnly')) out.push(F ? 'hikayating mag-record ng practice words, hindi lang maglaro' : 'encourage recording practice words, not only games');
+  return out;
+}
+
+async function loadInsights(el, force){
+  const keep = INS && INS.el === el ? INS : null;
+  INS = { el, data: keep ? keep.data : sideGet('insights'), cls: keep ? keep.cls : '', cat: keep ? keep.cat : '', q: keep ? keep.q : '', open: keep ? keep.open : {}, loading: true };
+  if (INS.data && !force) renderInsights(); else el.innerHTML = loaderHtml('Analyzing every learner. This can take a little while.');
+  try {
+    const res = await callApi({ action: 'insights', pin: S.pin, _wait: 120000 });
+    if (!INS || INS.el !== el) return;
+    INS.loading = false;
+    if (!res || !res.ok){ if (!INS.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc(res && res.error === 'Unknown request.' ? 'Learner Insights needs the newest server code. Please update Code.gs and deploy a new version.' : (res && res.error) || 'Could not analyze the learners.')}</p></div>`; else renderInsights(); return; }
+    INS.data = res; sideSet('insights', res);
+    renderInsights();
+  } catch(e){ if (INS){ INS.loading = false; if (!INS.data) el.innerHTML = '<div class="panel"><p class="msg err">Learner Insights needs the internet. Connect, then open this tab again.</p></div>'; else renderInsights(); } }
+}
+function insClassKey(c){ return c.grade + '|' + c.section; }
+function renderInsights(){
+  const d = INS.data, lang = insLang();
+  const classes = (d.classes || []).slice().sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade) || String(a.section).localeCompare(String(b.section)));
+  const inCls = x => !INS.cls || (x.grade + '|' + x.section) === INS.cls;
+  const q = INS.q.trim().toLowerCase();
+  const all = (d.learners || []).filter(inCls);
+  const list = all.filter(x => (!INS.cat || (INS.cat === 'up' ? improving(x) : x.cat === INS.cat)) && (!q || x.name.toLowerCase().indexOf(q) >= 0));
+  const count = k => all.filter(x => k === 'up' ? improving(x) : x.cat === k).length;
+  const card = (k, ico, label) => `<button type="button" class="ins-sum ins-${k}${INS.cat === k ? ' on' : ''}" data-inscat="${k}"><span>${ico}</span><b>${count(k)}</b><small>${label}</small></button>`;
+  const chip = (t, cls) => `<span class="ins-chip${cls ? ' ' + cls : ''}">${t}</span>`;
+  const learnerCard = x => {
+    const acts = actionText(x, lang);
+    return `<div class="ins-card ins-b-${x.cat}">
+      <div class="ins-top"><div><b class="ins-name">${esc(x.name)}</b> <span class="sub">${esc(classLabel(x.grade, x.section))}${x.advisers.length ? ', ' + esc(x.advisers.join(', ')) : ''}</span></div>
+        <span class="ins-tag ins-${x.cat}">${catInfo(x.cat)[1]} ${esc(catName(x.cat, lang))}</span></div>
+      <div class="ins-chips">${chip('📖 ' + esc(x.level || (lang === 'fil' ? 'Wala pang assessment' : 'Not assessed')) + (x.index != null ? ' (' + x.index + ')' : ''))}
+        ${chip('⭐ ' + x.weekStars + (lang === 'fil' ? ' ngayong linggo' : ' this week'))}
+        ${chip('🎤 ' + x.sent7 + (lang === 'fil' ? ' recording (7 araw)' : (x.sent7 === 1 ? ' recording (7 days)' : ' recordings (7 days)')))}
+        ${x.words ? chip('✅ ' + x.correctRate + '% ' + (lang === 'fil' ? 'tama' : 'correct')) : ''}
+        ${chip('📱 ' + (x.never ? (lang === 'fil' ? 'Hindi pa nag-sign in' : 'Never signed in') : x.idle === 0 ? (lang === 'fil' ? 'Aktibo ngayon' : 'Active today') : (x.idle + (lang === 'fil' ? ' araw na ang nakalipas' : (x.idle === 1 ? ' day ago' : ' days ago')))), x.never || x.idle >= 7 ? 'warn' : '')}</div>
+      ${x.why.length ? `<ul class="ins-why">${x.why.map(w => `<li>${esc(reasonText(w, lang))}</li>`).join('')}</ul>` : ''}
+      ${x.good.length ? `<p class="ins-good">👏 ${x.good.map(g => esc(reasonText(g, lang))).join('; ')}</p>` : ''}
+      ${acts.length ? `<p class="ins-act"><b>${lang === 'fil' ? 'Mungkahi:' : 'Suggested:'}</b> ${esc(acts.join('; '))}</p>` : ''}
+    </div>`;
+  };
+  const groups = (INS.cat ? [[INS.cat]] : INS_CATS.map(c => [c[0]])).map(([k]) => {
+    const rows = INS.cat ? list : list.filter(x => x.cat === k);
+    if (!rows.length) return '';
+    rows.sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+    const label = k === 'up' ? (lang === 'fil' ? '📈 Umuunlad' : '📈 Improving') : catInfo(k)[1] + ' ' + catName(k, lang);
+    const shut = !INS.cat && k === 'track' && !INS.open.track;
+    return `<div class="panel"><h2 style="margin-top:0">${label} <span class="sub">(${rows.length})</span></h2>
+      ${shut ? `<button type="button" class="btn small" data-insopen="track">${lang === 'fil' ? 'Ipakita' : 'Show'} ${rows.length}</button>` : `<div class="ins-grid">${rows.map(learnerCard).join('')}</div>`}</div>`;
+  }).join('');
+  INS.el.innerHTML = `<div class="panel">
+    <div class="ins-head"><div><h2 style="margin:0">🧠 Learner Insights</h2>
+      <p class="sub" style="margin:4px 0 0">${lang === 'fil' ? 'Sinusuri ang bawat mag-aaral gamit ang reading assessment, recordings, stars, at sign ins.' : 'Every learner is checked using the reading assessment, recordings, stars, and sign ins.'} ${lang === 'fil' ? 'Huling sinuri' : 'Last analyzed'} ${esc(fmtDateTime(d.at))}.${INS.loading ? ' ⏳' : ''}</p></div>
+      <div class="ins-tools">
+        <div class="seg" role="group" aria-label="Language"><button type="button" data-inslang="en" aria-pressed="${lang === 'en'}">English</button><button type="button" data-inslang="fil" aria-pressed="${lang === 'fil'}">Filipino</button></div>
+        <button type="button" class="btn small" id="insReload">🔄 ${lang === 'fil' ? 'Suriin Muli' : 'Analyze Again'}</button>
+        <button type="button" class="btn small primary" id="insMsg">💬 Messages</button></div></div>
+    <div class="toolbar"><label>${lang === 'fil' ? 'Klase' : 'Class'}<select id="insCls"><option value="">${lang === 'fil' ? 'Lahat ng klase' : 'All classes'}</option>${classes.map(c => `<option value="${esc(insClassKey(c))}"${insClassKey(c) === INS.cls ? ' selected' : ''}>${esc(classLabel(c.grade, c.section))}${c.advisers.length ? ' (' + esc(c.advisers.join(', ')) + ')' : ''}</option>`).join('')}</select></label>
+      <label>${lang === 'fil' ? 'Hanapin' : 'Search'}<input id="insQ" value="${esc(INS.q)}" placeholder="${lang === 'fil' ? 'Pangalan ng mag-aaral' : 'Learner name'}"></label></div>
+    <div class="ins-sums">${INS_CATS.map(c => card(c[0], c[1], lang === 'fil' ? c[3] : c[2])).join('')}${card('up', '📈', lang === 'fil' ? 'Umuunlad' : 'Improving')}</div>
+    ${INS.cat ? `<p class="hint">${lang === 'fil' ? 'Tap muli ang card para ipakita ang lahat.' : 'Tap the card again to show everyone.'}</p>` : ''}
+  </div>
+  <div class="panel"><h2 style="margin-top:0">🏫 ${lang === 'fil' ? 'Bawat Klase' : 'By Class'}</h2>
+    <div class="tablewrap"><table class="stable"><thead><tr><th>${lang === 'fil' ? 'Klase' : 'Class'}</th><th>Adviser</th><th>🔴</th><th>🟠</th><th>🟡</th><th>🌟</th><th>✅</th><th>📈</th><th>🎧 ${lang === 'fil' ? 'Naghihintay' : 'Waiting'}</th><th></th></tr></thead>
+    <tbody>${classes.map(c => `<tr><td>${esc(classLabel(c.grade, c.section))}${c.recOff ? ' <span class="tag red">🎙️ OFF</span>' : ''}</td><td>${esc(c.advisers.join(', ') || '')}</td><td>${c.risk}</td><td>${c.help}</td><td>${c.attention}</td><td>${c.star}</td><td>${c.track}</td><td>${c.improving}</td><td>${c.waiting}</td>
+      <td>${c.advisers.length ? `<button type="button" class="btn small" data-insmsg="${esc(insClassKey(c))}">💬 ${lang === 'fil' ? 'Mensahe' : 'Message'}</button>` : ''}</td></tr>`).join('') || '<tr><td colspan="10">No classes yet.</td></tr>'}</tbody></table></div>
+    <p class="hint">${lang === 'fil' ? 'Paano pinapangkat: Nanganganib kung mababa ang reading level at hindi aktibo, o hindi pa nag-sign in at walang assessment. Kailangan ng Tulong sa Pagbasa kung mababa ang reading level o madalas ang Redo. Kailangang Bantayan kung hindi aktibo nang 7 araw o higit pa, walang recording, o walang assessment.' : 'How groups work: At Risk means a low reading level with little activity, or never signed in and not assessed. Needs Reading Help means a low reading level or many Redo words. Needs Attention means no sign in for 7 days or more, no recordings, or no assessment yet.'}</p></div>
+  ${groups || `<div class="panel"><p class="hint">${lang === 'fil' ? 'Walang mag-aaral dito.' : 'No learners here.'}</p></div>`}`;
+  INS.el.querySelectorAll('[data-inscat]').forEach(b => b.onclick = () => { INS.cat = INS.cat === b.dataset.inscat ? '' : b.dataset.inscat; renderInsights(); });
+  INS.el.querySelectorAll('[data-inslang]').forEach(b => b.onclick = () => { setInsLang(b.dataset.inslang); renderInsights(); });
+  INS.el.querySelectorAll('[data-insopen]').forEach(b => b.onclick = () => { INS.open[b.dataset.insopen] = true; renderInsights(); });
+  INS.el.querySelectorAll('[data-insmsg]').forEach(b => b.onclick = () => openMessages({ type: 'class', cls: b.dataset.insmsg }));
+  $('insCls').onchange = e => { INS.cls = e.target.value; renderInsights(); };
+  $('insQ').oninput = e => { INS.q = e.target.value; clearTimeout(INS.qt); INS.qt = setTimeout(() => { renderInsights(); const f = $('insQ'); f.focus(); f.setSelectionRange(f.value.length, f.value.length); }, 300); };
+  $('insReload').onclick = () => loadInsights(INS.el, true);
+  $('insMsg').onclick = () => openMessages(INS.cls ? { type: 'class', cls: INS.cls } : {});
+}
+
+/* ---------- Message builders ---------- */
+function properName(x){ const i = String(x.name).indexOf(','); return i > 0 ? niceName(x.name.slice(i + 1).trim()) + ' ' + niceName(x.name.slice(0, i).trim()) : niceName(x.name); }
+function joinAnd(list, lang){ const a = list.slice(); if (a.length < 2) return a.join(''); const last = a.pop(); return a.join(', ') + (lang === 'fil' ? ' at ' : ' and ') + last; }
+function namesList(rows, lang){ return joinAnd(rows.map(properName), lang); }
+function siSina(rows, kind){ const n = namesList(rows, 'fil'); return (rows.length > 1 ? (kind === 'ni' ? 'nina ' : 'sina ') : (kind === 'ni' ? 'ni ' : 'si ')) + n; }
+function msgClassReport(d, c, lang){
+  const F = lang === 'fil';
+  const rows = d.learners.filter(x => x.grade === c.grade && x.section === c.section);
+  const teacher = (d.teachers || []).find(t => c.advisers.indexOf(t.name) >= 0) || {};
+  const adv = firstName(c.advisers[0] || '');
+  const by = k => rows.filter(x => x.cat === k).sort((a, b) => b.score - a.score);
+  const line = x => `• ${properName(x)}: ${x.why.map(w => reasonText(w, lang)).join('; ')}`;
+  const out = [];
+  out.push(F ? `Magandang araw, Teacher ${adv}! 😊` : `Good day, Teacher ${adv}! 😊`);
+  out.push('');
+  out.push(F ? `Narito po ang e-READ update para sa ${classLabel(c.grade, c.section)} ngayong ${todayText(lang)}. (${rows.length} na mag-aaral)` : `Here is the e-READ update for ${classLabel(c.grade, c.section)} as of ${todayText(lang)}. (${rows.length} learners)`);
+  ['risk', 'help', 'attention'].forEach(k => { const r = by(k); if (!r.length) return; out.push(''); out.push(`${catInfo(k)[1]} ${catName(k, lang)} (${r.length})`); r.forEach(x => out.push(line(x))); });
+  const stars = by('star'), up = rows.filter(improving);
+  if (stars.length){ out.push(''); out.push(`🌟 ${catName('star', lang)}: ${namesList(stars, lang)}`); }
+  if (up.length){ out.push(''); out.push(`📈 ${F ? 'Umuunlad' : 'Improving'}: ${up.map(x => properName(x) + ' (' + x.good.filter(g => g.k === 'up' || g.k === 'rise').map(g => reasonText(g, lang)).join(', ') + ')').join('; ')}`); }
+  const track = by('track').length;
+  if (track){ out.push(''); out.push(`✅ ${catName('track', lang)}: ${track} ${F ? 'na mag-aaral' : (track === 1 ? 'learner' : 'learners')}`); }
+  out.push('');
+  out.push(F ? `🎧 Mga recording na naghihintay sa inyong pag-check: ${c.waiting}` : `🎧 Recordings waiting for you to check: ${c.waiting}`);
+  if (teacher.recheck) out.push(F ? `🔁 Ibinalik sa inyo para i-check muli: ${teacher.recheck}` : `🔁 Sent back to you to check again: ${teacher.recheck}`);
+  // next steps
+  const steps = [];
+  const away = rows.filter(x => x.never || (x.idle != null && x.idle >= 7));
+  const low = rows.filter(x => x.why.some(w => w.k === 'low' || w.k === 'lowIdx'));
+  const redo = rows.filter(x => x.redo >= 3);
+  const noAs = rows.filter(x => !x.assessed);
+  const games = rows.filter(x => x.why.some(w => w.k === 'gamesOnly'));
+  if (away.length) steps.push(F ? `Pakikausap po ang ${away.length > 1 ? 'mga magulang' : 'magulang'} ${siSina(away, 'ni')} dahil hindi ${away.length > 1 ? 'sila' : 'siya'} gaanong gumagamit ng e-READ nitong mga nakaraang araw.` : `Please reach out to the parents of ${namesList(away, lang)}, who ${away.length > 1 ? 'have' : 'has'} not been using e-READ lately.`);
+  if (low.length) steps.push(F ? `Bigyan po natin ${siSina(low, 'si')} ng 10 minutong pagbasa araw-araw. Pagtuunan ang tunog ng mga letra at ang mga word pattern na ${low.length > 1 ? 'nahihirapan sila' : 'nahihirapan siya'}.` : `Give ${namesList(low, lang)} 10 minutes of reading time every day. Focus on the letter sounds and word patterns ${low.length > 1 ? 'they find' : 'the learner finds'} hard.`);
+  if (c.waiting) steps.push(F ? `Pakicheck po ang ${c.waiting} na recording na naghihintay para agad makuha ng mga bata ang kanilang stars.` : `Please check the ${c.waiting} waiting recordings so the learners get their stars right away.`);
+  if (redo.length) steps.push(F ? `Paalalahanan po ${siSina(redo, 'si')} na i-record muli ang ${redo.length > 1 ? 'kanilang' : 'kanyang'} Redo words.` : `Remind ${namesList(redo, lang)} to record ${redo.length > 1 ? 'their' : 'the'} Redo words again.`);
+  if (noAs.length) steps.push(F ? `Pakiiskedyul po ang reading assessment ${siSina(noAs, 'ni')}.` : `Please schedule the reading assessment for ${namesList(noAs, lang)}.`);
+  if (games.length) steps.push(F ? `Hikayatin po ${siSina(games, 'si')} na mag-record din ng practice words, hindi lang maglaro.` : `Encourage ${namesList(games, lang)} to record their practice words too, not only play games.`);
+  if (c.recOff) steps.push(F ? 'Naka-OFF muna ang recording ng klase ninyo para makahabol tayo sa pag-check.' : 'Recording is OFF for your class for now so we can catch up on checking.');
+  if (steps.length){ out.push(''); out.push(F ? 'Mga maaari nating gawin ngayong linggo:' : 'What we can do this week:'); steps.forEach((t, i) => out.push(`${i + 1}. ${t}`)); }
+  out.push('');
+  out.push(F ? 'Maraming salamat po sa inyong sipag at malasakit para sa ating mga mag-aaral! 💚' : 'Thank you for your hard work and care for our learners! 💚');
+  out.push(''); out.push(signOff());
+  return out.join('\n');
+}
+function msgWaiting(d, t, lang){
+  const F = lang === 'fil', n = firstName(t.name);
+  return (F ? `Magandang araw, Teacher ${n}! 😊\n\nPaalala lang po: may ${t.waiting} na recording ng mga mag-aaral na naghihintay sa inyong Practice Review sa e-READ${t.recheck ? `, at ${t.recheck} na ibinalik sa inyo para i-check muli` : ''}. Kapag na-check na po ninyo, agad makukuha ng mga bata ang kanilang stars, at may star din po kayo sa bawat recording na na-check.\n\nSalamat po! 💚`
+    : `Good day, Teacher ${n}! 😊\n\nA friendly reminder: you have ${t.waiting} learner recordings waiting in your e-READ Practice Review${t.recheck ? `, and ${t.recheck} sent back to you to check again` : ''}. Once you check them, your learners get their stars right away, and you earn a star for every recording you check.\n\nThank you! 💚`) + '\n\n' + signOff();
+}
+function msgWaitingGroup(d, lang){
+  const F = lang === 'fil', ts = (d.teachers || []).filter(t => t.waiting || t.recheck).sort((a, b) => b.waiting - a.waiting);
+  if (!ts.length) return F ? 'Walang recording na naghihintay ngayon. Salamat po sa lahat! 🎉' : 'No recordings are waiting right now. Thank you, everyone! 🎉';
+  return (F ? `🎧 e-READ: Mga recording na naghihintay (${todayText(lang)})\n\n` : `🎧 e-READ: Recordings waiting to be checked (${todayText(lang)})\n\n`)
+    + ts.map(t => `• ${t.name}: ${t.waiting}${t.recheck ? (F ? `, ${t.recheck} ibinalik para i-check muli` : `, ${t.recheck} sent back to check again`) : ''}`).join('\n')
+    + (F ? '\n\nPakicheck po natin ang mga ito para agad makuha ng mga bata ang kanilang stars. Salamat po! 💚' : '\n\nLet us check these soon so our learners get their stars right away. Thank you! 💚') + '\n\n' + signOff();
+}
+function msgRecheck(d, t, lang){
+  const F = lang === 'fil', n = firstName(t.name);
+  return (F ? `Magandang araw, Teacher ${n}! 😊\n\nMay ${t.recheck} recording po akong ibinalik sa inyo para i-check muli. Makikita po ninyo ang mga ito sa Practice Review, sa card na "From the School Head". Pakinggan po muli at piliin ang Correct o Redo. Habang hindi pa ito na-check muli, nakahinto muna ang star ng mag-aaral at ang inyong check para sa mga salitang ito.\n\nSalamat po! 💚`
+    : `Good day, Teacher ${n}! 😊\n\nI sent ${t.recheck} recordings back to you to check again. You will find them in Practice Review, in the "From the School Head" card. Please listen again and choose Correct or Redo. Until then, the learner's star and your check for those words are on hold.\n\nThank you! 💚`) + '\n\n' + signOff();
+}
+function msgThanks(d, lang){
+  const F = lang === 'fil', ts = (d.teachers || []).filter(t => t.checkedWeek > 0).sort((a, b) => b.checkedWeek - a.checkedWeek);
+  const medal = i => ['🥇', '🥈', '🥉'][i] || (i + 1) + '.';
+  if (!ts.length) return F ? 'Wala pang na-check na recording ngayong linggo.' : 'No recordings have been checked this week yet.';
+  return (F ? '🏆 Checking Champions ngayong linggo!\n\n' : '🏆 This week\'s Checking Champions!\n\n')
+    + ts.map((t, i) => `${medal(i)} ${t.name}: ${t.checkedWeek} ${F ? 'recording na na-check' : 'recordings checked'}`).join('\n')
+    + (F ? '\n\nMaraming salamat po sa inyong sipag! Dahil sa inyo, mabilis na nakakakuha ng stars at feedback ang ating mga mag-aaral. 💚' : '\n\nThank you so much for your hard work! Because of you, our learners get their stars and feedback quickly. 💚') + '\n\n' + signOff();
+}
+function msgAway(d, c, lang){
+  const F = lang === 'fil', adv = firstName(c.advisers[0] || '');
+  const rows = d.learners.filter(x => x.grade === c.grade && x.section === c.section && (x.never || (x.idle != null && x.idle >= 7)))
+    .sort((a, b) => (b.never ? 9999 : b.idle) - (a.never ? 9999 : a.idle));
+  if (!rows.length) return '';
+  const list = rows.map(x => `• ${properName(x)} (${x.never ? (F ? 'hindi pa nag-sign in' : 'never signed in') : x.idle + (F ? ' araw' : ' days')})`).join('\n');
+  return (F ? `Magandang araw, Teacher ${adv}! 😊\n\nAng mga mag-aaral na ito ay hindi pa nakakapagbukas ng e-READ nang 7 araw o higit pa:\n${list}\n\nMaaari po ba ninyong ipadala sa kanilang mga magulang ang mensahe sa ibaba? Salamat po! 💚`
+    : `Good day, Teacher ${adv}! 😊\n\nThese learners have not opened e-READ for 7 days or more:\n${list}\n\nCould you please send the message below to their parents? Thank you! 💚`) + '\n\n' + signOff();
+}
+function msgParent(lang){
+  return lang === 'fil'
+    ? 'Magandang araw po! 😊 Mula po ito sa Baluyan Elementary School.\n\nNapansin po namin na si [pangalan ng anak] ay hindi pa nakakapagbukas ng e-READ nitong mga nakaraang araw. Hinihikayat po namin kayong tulungan siyang magbasa at mag-record ng kanyang practice words kahit 10 minuto lamang araw-araw. Bawat salitang mabasa niya nang tama ay may star, at may premyo po para sa mga masisipag na mambabasa.\n\nMaraming salamat po sa inyong suporta! 💚'
+    : 'Good day! 😊 This is from Baluyan Elementary School.\n\nWe noticed that [child\'s name] has not opened e-READ in the past few days. We encourage you to help your child read and record the practice words for even just 10 minutes a day. Every word read correctly earns a star, and there are prizes for hardworking readers.\n\nThank you for your support! 💚';
+}
+function msgSchool(d, lang){
+  const F = lang === 'fil', all = d.learners;
+  const classes = (d.classes || []).slice().sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade));
+  const n = k => all.filter(x => x.cat === k).length;
+  return (F ? `📊 e-READ Buod ng Paaralan (${todayText(lang)})\n\n` : `📊 e-READ School Summary (${todayText(lang)})\n\n`)
+    + `👧 ${F ? 'Mag-aaral' : 'Learners'}: ${all.length}\n`
+    + INS_CATS.map(c => `${c[1]} ${F ? c[3] : c[2]}: ${n(c[0])}`).join('\n') + `\n📈 ${F ? 'Umuunlad' : 'Improving'}: ${all.filter(improving).length}\n\n`
+    + (F ? 'Bawat klase (Nanganganib, Kailangan ng Tulong, Bantayan, Naghihintay na recording):\n' : 'By class (At Risk, Needs Help, Needs Attention, Recordings Waiting):\n')
+    + classes.map(c => `• ${classLabel(c.grade, c.section)}${c.advisers.length ? ' (' + c.advisers.join(', ') + ')' : ''}: 🔴 ${c.risk}, 🟠 ${c.help}, 🟡 ${c.attention}, 🎧 ${c.waiting}`).join('\n')
+    + (F ? '\n\nTulungan po natin ang mga nanganganib at kailangan ng tulong. Ipapadala ko po sa bawat adviser ang detalye ng kanilang klase. Salamat po! 💚' : '\n\nLet us give extra help to learners at risk and those who need reading help. I will send each adviser the details for their class. Thank you! 💚') + '\n\n' + signOff();
+}
+function msgStars(d, lang){
+  const F = lang === 'fil';
+  const grades = [...new Set(d.learners.map(x => x.grade))].sort((a, b) => gradeOrder(a) - gradeOrder(b));
+  const medal = i => ['🥇', '🥈', '🥉'][i];
+  const blocks = grades.map(g => { const top = d.learners.filter(x => x.grade === g && x.weekStars > 0).sort((a, b) => b.weekStars - a.weekStars).slice(0, 3);
+    return top.length ? `${gradeLabel(g)}\n` + top.map((x, i) => `${medal(i)} ${properName(x)} ★ ${x.weekStars}`).join('\n') : ''; }).filter(Boolean);
+  return (F ? '🌟 e-READ Star Readers ngayong linggo!\n\n' : '🌟 e-READ Star Readers of the Week!\n\n') + (blocks.join('\n\n') || (F ? 'Wala pang stars ngayong linggo.' : 'No stars yet this week.'))
+    + (F ? '\n\nCongratulations sa ating masisipag na mambabasa! Ituloy lang ang pagbabasa araw-araw. 📚💚' : '\n\nCongratulations to our hardworking readers! Keep reading every day. 📚💚');
+}
+function msgRecording(d, lang, on){
+  const F = lang === 'fil';
+  const off = Object.keys(d.recOff || {}).sort((a, b) => gradeOrder(a) - gradeOrder(b)).map(gradeLabel).join(', ');
+  if (!on) return off ? (F ? `🎙️ Paalala po: Naka-OFF muna ang learner recording sa e-READ para sa ${off}. Makakapakinig, makakapagpraktis, at makakapaglaro pa rin ang mga bata, pero hindi muna sila makakapagpadala ng bagong recording. Gamitin po natin ang panahong ito para matapos ang pag-check ng mga naghihintay na recording. Ipapaalam ko po kapag naka-ON na ulit. Salamat po! 💚`
+      : `🎙️ Notice: Learner recording in e-READ is OFF for now for ${off}. Learners can still listen, practice, and play games, but they cannot send new recordings yet. Let us use this time to finish checking the recordings that are waiting. I will let you know once it is back ON. Thank you! 💚`) + '\n\n' + signOff()
+    : (F ? 'Lahat ng grade ay naka-ON ngayon. Walang naka-OFF na recording.' : 'Recording is ON for every grade right now. Nothing is turned off.');
+  return (F ? '🎙️ Magandang balita! Naka-ON na muli ang learner recording sa e-READ. Maaari na ulit mag-record at magpadala ng practice words ang mga bata. Salamat po sa pag-check ng mga recording! 💚'
+    : '🎙️ Good news! Learner recording in e-READ is ON again. Learners can record and send their practice words again. Thank you for checking the recordings! 💚') + '\n\n' + signOff();
+}
+
+/* ---------- Messages window ---------- */
+const MSG_TYPES = [
+  ['class', '🧠 Class report for an adviser', '🧠 Ulat ng klase para sa adviser'],
+  ['waiting', '🎧 Reminder: recordings waiting', '🎧 Paalala: mga recording na naghihintay'],
+  ['recheck', '🔁 Reminder: sent back to check again', '🔁 Paalala: ibinalik para i-check muli'],
+  ['away', '📱 Learners not signed in (with parent message)', '📱 Mga hindi nag-sign in (may mensahe sa magulang)'],
+  ['thanks', '🏆 Thank you to teachers', '🏆 Pasasalamat sa mga guro'],
+  ['school', '📊 School summary for the group chat', '📊 Buod ng paaralan para sa group chat'],
+  ['stars', '🌟 Star Readers of the Week', '🌟 Star Readers ng linggo'],
+  ['recoff', '🎙️ Recording is OFF notice', '🎙️ Abiso: naka-OFF ang recording'],
+  ['recon', '🎙️ Recording is back ON notice', '🎙️ Abiso: naka-ON na muli ang recording']
+];
+let MSG = { type: 'class', cls: '' };
+async function openMessages(opts){
+  MSG = Object.assign({ type: MSG.type || 'class', cls: MSG.cls || '' }, opts || {});
+  $('msgModal').classList.remove('hidden'); document.body.classList.add('modal-open');
+  if (!INS || !INS.data){
+    const cached = sideGet('insights');
+    if (cached){ INS = INS || { el: $('insAdmin'), data: cached, cls: '', cat: '', q: '', open: {} }; INS.data = INS.data || cached; }
+  }
+  if (INS && INS.data) renderMessages(); else $('msgBox').innerHTML = loaderHtml('Analyzing every learner to write the messages.');
+  if (!INS || !INS.data || Date.now() - new Date(INS.data.at).getTime() > 10 * 60000){
+    try {
+      const res = await callApi({ action: 'insights', pin: S.pin, _wait: 120000 });
+      if (res && res.ok){ INS = INS || { el: $('insAdmin'), cls: '', cat: '', q: '', open: {} }; INS.data = res; sideSet('insights', res); if (!$('msgModal').classList.contains('hidden')) renderMessages(); }
+      else if (!INS || !INS.data) $('msgBox').innerHTML = `<div class="msg-head"><h2>💬 Messages</h2><button type="button" class="btn small" id="msgClose">Close</button></div><p class="msg err">${esc(res && res.error === 'Unknown request.' ? 'Messages need the newest server code. Please update Code.gs and deploy a new version.' : (res && res.error) || 'Could not get the learner data.')}</p>`;
+    } catch(e){ if (!INS || !INS.data) $('msgBox').innerHTML = '<div class="msg-head"><h2>💬 Messages</h2><button type="button" class="btn small" id="msgClose">Close</button></div><p class="msg err">Messages need the internet the first time. Connect, then try again.</p>'; }
+    if ($('msgClose')) $('msgClose').onclick = closeMessages;
+  }
+}
+function closeMessages(){ $('msgModal').classList.add('hidden'); document.body.classList.remove('modal-open'); }
+function msgBlock(title, text, id){
+  return `<div class="msg-item"><div class="msg-item-head"><b>${esc(title)}</b><button type="button" class="btn small primary" data-copy="${id}">📋 Copy</button></div>
+    <textarea id="${id}" rows="${Math.min(22, Math.max(5, text.split('\n').length + 1))}">${esc(text)}</textarea></div>`;
+}
+function renderMessages(){
+  const d = INS.data, lang = insLang(), F = lang === 'fil';
+  const classes = (d.classes || []).filter(c => c.advisers.length).sort((a, b) => gradeOrder(a.grade) - gradeOrder(b.grade) || String(a.section).localeCompare(String(b.section)));
+  if (MSG.type === 'class' && !MSG.cls && classes.length) MSG.cls = insClassKey(classes[0]);
+  let body = '', n = 0; const id = () => 'msgT' + (n++);
+  const cls = classes.find(c => insClassKey(c) === MSG.cls);
+  if (MSG.type === 'class'){
+    body = `<label class="msg-pick">${F ? 'Klase at adviser' : 'Class and adviser'}<select id="msgCls">${classes.map(c => `<option value="${esc(insClassKey(c))}"${insClassKey(c) === MSG.cls ? ' selected' : ''}>${esc(classLabel(c.grade, c.section))}, ${esc(c.advisers.join(', '))}</option>`).join('')}</select></label>`
+      + (cls ? msgBlock(F ? 'Ulat ng klase (mula sa e-READ)' : 'Class report (from e-READ)', msgClassReport(d, cls, lang), id())
+        + `<div class="msg-ai"><div><b>✨ ${F ? 'Ipasulat sa AI' : 'Write with AI'}</b><p class="sub" style="margin:2px 0 0">${d.aiReady ? (F ? 'Gagawa ang AI (Claude) ng mas personal na mensahe mula sa datos ng klase. Hindi ipinapadala ang pangalan ng mga bata.' : 'The AI (Claude) writes a more personal message from the class data. Learner names are hidden before anything is sent.') : (F ? 'Hindi pa naka-ON ang AI. Tingnan ang paraan sa ibaba.' : 'AI is not turned on yet. See how below.')}</p></div>
+          <button type="button" class="btn small" id="msgAi"${d.aiReady ? '' : ' disabled'}>✨ ${F ? 'Isulat' : 'Write'}</button></div><div id="msgAiOut"></div>`
+        + (d.aiReady ? '' : `<details class="msg-help"><summary>${F ? 'Paano i-ON ang AI' : 'How to turn on the AI'}</summary><ol><li>Get an API key at console.anthropic.com (this has a small cost per message).</li><li>In Apps Script, open Project Settings, then Script Properties. Add <b>ANTHROPIC_API_KEY</b> with your key.</li><li>Run the function <b>testAI</b> once in the editor and allow access.</li><li>Deploy a new version. The Write button will turn on.</li></ol></details>`) : `<p class="hint">${F ? 'Walang klase na may adviser.' : 'No classes with advisers yet.'}</p>`);
+  } else if (MSG.type === 'waiting'){
+    const ts = (d.teachers || []).filter(t => t.waiting > 0).sort((a, b) => b.waiting - a.waiting);
+    body = msgBlock(F ? 'Para sa group chat ng mga guro' : 'For the teachers\' group chat', msgWaitingGroup(d, lang), id()) + ts.map(t => msgBlock(`${t.name} (${t.waiting})`, msgWaiting(d, t, lang), id())).join('');
+  } else if (MSG.type === 'recheck'){
+    const ts = (d.teachers || []).filter(t => t.recheck > 0);
+    body = ts.length ? ts.map(t => msgBlock(`${t.name} (${t.recheck})`, msgRecheck(d, t, lang), id())).join('') : `<p class="hint">${F ? 'Walang recording na ibinalik sa mga guro ngayon.' : 'No recordings are sent back to teachers right now.'}</p>`;
+  } else if (MSG.type === 'away'){
+    const blocks = classes.map(c => { const t = msgAway(d, c, lang); return t ? msgBlock(`${classLabel(c.grade, c.section)}, ${c.advisers.join(', ')}`, t, id()) : ''; }).filter(Boolean);
+    body = (blocks.join('') || `<p class="hint">${F ? 'Lahat ng mag-aaral ay nag-sign in sa nakaraang 7 araw. 🎉' : 'Every learner signed in within the last 7 days. 🎉'}</p>`) + msgBlock(F ? 'Mensahe para sa magulang (ipapadala ng adviser)' : 'Message for parents (for the adviser to send)', msgParent(lang), id());
+  } else if (MSG.type === 'thanks') body = msgBlock(F ? 'Pasasalamat' : 'Thank you message', msgThanks(d, lang), id());
+  else if (MSG.type === 'school') body = msgBlock(F ? 'Buod ng paaralan' : 'School summary', msgSchool(d, lang), id());
+  else if (MSG.type === 'stars') body = msgBlock('Star Readers', msgStars(d, lang), id());
+  else if (MSG.type === 'recoff') body = msgBlock(F ? 'Abiso' : 'Notice', msgRecording(d, lang, false), id());
+  else if (MSG.type === 'recon') body = msgBlock(F ? 'Abiso' : 'Notice', msgRecording(d, lang, true), id());
+  $('msgBox').innerHTML = `<div class="msg-head"><h2 style="margin:0">💬 Messages</h2><button type="button" class="btn small" id="msgClose">✕ ${F ? 'Isara' : 'Close'}</button></div>
+    <p class="sub" style="margin:4px 0 10px">${F ? 'Handa nang kopyahin. Maaari ninyong baguhin ang mensahe bago kopyahin.' : 'Ready to copy. You can edit any message before copying.'} ${F ? 'Datos mula' : 'Data from'} ${esc(fmtDateTime(d.at))}.</p>
+    <div class="msg-bar">
+      <div class="seg" role="group" aria-label="Language"><button type="button" data-msglang="en" aria-pressed="${lang === 'en'}">English</button><button type="button" data-msglang="fil" aria-pressed="${lang === 'fil'}">Filipino</button></div>
+      <label class="msg-pick">${F ? 'Uri ng mensahe' : 'Message'}<select id="msgType">${MSG_TYPES.map(t => `<option value="${t[0]}"${t[0] === MSG.type ? ' selected' : ''}>${F ? t[2] : t[1]}</option>`).join('')}</select></label>
+      <label class="msg-pick">${F ? 'Lagda' : 'Sign off'}<textarea id="msgSign" rows="2">${esc(signOff())}</textarea></label>
+    </div>
+    <div class="msg-body">${body}</div>`;
+  $('msgClose').onclick = closeMessages;
+  $('msgBox').querySelectorAll('[data-msglang]').forEach(b => b.onclick = () => { setInsLang(b.dataset.msglang); renderMessages(); if (INS.el && INS.el.offsetParent) renderInsights(); });
+  $('msgType').onchange = e => { MSG.type = e.target.value; renderMessages(); };
+  if ($('msgCls')) $('msgCls').onchange = e => { MSG.cls = e.target.value; renderMessages(); };
+  $('msgSign').onchange = e => { try { localStorage.setItem('sbra_signoff', e.target.value.trim() || 'School Head'); } catch(x){} renderMessages(); };
+  $('msgBox').querySelectorAll('[data-copy]').forEach(b => b.onclick = () => copyBox($(b.dataset.copy), b));
+  if ($('msgAi')) $('msgAi').onclick = async () => {
+    const out = $('msgAiOut'), b = $('msgAi');
+    b.disabled = true; out.innerHTML = `<p class="msg">${F ? 'Sumusulat ang AI. Sandali lang po.' : 'The AI is writing. Please wait a moment.'}</p>`;
+    try {
+      const r = await callApi({ action: 'aiInsight', pin: S.pin, grade: cls.grade, section: cls.section, adviser: cls.advisers[0] || '', lang, signOff: signOff().replace(/\n/g, ', '), _wait: 120000 });
+      b.disabled = false;
+      if (!r || !r.ok){ out.innerHTML = `<p class="msg err">${esc((r && r.error) || 'The AI could not write the message.')}</p>`; return; }
+      out.innerHTML = msgBlock(F ? 'Mensahe mula sa AI (pakibasa muna bago ipadala)' : 'Message from the AI (please read it before sending)', r.text, 'msgAiText');
+      out.querySelector('[data-copy]').onclick = e => copyBox($('msgAiText'), e.target);
+    } catch(e){ b.disabled = false; out.innerHTML = `<p class="msg err">${F ? 'Walang internet. Subukan muli.' : 'No internet. Try again.'}</p>`; }
+  };
+}
+function copyBox(box, btn){
+  if (!box) return;
+  const done = () => { const t = btn.textContent; btn.textContent = '✅ Copied'; setTimeout(() => { btn.textContent = t; }, 1800); };
+  box.focus(); box.select();
+  try { navigator.clipboard.writeText(box.value).then(done, () => { try { document.execCommand('copy'); done(); } catch(e){} }); }
+  catch(e){ try { document.execCommand('copy'); done(); } catch(x){} }
+}
+document.addEventListener('click', e => {
+  if (e.target && e.target.id === 'msgOpen') openMessages(INS && INS.cls ? { type: 'class', cls: INS.cls } : {});
+  if (e.target && e.target.id === 'msgModal') closeMessages();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('msgModal').classList.contains('hidden')) closeMessages(); });
 
 /* ---------- Real time stars ----------
    While a learner page is open, the true tally is fetched from the server every 20 seconds
