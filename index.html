@@ -1114,7 +1114,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/e-READ-Project/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '5.0';
+const APP_VERSION = '5.1';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -4845,7 +4845,7 @@ function weekLabel(w){
 async function loadStandings(auth, el){
   const keep = SD && SD.el === el ? SD : null;
   // Show the last saved standings at once, then refresh them quietly
-  const saved = !keep && S.standCache && S.standCache.role === (auth.pin ? 'head' : auth.email) ? S.standCache.data : null;
+  const saved = !keep && S.standCache && S.standCache.role === (isHeadAuth(auth) ? 'head' : auth.email) ? S.standCache.data : null;
   SD = { auth, el, data: keep ? keep.data : saved, week: keep ? keep.week : '', grade: keep ? keep.grade : '', adj: '', recountNote: keep ? keep.recountNote : '' };
   if (SD.data){ if (!SD.week && SD.data.weeks.length) SD.week = SD.data.weeks[0].start; renderStandings(); }
   else el.innerHTML = loaderHtml('Counting the stars.');
@@ -4853,9 +4853,9 @@ async function loadStandings(auth, el){
     const res = await callApi(Object.assign({ action: 'starStandings', fresh: true }, auth));
     if (!res || !res.ok){ if (!SD.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc((res && res.error) || 'Could not load the standings.')}</p></div>`; return; }
     if (SD.el !== el) return;
-    S.standCache = { role: auth.pin ? 'head' : auth.email, data: res }; persist();
+    S.standCache = { role: isHeadAuth(auth) ? 'head' : auth.email, data: res }; persist();
     SD.data = res; if (!SD.week && res.weeks.length) SD.week = res.weeks[0].start;
-    if (auth.pin) useStandings(res.overall);
+    if (isHeadAuth(auth)) useStandings(res.overall);
     if (!(SD.adj || (SD.prizes && document.activeElement && SD.el.contains(document.activeElement)))) renderStandings();
   } catch(e){ el.innerHTML = '<div class="panel"><p class="msg err">The standings need the internet. Connect, then open this tab again.</p></div>'; }
 }
@@ -5733,7 +5733,7 @@ let HM = null;
    then fills in the newest numbers when the server answers, and keeps trying on a weak signal. */
 function localHome(auth){
   const top = rows => rows.slice().sort((a, b) => b.stars - a.stars).slice(0, 5);
-  if (auth.pin){
+  if (isHeadAuth(auth)){
     const ls = Object.values(S.learners), done = {};
     Object.values(S.assessments).forEach(a => { done[a.learnerId] = true; });
     const known = (SD && SD.data && SD.data.role === 'head' && SD.data.overall) || (S.standCache && S.standCache.role === 'head' && S.standCache.data && S.standCache.data.overall)
@@ -5762,13 +5762,13 @@ async function loadHome(auth, el, tries){
   HM = { auth, el, data: keep ? keep.data : (sideGet(key) || localHome(auth)), state: 'loading' };
   if (HM.data) renderHome(); else el.innerHTML = loaderHtml('Getting your school at a glance.');
   // the star totals are a small, quick request, so they fill in first on a weak signal
-  if (auth.pin && HM.data && HM.data.local) loadLearnerStars().then(() => { if (HM && HM.el === el && HM.state !== 'ok'){ HM.data = localHome(auth); renderHome(); } });
+  if (isHeadAuth(auth) && HM.data && HM.data.local) loadLearnerStars().then(() => { if (HM && HM.el === el && HM.state !== 'ok'){ HM.data = localHome(auth); renderHome(); } });
   try {
     const res = await callApi(Object.assign({ action: 'homeSummary', _wait: 90000 }, auth));
     if (HM.el !== el) return;
     if (!res || !res.ok){ homeRetry(auth, el, tries, (res && res.error) || ''); return; }
     HM.data = res; HM.state = 'ok'; sideSet(key, res);
-    if (auth.pin) useStandings(res.overall, res.at);
+    if (isHeadAuth(auth)) useStandings(res.overall, res.at);
     renderHome();
   } catch(e){ if (HM.el === el) homeRetry(auth, el, tries, ''); }
 }
@@ -5777,11 +5777,13 @@ function homeRetry(auth, el, tries, err){
   const old = err === 'Unknown request.';
   HM.state = 'retry'; HM.err = old ? 'Home needs the newest server code. Please update Code.gs and deploy a new version.' : err;
   HM.next = Date.now() + wait * 1000;
-  if (!HM.data) HM.data = localHome(auth) || { ok: true, local: true, role: auth.pin ? 'head' : 'adviser', at: new Date().toISOString(), learners: null, assessed: null, totalStars: null, weekStars: null, top: [], weekTop: [], byGrade: [] };
+  if (!HM.data) HM.data = localHome(auth) || { ok: true, local: true, role: isHeadAuth(auth) ? 'head' : 'adviser', at: new Date().toISOString(), learners: null, assessed: null, totalStars: null, weekStars: null, top: [], weekTop: [], byGrade: [] };
   renderHome();
   if (!old) HM.retry = setTimeout(() => { if (HM && HM.el === el && el.offsetParent) loadHome(auth, el, n); }, wait * 1000);
 }
-function homeGo(t){ if (HM.auth.pin) selectTab(t); else { REV.view = t; renderReview(); } }
+/* The School Head signs in with a PIN only. Teachers sign in with their email and a PIN. */
+function isHeadAuth(a){ return !!(a && a.pin && !a.email); }
+function homeGo(t){ if (isHeadAuth(HM.auth)) selectTab(t); else { REV.view = t; renderReview(); } }
 function renderHome(){
   const d = HM.data, head = d.role === 'head';
   const pct = d.learners ? Math.round((d.assessed || 0) / d.learners * 100) : 0;
