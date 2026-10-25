@@ -118,6 +118,72 @@
   /* School Head feedback for teachers */
   .hf-card{border-left:6px solid var(--gold)}
   .msg-tab{color:var(--ink)!important;font-weight:800}
+  .balloon{position:absolute;left:0;top:0;border:0;background:radial-gradient(circle at 35% 30%,#fff8,transparent 30%),var(--bc);border-radius:50% 50% 48% 48%;color:#fff;font-family:var(--card);font-weight:800;text-shadow:0 2px 3px #0005;cursor:pointer;box-shadow:inset -6px -8px 0 #0002}
+  .balloon::after{content:'';position:absolute;left:50%;bottom:-22px;width:2px;height:22px;background:#9aa}
+  .balloon span{position:relative;top:-4px}
+  .balloon.pop{transition:transform .3s,opacity .3s;opacity:0;transform:scale(1.6)!important}
+  .hearts{margin-left:6px;letter-spacing:2px}
+  .pond{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vh;background:linear-gradient(#c9f0ff,#7fd3ee)}
+  .pond-track{display:flex;gap:6px}.pond-track .pt{width:44px;height:30px;border-radius:50%;background:#5cb85c;display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+  .pond-track .pt.past{background:#3e8e41}.pfrog{width:40px;display:block}.pfrog.hop{animation:hop .5s}
+  @keyframes hop{50%{transform:translateY(-22px) scale(1.1)}}
+  .pads{display:flex;gap:4vw;flex-wrap:wrap;justify-content:center}
+  .pad{width:min(30vw,170px);height:min(20vw,110px);border-radius:50%;border:0;background:radial-gradient(circle at 50% 40%,#8fdb6b,#3f9d35);font:700 clamp(1.4rem,6vw,2.4rem) var(--card);color:#123;cursor:pointer;box-shadow:0 6px 0 #2c6e25}
+  .pad.splash{animation:splash .4s}.pad.glow{outline:5px solid #ffd447}.pad.right{background:#ffd447}
+  @keyframes splash{50%{transform:translateY(10px);filter:brightness(.8)}}
+  .rocket .rk-ship{font-size:3.4rem;transition:transform 1.2s ease-in}.rk-ship.ready{animation:shake .3s 3}.rk-ship.launch{transform:translateY(-70vh)}
+  @keyframes shake{25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+  .sbox{cursor:pointer;border:2px solid #cfd8dc;background:#fff;min-width:64px}.sbox.lit{background:#fff3c4;transform:scale(1.12)}
+  .odd-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+  .odd-card{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .spk-btn{border:0;background:#eef6ff;border-radius:999px;padding:6px 12px;font-size:1.1rem;cursor:pointer}
+  .odd-explain{font-weight:700;text-align:center;max-width:520px}
+  .drum-word{font:700 clamp(2.2rem,9vw,3.6rem) var(--card);display:flex;align-items:center;gap:12px}
+  .drum{font-size:clamp(5rem,22vw,8rem);border:0;background:none;cursor:pointer}.drum.hit{animation:hit .2s}
+  @keyframes hit{50%{transform:scale(.88)}}
+  .drum-count{font-weight:800;font-size:1.3rem}
+  .syl{padding:0 4px;border-radius:8px}.syl.s0{background:#ffe0e6}.syl.s1{background:#dff3ff}.syl.s2{background:#e6f7df}.syl.s3{background:#fff1cc}
+  .sentb .sb-pic{font-size:clamp(3rem,14vw,5rem)}
+  .sb-line{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:56px}
+  .sb-slot{min-width:60px;height:50px;border-bottom:3px dashed #9db;display:flex;align-items:center;justify-content:center;font:700 clamp(1.2rem,5vw,1.9rem) var(--card);padding:0 6px}
+  .sb-slot.full{border-bottom-style:solid;border-color:#2e7d32}.sb-slot.on{background:#fff3c4;border-radius:8px}
+  .sb-blocks{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:760px}
+  .sb-block{font:700 clamp(1.1rem,4.6vw,1.7rem) var(--card);padding:10px 16px;border-radius:14px;border:2px solid var(--ink);background:#fff;cursor:pointer;box-shadow:0 4px 0 #0b6b3a55}
+  .sb-block.used{opacity:.25}
+  .comp-lock{text-align:center}.comp-meter{height:18px;border-radius:99px;background:#e8eee9;overflow:hidden;max-width:420px;margin:10px auto}
+  .comp-meter i{display:block;height:100%;background:linear-gradient(90deg,#2e7d32,#9ccc65)}.comp-count{font-size:1.1rem}
+  .comp-head{display:flex;gap:14px;align-items:center}.comp-cover{font-size:3.2rem}
+  .comp-dots{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+  .cd{min-width:30px;height:30px;border-radius:50%;border:1.5px solid #cfd8dc;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;cursor:pointer}
+  .cd.correct{background:#2e7d32;color:#fff;border-color:#2e7d32}.cd.submitted{background:#fff8e1;border-color:#f9a825}.cd.redo{background:#fdecec;border-color:#c62828}.cd.q{border-radius:8px;cursor:default}
+  .comp-card{text-align:center}.comp-ic{font-size:clamp(3rem,13vw,4.6rem);line-height:1.2}.comp-ic.sm{font-size:1.4rem}
+  .comp-sent{font:700 clamp(1.6rem,6.5vw,2.6rem)/1.5 var(--card);margin:10px 0}
+  .cw{padding:0 3px;border-radius:8px;transition:background .15s}.cw.on{background:#ffd447}.cw.all{background:#fff3c4}.cw.known{color:#2e7d32;text-decoration:underline dotted}
+  .comp-story{padding-left:22px}.comp-story li{margin:8px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .comp-line{font:700 1.15rem var(--card)}
+  .comp-q{border:1.5px solid #e2e8e3;border-radius:14px;padding:12px;margin:10px 0}.comp-q.correct{background:#f1f9f2}.comp-q.locked{opacity:.6}
+  .comp-q-h{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.lvl-badge{font-size:.78rem;font-weight:800;padding:3px 8px;border-radius:999px;background:#f3e8fa;color:#5b1786}
+  .comp-q-t{font:700 1.2rem var(--card);margin:6px 0}.comp-starter{background:#f7f9ff;border-radius:10px;padding:8px 10px}
+  .comp-q-rec{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px}
+  .mic.small{width:56px;height:56px}
+  .comp-fin{display:flex;flex-wrap:wrap;gap:8px}.comp-fin-i{padding:6px 10px;border-radius:999px;background:#f4fbf5;border:1px solid #dcebdf}
+  .cr-kind{font-weight:800;font-size:.85rem;color:#5b1786}.cr-text{font:700 1.15rem var(--card);margin:4px 0}
+  .gp-bar{display:inline-block;width:90px;height:10px;border-radius:99px;background:#E8EEE9;overflow:hidden;vertical-align:middle;margin-right:6px}
+  .gp-bar i{display:block;height:100%;background:linear-gradient(90deg,#2E7D32,#66BB6A)}
+  .gp-row{cursor:pointer}.gp-row:hover{background:#F4FBF5}
+  .gp-pct{font-size:1.1rem}
+  .gp-lg{margin:8px 0}.gp-lg-h{margin-bottom:4px}
+  .gp-dots{display:flex;flex-wrap:wrap;gap:4px}
+  .gp-dots span{min-width:26px;height:26px;padding:0 3px;border-radius:7px;background:#EEF2EF;color:#8A968D;font-size:.7rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+  .gp-dots span.on{background:#2E7D32;color:#fff}
+  .gp-wt th .emo{font-size:1.3rem!important;line-height:1}.gp-wt th svg{width:24px!important;height:24px!important}
+  .gp-wt td,.gp-wt th{text-align:center;font-size:.8rem}.gp-wt td:first-child{text-align:left}
+  .gp-wt td.fin{background:#E8F5E9;color:#1B5E20;font-weight:800}.gp-wt td.part{background:#FFF8E1}
+  .gp-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .gp-col{border:1.5px solid #E2E8E3;border-radius:14px;padding:10px}
+  .gp-col.done{border-top:5px solid #2E7D32}.gp-col.part{border-top:5px solid #F9A825}.gp-col.none{border-top:5px solid #B0BEC5}
+  .gp-col h3{margin:0 0 8px}
+  .gp-chip{display:inline-flex;gap:4px;align-items:center;margin:3px;padding:5px 9px;border-radius:999px;border:1px solid #DCEBDF;background:#fff;font:inherit;font-size:.85rem;cursor:pointer}
   .ins-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:flex-start}
   .ins-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
   .seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden}
@@ -843,10 +909,11 @@
       <button class="tab" role="tab" type="button" data-tab="teachers" aria-selected="false">&#x1F469;&#x200D;&#x1F3EB; Teachers</button>
       <button class="tab" role="tab" type="button" data-tab="notebooks" aria-selected="false">&#x1F4D2; Learner Notebooks</button>
       <button class="tab" role="tab" type="button" data-tab="checked" aria-selected="false">&#x2705; Checked Recordings</button>
+      <button class="tab" role="tab" type="button" data-tab="compreview" aria-selected="false">&#x1F4DA; Comprehension Review</button>
+      <button class="tab" role="tab" type="button" data-tab="gameprog" aria-selected="false">&#x1F3AE; Game Progress</button>
       <button class="tab" role="tab" type="button" data-tab="insights" aria-selected="false">&#x1F9E0; Learner Insights</button>
       <button class="tab msg-tab" type="button" id="msgOpen">&#x1F4AC; Messages</button>
       <button class="tab" role="tab" type="button" disabled>&#x1F522; Numeracy <small>(Coming Soon)</small></button>
-      <button class="tab" role="tab" type="button" disabled>&#x1F4DA; Comprehension <small>(Coming Soon)</small></button>
     </nav>
 
     <!-- Assessment form -->
@@ -1030,6 +1097,8 @@
     <!-- Checked Recordings: the School Head reviews each teacher's checks -->
     <div id="tab-checked" class="hidden"><div id="ckAdmin"></div></div>
     <div id="tab-insights" class="hidden"><div id="insAdmin"></div></div>
+    <div id="tab-gameprog" class="hidden"><div id="gpAdmin"></div></div>
+    <div id="tab-compreview" class="hidden"><div id="crAdmin"></div></div>
     <div id="msgModal" class="msg-modal hidden" role="dialog" aria-modal="true" aria-label="Messages"><div class="msg-box" id="msgBox"></div></div>
 
     <!-- Printables -->
@@ -1158,7 +1227,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/e-READ-Project/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '5.3';
+const APP_VERSION = '5.5';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1323,7 +1392,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '5.3';
+const NEED_SERVER = '5.5';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
@@ -1593,7 +1662,9 @@ function enterAdmin(){
 function selectTab(name){
   currentTab = name;
   document.querySelectorAll('.tab[data-tab]').forEach(b => b.setAttribute('aria-selected', b.dataset.tab === name ? 'true' : 'false'));
-  ['home','assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks','checked','insights'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
+  ['home','assess','learners','records','print','practice','bank','stars','activity','teachers','notebooks','checked','insights','gameprog','compreview'].forEach(t => $('tab-' + t).classList.toggle('hidden', t !== name));
+  if (name === 'compreview') loadCompReview({ pin: S.pin }, $('crAdmin'));
+  if (name === 'gameprog') loadGameProg({ pin: S.pin }, $('gpAdmin'));
   if (name === 'checked') loadChecked($('ckAdmin'));
   if (name === 'insights') loadInsights($('insAdmin'));
   if (name === 'home') loadHome({ pin: S.pin }, $('homeAdmin'));
@@ -2716,7 +2787,7 @@ function bindResults(){
   $('padSave').onclick = saveSignature;
 }
 
-const LTABS = [['practice','\uD83C\uDFA4 Practice Words'],['games','\uD83C\uDFAE Games'],['prizes','\uD83C\uDF81 Prizes'],['notebook','\uD83D\uDCD2 My Notebook'],['tasks','\uD83D\uDCD6 Reading Assessment Tasks'],['results','\uD83C\uDFC5 Results'],['comp','\uD83D\uDCDA Stories (Coming Soon)']];
+const LTABS = [['practice','\uD83C\uDFA4 Practice Words'],['games','\uD83C\uDFAE Games'],['prizes','\uD83C\uDF81 Prizes'],['notebook','\uD83D\uDCD2 My Notebook'],['tasks','\uD83D\uDCD6 Reading Assessment Tasks'],['results','\uD83C\uDFC5 Results'],['comp','\uD83D\uDCDA Stories']];
 /* ---------- Prizes ----------
    A prize can need Total stars, Practice Word stars, and Game stars (0 means not needed).
    Stars keep adding up. Qualifying for a prize does not use up any stars. */
@@ -2782,16 +2853,16 @@ function renderTeacher(){
   else if (TV.tab === 'notebook') main = notebookHtml();
   else if (TV.tab === 'tasks') main = tasksPanel();
   else if (TV.tab === 'prizes') main = prizesHtml();
-  else if (TV.tab === 'comp') main = `<div class="panel" style="text-align:center"><div class="sc-frog" style="width:120px;margin:0 auto">${FROG_SVG}</div>
-    <h2>Stories are coming soon! \uD83D\uDCD6</h2><p>Short stories to read, with questions to answer. Keep practicing your words, and you will be ready!</p></div>`;
+  else if (TV.tab === 'comp') main = compHtml();
   else main = resultsHtml();
   body.innerHTML = head + main;
-  body.querySelectorAll('[data-ltab]').forEach(b => b.onclick = () => { recCancel(); TV.tab = b.dataset.ltab; renderTeacher(); if (/notebook|prizes/.test(TV.tab)) liveStars(true); });
+  body.querySelectorAll('[data-ltab]').forEach(b => b.onclick = () => { recCancel(); if (CP && CP.rec){ CP.rec.ctl.cancel(); CP.rec = null; } TV.tab = b.dataset.ltab; if (TV.tab === 'comp' && (!CP || CP.lrn !== TV.learner.lrn || !CP.loadedAt || Date.now() - CP.loadedAt > 30000)){ loadComp(); if (CP) CP.loadedAt = Date.now(); } renderTeacher(); if (/notebook|prizes/.test(TV.tab)) liveStars(true); });
   if ($('soundBtn')) $('soundBtn').onclick = soundCheck;
   if (TV.tab === 'practice') bindPractice();
   else if (TV.tab === 'games') bindGames();
   else if (TV.tab === 'tasks') bindTasksPanel();
   else if (TV.tab === 'results') bindResults();
+  else if (TV.tab === 'comp') bindComp();
 }
 
 /* =========================================================
@@ -3323,7 +3394,11 @@ const GAMES = [
   { id: 'safari', title: 'Sound Safari', blurb: 'Which letter does the picture start with?', levels: 26, letters: true, icon: '<span class="emo">\uD83E\uDD81</span>' },
   { id: 'memory', title: 'Letter Memory', blurb: 'Flip the cards and find the pairs.', levels: MEMORY_SETS.length, icon: '<span class="emo">\uD83C\uDCCF</span>' },
   { id: 'mirror', title: 'Mirror Letters', blurb: 'Look closely at letters that look alike.', levels: MIRROR_SETS.length, unlock: 'frog', icon: '<span class="emo mir">b d</span>' },
-  { id: 'trace', title: 'Trace with Froggy', blurb: 'Trace the letter with your finger.', levels: 26, letters: true, icon: '<span class="emo">\u270F\uFE0F</span>' }
+  { id: 'trace', title: 'Trace with Froggy', blurb: 'Trace the letter with your finger.', levels: 26, letters: true, icon: '<span class="emo">\u270F\uFE0F</span>' },
+  { id: 'balloon', title: 'Balloon Pop', blurb: 'Pop the balloons with the letter before they fly away!', levels: 26, letters: true, icon: '<span class="emo">\uD83C\uDF88</span>' },
+  { id: 'drum', title: 'Syllable Drum', blurb: 'Tap the drum once for each part of the word.', levels: 6, reading: true, grades: ['3', '4', '5', '6'], icon: '<span class="emo">\uD83E\uDD41</span>' },
+  { id: 'sent1', title: 'Sentence Builder', blurb: 'Tap the words in order to build the sentence.', levels: 8, reading: true, grades: ['1', '2', '3'], icon: '<span class="emo">\uD83E\uDDE9</span>' },
+  { id: 'sent2', title: 'Sentence Builder', blurb: 'Tap the words in order to build the sentence.', levels: 8, reading: true, grades: ['4', '5', '6'], icon: '<span class="emo">\uD83E\uDDE9</span>' }
 ];
 const GAME = id => GAMES.find(g => g.id === id) || wordGame(id);
 function passedOf(id){ return myRewards().progress[id] || []; }
@@ -3334,6 +3409,8 @@ function levelLabel(g, n){
   if (g.id === 'memory') return MEMORY_SETS[n - 1].join(' ');
   if (g.id === 'mirror') return MIRROR_SETS[n - 1].length > 4 ? 'All' : MIRROR_SETS[n - 1].join(' ');
   if (g.word) return 'Set ' + n;
+  if (g.id === 'drum') return DRUM_LABELS[n - 1] || String(n);
+  if (g.id === 'sent1' || g.id === 'sent2') return 'Set ' + n;
   return String(n);
 }
 function shuffle(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
@@ -3382,7 +3459,9 @@ function gamesHtml(){
       </div>
     </div>
     <div class="panel gsection"><h2>Letter Practice</h2><p class="sub">Games to learn the letters and their sounds.</p></div>
-    ${GAMES.map(gameCardHtml).join('')}
+    ${GAMES.filter(g => !g.reading).map(gameCardHtml).join('')}
+    ${GAMES.some(g => g.reading && gradeOk(g)) ? `<div class="panel gsection"><h2>Reading Practice</h2><p class="sub">Games for longer words and sentences.</p></div>
+    ${GAMES.filter(g => g.reading && gradeOk(g)).map(gameCardHtml).join('')}` : ''}
     <div class="panel gsection"><h2>Word Practice</h2>
       ${cats.length ? `<p class="sub">Choose a word group, then a family or pattern. Each set has 5 words.</p>
       <div class="chipbar">${groups.map(g => `<button type="button" class="ltab" data-wgroup="${esc(g)}" aria-selected="${g === TV.wgroup}">${esc(g)}</button>`).join('')}</div>
@@ -3448,7 +3527,14 @@ function howSteps(g){
     mixup: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDD00', 'Fix the order'], ['\u2B50', 'Star']],
     rhyme: [['\uD83D\uDC40', 'Read'], ['\uD83C\uDFB5', 'Find the rhyme'], ['\u2B50', 'Star']],
     sort: [['\uD83D\uDC40', 'Read'], ['\uD83E\uDDFA', 'Pick the basket'], ['\u2B50', 'Star']],
-    wmem: [['\uD83D\uDC46', 'Flip two'], ['\uD83D\uDC40', 'Read the pair'], ['\u2B50', 'Star']]
+    wmem: [['\uD83D\uDC46', 'Flip two'], ['\uD83D\uDC40', 'Read the pair'], ['\u2B50', 'Star']],
+    balloon: [['\uD83D\uDC42', 'Listen'], ['\uD83C\uDF88', 'Pop the letter'], ['\u2B50', 'Star']],
+    lily: [['\uD83D\uDC42', 'Listen'], ['\uD83D\uDC38', 'Tap the pad'], ['\u2B50', 'Star']],
+    rocket: [['\uD83D\uDC46', 'Tap each sound'], ['\uD83D\uDE80', 'Blast off'], ['\u2B50', 'Pick the word']],
+    odd: [['\uD83D\uDC40', 'Read'], ['\uD83D\uDD75\uFE0F', 'Find the odd one'], ['\u2B50', 'Star']],
+    drum: [['\uD83D\uDC42', 'Listen'], ['\uD83E\uDD41', 'Tap each part'], ['\u2B50', 'Star']],
+    sent1: [['\uD83D\uDC42', 'Listen'], ['\uD83E\uDDE9', 'Tap words in order'], ['\u2B50', 'Star']],
+    sent2: [['\uD83D\uDC42', 'Listen'], ['\uD83E\uDDE9', 'Tap words in order'], ['\u2B50', 'Star']]
   }[base];
   if (!steps) return '';
   return `<div class="howrow">${steps.map(x => `<span class="hstep"><span class="hicon">${x[0]}</span><span>${esc(x[1])}</span></span>`).join('<span class="harrow">\u2192</span>')}</div>`;
@@ -3474,6 +3560,12 @@ function demoTarget(){
   if (base === 'complete') return [...root.querySelectorAll('.part')].find(b => b.dataset.t === FG.missing);
   if (base === 'build'){ const need = FG.parts && FG.parts[0]; return need && [...root.querySelectorAll('.part')].find(b => b.textContent.toLowerCase() === need.t.toLowerCase()); }
   if (base === 'trace') return $('tInk');
+  if (base === 'balloon'){ const b = (FG.bal || []).find(x => x.target && !x.gone); return b && b.el; }
+  if (base === 'lily') return [...root.querySelectorAll('.pad')].find(b => b.dataset.w === FG.cur);
+  if (base === 'rocket') return root.querySelector('.sbox');
+  if (base === 'odd'){ const r = FG.rounds && FG.rounds[FG.round]; return r && [...root.querySelectorAll('.oddw')].find(b => b.dataset.w === r.odd); }
+  if (base === 'drum') return $('dDrum');
+  if (base === 'sent1' || base === 'sent2') return [...root.querySelectorAll('.sb-block')].find(b => !b.disabled && b.textContent === FG.words[FG.pos]);
   return null;
 }
 function howTo(){
@@ -3977,7 +4069,7 @@ function wordStageHtml(w, big){
   </div>`;
 }
 /* Simple microphone recorder, used in the Word Bank */
-async function micRecord(onDone, onError){
+async function micRecord(onDone, onError, maxMs){
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder){ onError(micHelp()); return null; }
   let stream;
   try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
@@ -3991,7 +4083,7 @@ async function micRecord(onDone, onError){
   media.start();
   ctl.stop = () => { if (media.state !== 'inactive') media.stop(); };
   ctl.cancel = () => { ctl.cancelled = true; ctl.stop(); };
-  ctl.timer = setTimeout(ctl.stop, 8000);
+  ctl.timer = setTimeout(ctl.stop, maxMs || 8000);
   return ctl;
 }
 
@@ -4421,7 +4513,10 @@ const WORD_GAMES = [
   { id: 'mixup', title: 'Mixed-Up Word', blurb: 'The letters are mixed up! Tap them in the right order to fix the word.', icon: '<span class="emo">\uD83D\uDD00</span>' },
   { id: 'rhyme', title: 'Rhyme Time', blurb: 'Read the word, then tap the word that rhymes with it.', icon: '<span class="emo">\uD83C\uDFB5</span>' },
   { id: 'sort', title: 'Sort It Out', blurb: 'Read each word, then drop it into the right basket.', icon: '<span class="emo">\uD83E\uDDFA</span>' },
-  { id: 'wmem', title: 'Word Memory', blurb: 'Flip two cards. Find the two cards with the same word, and read it.', icon: '<span class="emo">\uD83C\uDCCF</span>' }
+  { id: 'wmem', title: 'Word Memory', blurb: 'Flip two cards. Find the two cards with the same word, and read it.', icon: '<span class="emo">\uD83C\uDCCF</span>' },
+  { id: 'lily', title: 'Lily Pad Hop', blurb: 'Listen, then tap the lily pad with the word to help Froggy hop across.', icon: '<span class="emo">\uD83D\uDC38</span>' },
+  { id: 'rocket', title: 'Blending Rocket', blurb: 'Tap each sound, blend them, and pick the word. Blast off!', icon: '<span class="emo">\uD83D\uDE80</span>' },
+  { id: 'odd', title: 'Odd One Out', blurb: 'Three words belong together. Tap the one that does not!', icon: '<span class="emo">\uD83D\uDD75\uFE0F</span>' }
 ];
 function wslug(t){ return String(t).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 function wordCats(){
@@ -4430,7 +4525,7 @@ function wordCats(){
   return lists.filter(x => String(x.ks).split(',').indexOf(String(ks)) >= 0 && x.words.length >= 3);
 }
 function wordGame(id){
-  const m = String(id).match(/^w\.(build|hunt|choose|complete|snake|train|silly|match|mixup|rhyme|sort|wmem)\.([a-z0-9]+)$/); if (!m) return null;
+  const m = String(id).match(/^w\.(build|hunt|choose|complete|snake|train|silly|match|mixup|rhyme|sort|wmem|lily|rocket|odd)\.([a-z0-9]+)$/); if (!m) return null;
   const cat = (S.wordLists || []).find(x => wslug(x.category) === m[2]); if (!cat) return null;
   const base = WORD_GAMES.find(x => x.id === m[1]);
   return { id, base: m[1], title: base.title, blurb: base.blurb, icon: base.icon, cat, words: cat.words, levels: Math.max(1, Math.ceil(cat.words.length / 5)), word: true };
@@ -4879,6 +4974,528 @@ function chooseRound(){
 }
 
 /* =========================================================
+   NEW GAMES: Balloon Pop, Lily Pad Hop, Blending Rocket, Odd One Out, Syllable Drum, Sentence Builder
+   ========================================================= */
+const DRUM_SETS = [
+  [['rab', 'bit'], ['pen', 'cil'], ['bas', 'ket'], ['mon', 'key'], ['wa', 'ter']],
+  [['ti', 'ger'], ['ro', 'bot'], ['pump', 'kin'], ['gar', 'den'], ['lem', 'on']],
+  [['ba', 'na', 'na'], ['to', 'ma', 'to'], ['el', 'e', 'phant'], ['bi', 'cy', 'cle'], ['com', 'pu', 'ter']],
+  [['but', 'ter', 'fly'], ['di', 'no', 'saur'], ['um', 'brel', 'la'], ['cro', 'co', 'dile'], ['po', 'ta', 'to']],
+  [['wa', 'ter', 'mel', 'on'], ['cat', 'er', 'pil', 'lar'], ['al', 'li', 'ga', 'tor'], ['cal', 'cu', 'la', 'tor'], ['ar', 'ma', 'dil', 'lo']],
+  [['sun'], ['pa', 'per'], ['ba', 'na', 'na'], ['ta', 'ble'], ['he', 'li', 'cop', 'ter']]
+];
+const DRUM_LABELS = ['2 parts', '2 parts', '3 parts', '3 parts', '4 parts', 'Mixed'];
+const DRUM_PIC = { rabbit: '🐇', pencil: '✏️', basket: '🧺', monkey: '🐒', water: '💧', tiger: '🐯', robot: '🤖', pumpkin: '🎃', garden: '🌻', lemon: '🍋',
+  banana: '🍌', tomato: '🍅', elephant: '🐘', bicycle: '🚲', computer: '💻', butterfly: '🦋', dinosaur: '🦕', umbrella: '☂️', crocodile: '🐊', potato: '🥔',
+  watermelon: '🍉', caterpillar: '🐛', alligator: '🐊', calculator: '🧮', armadillo: '🦔', sun: '☀️', paper: '📄', table: '🪑', helicopter: '🚁' };
+const SENT1 = [
+  [['The cat is on the mat.', '🐱'], ['The dog can run.', '🐶🏃'], ['I see a red hen.', '👀🐔'], ['The sun is hot.', '☀️🔥']],
+  [['A bug is in the cup.', '🐛☕'], ['The pig is big.', '🐷'], ['Dad has a map.', '👨🗺️'], ['Sam sat on a log.', '🧒🪵']],
+  [['The fox is in the box.', '🦊📦'], ['I can hop and jump.', '🐸'], ['Mom got a pen.', '👩🖊️'], ['The bus is red.', '🚌']],
+  [['The fish can swim.', '🐟'], ['Ben fed the duck.', '👦🦆'], ['The bat is in the hut.', '🦇🛖'], ['We sit in the sun.', '☀️']],
+  [['The kid has a wet hat.', '🧒🎩💧'], ['A rat ran to the den.', '🐀'], ['The hen sat on ten eggs.', '🐔🥚'], ['Pat the cat on the rug.', '🐱']],
+  [['I like to read a book.', '📖'], ['The frog is on a lily pad.', '🐸'], ['My mom cooks rice.', '👩🍚'], ['We play at school.', '🏫']],
+  [['The cow eats green grass.', '🐄🌿'], ['I brush my teeth.', '🪥'], ['The bird can sing a song.', '🐦🎵'], ['Rain falls on the roof.', '🌧️🏠']],
+  [['The boy rides a bike.', '👦🚲'], ['She drinks a glass of milk.', '🥛'], ['The ship sails on the sea.', '🚢🌊'], ['Grandma bakes a cake.', '👵🎂']]
+];
+const SENT2 = [
+  [['The farmer plants rice in the wet field.', '🧑‍🌾🌾'], ['My sister reads a storybook every night.', '👧📖🌙'], ['The children play basketball after class.', '🏀'], ['A big wave crashed on the sandy beach.', '🌊🏖️']],
+  [['We bring our own water bottles to school.', '💧🏫'], ['The fisherman caught three large fish today.', '🎣🐟'], ['Mother cooked chicken adobo for lunch.', '🍗🍚'], ['The puppy chased the ball across the yard.', '🐶⚽']],
+  [['The jeepney was full of passengers this morning.', '🚌'], ['Please turn off the lights when you leave.', '💡'], ['The teacher praised the class for being quiet.', '🧑‍🏫👏'], ['Ripe mangoes are sweet and yellow.', '🥭']],
+  [['Plant trees to keep the air clean and fresh.', '🌳'], ['The storm made the river rise very fast.', '⛈️🌊'], ['My brother fixed the broken chair with nails.', '🔨🪑'], ['We clean our classroom every Friday afternoon.', '🧹']],
+  [['The students lined up quietly for the flag ceremony.', '🇵🇭'], ['A colorful butterfly landed on the red flower.', '🦋🌺'], ['Grandpa tells funny stories about his farm.', '👴🐃'], ['The market is busy on Sunday mornings.', '🏪']],
+  [['I save some of my money in a piggy bank.', '🐷🪙'], ['The nurse checked my temperature and weight.', '🧑‍⚕️🌡️'], ['Coconut trees grow well near the sea.', '🥥🌊'], ['Wash your hands before and after eating.', '🧼🍽️']],
+  [['Our team practiced hard and won the game.', '🏆'], ['The library has many books about animals.', '📚🐘'], ['Fireflies glow brightly in the dark night.', '✨🌙'], ['The volcano is quiet, but people stay careful.', '🌋']],
+  [['Honesty is important at home and in school.', '🤝'], ['The carabao helps the farmer plow the field.', '🐃'], ['We should not throw garbage in the river.', '🚯🏞️'], ['Reading every day makes us better readers.', '📖⭐']]
+];
+function gradeOk(g){ return !g.grades || !TV || g.grades.indexOf(String(TV.learner.grade)) >= 0; }
+
+/* ---------- 1. Balloon Pop: pop the balloons with the letter ---------- */
+GI.balloon = {
+  big: () => FG.L.toUpperCase() + ' ' + FG.L,
+  intro: () => `Pop every balloon with ${FG.L.toUpperCase()} or ${FG.L} before it flies away. Careful! Popping a wrong balloon costs a heart.`,
+  line: () => { const p = letterPic(FG.L); return `Pop the letter ${FG.L.toUpperCase()}${p ? ', like in ' + p.word : ''}.`; },
+  start(){
+    FG.need = 6; FG.got = 0; FG.hearts = 3; FG.bal = []; FG.spawnAt = 0; FG.last = performance.now();
+    balloonAsk(); say(GI.balloon.line());
+    FG.raf = requestAnimationFrame(balloonLoop);
+  }
+};
+function balloonAsk(){ setAsk(`Pop <b>${FG.L.toUpperCase()} ${FG.L}</b> <span class="hearts">${'❤️'.repeat(FG.hearts)}${'🤍'.repeat(3 - FG.hearts)}</span>`, FG.need, FG.got); }
+function balloonLoop(ts){
+  if (!FG || FG.gid !== 'balloon' && FG.g.base !== 'balloon') return;
+  const dt = Math.min(0.05, (ts - FG.last) / 1000); FG.last = ts;
+  const { w, h } = stageSize();
+  if (ts >= FG.spawnAt && FG.bal.filter(b => !b.gone).length < 6){
+    const target = Math.random() < 0.45;
+    const ch = target ? (Math.random() < 0.5 ? FG.L.toUpperCase() : FG.L) : (() => { const o = otherLetters([FG.L], 1)[0]; return Math.random() < 0.5 ? o.toUpperCase() : o; })();
+    const size = Math.max(64, Math.min(96, Math.min(w, h) * 0.15));
+    const el = document.createElement('button'); el.type = 'button'; el.className = 'balloon';
+    const hue = Math.floor(Math.random() * 360);
+    el.style.setProperty('--bc', `hsl(${hue} 80% 60%)`); el.style.width = size + 'px'; el.style.height = (size * 1.2) + 'px'; el.style.fontSize = (size * 0.45) + 'px';
+    el.innerHTML = `<span>${esc(ch)}</span>`;
+    const b = { el, ch, target: ch.toLowerCase() === FG.L, x: Math.random() * Math.max(1, w - size), y: h + 10, v: (48 + Math.random() * 30 + FG.got * 9) * (size / 80), gone: false };
+    el.onpointerdown = e => { e.preventDefault(); balloonTap(b); };
+    $('gBubbles').appendChild(el); FG.bal.push(b);
+    FG.spawnAt = ts + 850 + Math.random() * 500;
+  }
+  FG.bal.forEach(b => {
+    if (b.gone) return;
+    b.y -= b.v * dt;
+    if (b.y < -150){ b.gone = true; b.el.remove(); return; }
+    b.el.style.transform = `translate(${b.x}px,${b.y}px)`;
+  });
+  FG.raf = requestAnimationFrame(balloonLoop);
+}
+function balloonTap(b){
+  if (!FG || b.gone || FG.over) return;
+  if (!b.target){
+    FG.hearts--; gWrong(b.el, `That is ${letterSay(b.ch)}. Pop only ${FG.L.toUpperCase()}.`); balloonAsk();
+    if (FG.hearts <= 0){
+      FG.over = true; cancelAnimationFrame(FG.raf);
+      gOverlay(`<div class="g-card"><div class="frog-mini">🎈</div><h2>Oops! No more hearts.</h2><p>Let's try again. Pop only <b>${FG.L.toUpperCase()} ${FG.L}</b>.</p><button type="button" class="btn primary" id="gAgain">Try Again</button></div>`);
+      $('gAgain').onclick = () => openGame(FG.g.id, FG.level);
+    }
+    return;
+  }
+  b.gone = true; SFX.yes(); say(letterSay(b.ch) + '!');
+  b.el.classList.add('pop'); later(() => b.el.remove(), 350);
+  FG.got++; balloonAsk();
+  if (FG.got >= FG.need){ FG.over = true; later(gWin, 700); }
+}
+
+/* ---------- 2. Lily Pad Hop: tap the pad with the word you hear ---------- */
+GI.lily = {
+  intro: () => 'Listen to the word. Tap the lily pad with that word to help Froggy hop across the pond. Tap the speaker to hear it again.',
+  line: () => `Hop to the word, ${FG.cur}.`,
+  start(){ const ws = levelWords(); FG.list = shuffle(ws.concat(shuffle(ws)).slice(0, 6)); FG.round = 0; lilyRound(); }
+};
+function lilyRound(){
+  const w = FG.cur = FG.list[FG.round]; FG.busy = false; FG.miss = 0;
+  const pool = FG.g.words.filter(x => x !== w);
+  const near = pool.filter(x => x[0] === w[0] || rimeOf(x) === rimeOf(w));
+  const opts = shuffle([w].concat(shuffle(near.length >= 2 ? near : pool.length >= 2 ? pool : allListWords().filter(x => x !== w)).slice(0, 2)));
+  $('gBubbles').innerHTML = `<div class="pond">
+    <div class="pond-track">${Array.from({ length: 7 }, (_, i) => `<span class="pt${i <= FG.round ? ' past' : ''}">${i === FG.round ? `<span class="pfrog">${FROG_SVG}</span>` : i === 6 ? '🏁' : ''}</span>`).join('')}</div>
+    <button type="button" class="pic hear" id="lHear" aria-label="Hear the word again">🔊</button>
+    <div class="pads">${opts.map(o => `<button type="button" class="pad" data-w="${esc(o)}"><span>${esc(o)}</span></button>`).join('')}</div></div>`;
+  setAsk('Hop to the word you hear', FG.list.length, FG.round);
+  $('lHear').onclick = () => speakWord(w);
+  $('gBubbles').querySelectorAll('.pad').forEach(el => el.onclick = () => {
+    if (FG.busy) return;
+    if (el.dataset.w !== w){
+      FG.miss++; gWrong(el, 'Splash! Listen again. ' + w + '.'); el.classList.add('splash');
+      if (FG.miss >= 2){ const r = [...$('gBubbles').querySelectorAll('.pad')].find(p => p.dataset.w === w); if (r) r.classList.add('glow'); }
+      return;
+    }
+    FG.busy = true; SFX.yes(); el.classList.add('right'); speakWord(w);
+    const f = $('gBubbles').querySelector('.pfrog'); if (f) f.classList.add('hop');
+    later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else lilyRound(); }, 1200);
+  });
+  later(() => speakWord(w), 300);
+}
+
+/* ---------- 3. Blending Rocket: tap each sound, blend, pick the word ---------- */
+const PHONE = { a: 'ah', b: 'buh', c: 'kuh', d: 'duh', e: 'eh', f: 'fff', g: 'guh', h: 'huh', i: 'ih', j: 'juh', k: 'kuh', l: 'lll', m: 'mmm', n: 'nnn', o: 'aw', p: 'puh',
+  q: 'kwuh', r: 'rrr', s: 'sss', t: 'tuh', u: 'uh', v: 'vvv', w: 'wuh', x: 'ks', y: 'yuh', z: 'zzz', sh: 'shh', ch: 'chuh', th: 'thh', ng: 'ng', ck: 'kuh', wh: 'wuh', ph: 'fff',
+  ai: 'ay', ay: 'ay', ee: 'ee', ea: 'ee', oa: 'oh', ow: 'oh', oo: 'oo', ou: 'ow', oi: 'oy', oy: 'oy', ar: 'ar', er: 'er', ir: 'er', ur: 'er', or: 'or', igh: 'eye', ie: 'eye' };
+GI.rocket = {
+  intro: () => 'Tap each sound box to hear the sounds. Then tap Blast Off to blend them. Pick the word the sounds make!',
+  line: () => 'Tap each sound, then blast off.',
+  start(){ FG.list = levelWords(); FG.round = 0; FG.mistakes = 0; rocketRound(); }
+};
+function rocketRound(){
+  const w = FG.cur = FG.list[FG.round]; FG.busy = false; FG.heard = {};
+  const parts = chunkWord(w).filter(c => c.t.trim());
+  const pool = FG.g.words.filter(x => x !== w);
+  const usePics = wordPic(w) && pool.filter(x => wordPic(x) && wordPic(x) !== wordPic(w)).length >= 2;
+  const others = shuffle(usePics ? pool.filter(x => wordPic(x) && wordPic(x) !== wordPic(w)) : pool.length >= 2 ? pool : allListWords().filter(x => x !== w)).slice(0, 2);
+  const opts = shuffle([w].concat(others));
+  $('gBubbles').innerHTML = `<div class="build rocket">
+    <div class="rk-ship" id="rShip">🚀</div>
+    <div class="slots">${parts.map((p, i) => `<button type="button" class="slot full sbox" data-i="${i}"><span class="ch ${p.c}">${esc(p.t)}</span></button>`).join('')}</div>
+    <button type="button" class="btn primary" id="rBlast" disabled>🚀 Blast Off</button>
+    <div class="choices wrap hidden" id="rOpts">${opts.map(o => usePics ? `<button type="button" class="choice pmatch rk-o" data-w="${esc(o)}" aria-label="Picture">${wordPic(o)}</button>` : `<button type="button" class="choice wordc rk-o" data-w="${esc(o)}">${esc(o)}</button>`).join('')}</div></div>`;
+  setAsk('Tap each sound, then blast off', FG.list.length, FG.round);
+  const boxes = [...$('gBubbles').querySelectorAll('.sbox')];
+  boxes.forEach(b => b.onclick = () => {
+    const p = parts[+b.dataset.i], k = p.t.toLowerCase();
+    b.classList.add('lit'); later(() => b.classList.remove('lit'), 500);
+    say(PHONE[k] || k); tone(520 + (+b.dataset.i) * 90, 0.1);
+    FG.heard[b.dataset.i] = true;
+    if (Object.keys(FG.heard).length >= parts.length) $('rBlast').disabled = false;
+  });
+  $('rBlast').onclick = () => {
+    $('rShip').classList.add('ready'); boxes.forEach((b, i) => later(() => b.classList.add('lit'), i * 250));
+    later(() => { boxes.forEach(b => b.classList.remove('lit')); speakWord(w); $('rOpts').classList.remove('hidden'); }, parts.length * 250 + 150);
+  };
+  $('gBubbles').querySelectorAll('.rk-o').forEach(el => el.onclick = () => {
+    if (FG.busy) return;
+    if (el.dataset.w !== w){ FG.mistakes++; gWrong(el, 'Listen to the sounds again.'); return; }
+    FG.busy = true; SFX.yes(); el.classList.add('right'); $('rShip').classList.add('launch');
+    later(() => {
+      FG.round++;
+      if (FG.round < FG.list.length){ rocketRound(); return; }
+      if (FG.mistakes > 1){
+        gOverlay(`<div class="g-card"><div class="frog-mini">🚀</div><h2>Almost there!</h2><p>You made ${FG.mistakes} mistakes. Try again with 1 mistake or less.</p><button type="button" class="btn primary" id="gAgain">Try Again</button></div>`);
+        $('gAgain').onclick = () => openGame(FG.g.id, FG.level);
+      } else gWin();
+    }, 1400);
+  });
+  later(() => say('Tap each sound box.'), 300);
+}
+
+/* ---------- 4. Odd One Out: three words share a pattern, tap the one that does not ---------- */
+GI.odd = {
+  intro: () => 'Four words. Three of them belong together. Tap the one that does not belong! Tap the speaker on a card to hear it.',
+  line: () => 'Which word does not belong?',
+  start(){
+    const mine = FG.g.words.map(w => w.toLowerCase());
+    const others = allListWords().filter(w => mine.indexOf(w) < 0 && !mine.some(m => rimeOf(m) && rimeOf(m) === rimeOf(w)));
+    FG.rounds = Array.from({ length: 5 }, () => ({ same: shuffle(mine).slice(0, 3), odd: shuffle(others)[0] || 'zip' }));
+    FG.round = 0; oddRound();
+  }
+};
+function oddRound(){
+  const r = FG.rounds[FG.round]; FG.busy = false;
+  const cards = shuffle(r.same.concat([r.odd]));
+  $('gBubbles').innerHTML = `<div class="build"><div class="odd-grid">${cards.map(w => `<div class="odd-card"><button type="button" class="choice wordc oddw" data-w="${esc(w)}">${esc(w)}</button><button type="button" class="spk-btn" data-say="${esc(w)}" aria-label="Hear ${esc(w)}">🔊</button></div>`).join('')}</div>
+    <p class="odd-explain" id="oExplain"></p></div>`;
+  setAsk('Tap the word that does not belong', 5, FG.round);
+  $('gBubbles').querySelectorAll('[data-say]').forEach(b => b.onclick = () => speakWord(b.dataset.say));
+  $('gBubbles').querySelectorAll('.oddw').forEach(el => el.onclick = () => {
+    if (FG.busy) return;
+    if (el.dataset.w !== r.odd){ gWrong(el, `${el.dataset.w} belongs. Look for the word that is different.`); return; }
+    FG.busy = true; SFX.yes(); el.classList.add('right');
+    const why = `${r.same.join(', ')} are from ${FG.g.cat.category}. ${r.odd} is not.`;
+    $('oExplain').textContent = '🐸 ' + why; say(why);
+    later(() => { FG.round++; if (FG.round >= 5) gWin(); else oddRound(); }, 2600);
+  });
+  later(() => say(GI.odd.line()), 300);
+}
+
+/* ---------- 5. Syllable Drum: tap the drum once for each syllable ---------- */
+GI.drum = {
+  big: () => '🥁',
+  intro: () => 'Listen to the word. Tap the drum once for each part (syllable) you hear. Then tap Done.',
+  line: () => `How many parts does ${FG.cur} have?`,
+  start(){ FG.list = DRUM_SETS[FG.level - 1]; FG.round = 0; drumRound(); }
+};
+function drumRound(){
+  const parts = FG.list[FG.round], w = FG.cur = parts.join(''); FG.busy = false; FG.taps = 0; FG.tries = 0;
+  $('gBubbles').innerHTML = `<div class="build">
+    <div class="drum-word">${DRUM_PIC[w] || ''} <span id="dWord">${esc(w)}</span> <button type="button" class="spk-btn" id="dHear" aria-label="Hear the word">🔊</button></div>
+    <button type="button" class="drum" id="dDrum" aria-label="Drum">🥁</button>
+    <div class="drum-count" id="dCount">Taps: 0</div>
+    <div class="print-btns" style="justify-content:center"><button type="button" class="btn" id="dReset">Start Over</button><button type="button" class="btn primary" id="dDone">✅ Done</button></div></div>`;
+  setAsk('Tap the drum for each part', FG.list.length, FG.round);
+  const sayParts = () => say(parts.join('. ') + '. ' + w + '.');
+  $('dHear').onclick = () => speakWord(w);
+  $('dDrum').onclick = () => { FG.taps++; tone(330 + FG.taps * 60, 0.1); $('dCount').textContent = 'Taps: ' + FG.taps; const d = $('dDrum'); d.classList.remove('hit'); void d.offsetWidth; d.classList.add('hit'); };
+  $('dReset').onclick = () => { FG.taps = 0; $('dCount').textContent = 'Taps: 0'; };
+  $('dDone').onclick = () => {
+    if (FG.busy) return;
+    if (FG.taps !== parts.length){
+      FG.tries++; gWrong($('dDrum'), FG.tries >= 2 ? `Listen. ${parts.join('. ')}. That is ${parts.length} part${parts.length > 1 ? 's' : ''}.` : 'Not quite. Listen again and tap for each part.');
+      if (FG.tries >= 2) $('dWord').innerHTML = parts.map((p, i) => `<span class="syl s${i % 4}">${esc(p)}</span>`).join('');
+      FG.taps = 0; $('dCount').textContent = 'Taps: 0'; return;
+    }
+    FG.busy = true; SFX.yes();
+    $('dWord').innerHTML = parts.map((p, i) => `<span class="syl s${i % 4}">${esc(p)}</span>`).join('');
+    sayParts();
+    later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else drumRound(); }, 2400);
+  };
+  later(() => speakWord(w), 300);
+}
+
+/* ---------- 6. Sentence Builder: tap the words in order ---------- */
+const sentImpl = {
+  intro: () => 'Look at the picture and listen to the sentence. Then tap the word blocks in the right order to build it.',
+  line: () => 'Build the sentence.',
+  start(){ FG.list = ((FG.g.id === 'sent2') ? SENT2 : SENT1)[FG.level - 1]; FG.round = 0; sentRound(); }
+};
+GI.sent1 = sentImpl; GI.sent2 = sentImpl;
+function sentRound(){
+  const [text, ic] = FG.list[FG.round]; FG.busy = false; FG.pos = 0;
+  const words = text.split(/\s+/);
+  FG.words = words;
+  const blocks = shuffle(words.map((w, i) => ({ w, i })));
+  $('gBubbles').innerHTML = `<div class="build sentb">
+    <div class="sb-pic">${ic}</div>
+    <button type="button" class="btn small" id="sHear">🔊 Hear the sentence</button>
+    <div class="sb-line" id="sLine">${words.map((w, i) => `<span class="sb-slot" data-i="${i}"></span>`).join('')}</div>
+    <div class="sb-blocks">${blocks.map((b, k) => `<button type="button" class="sb-block" data-k="${k}">${esc(b.w)}</button>`).join('')}</div></div>`;
+  setAsk('Build the sentence', FG.list.length, FG.round);
+  $('sHear').onclick = () => say(text);
+  $('gBubbles').querySelectorAll('.sb-block').forEach(el => el.onclick = () => {
+    if (FG.busy || el.disabled) return;
+    const b = blocks[+el.dataset.k], need = words[FG.pos];
+    if (b.w !== need){ gWrong(el, 'Try another word. Listen to the sentence again.'); return; }
+    const slot = $('gBubbles').querySelector(`.sb-slot[data-i="${FG.pos}"]`);
+    slot.textContent = b.w; slot.classList.add('full'); el.disabled = true; el.classList.add('used'); tone(520 + FG.pos * 40, 0.08);
+    FG.pos++;
+    if (FG.pos >= words.length){
+      FG.busy = true; SFX.yes();
+      const slots = [...$('gBubbles').querySelectorAll('.sb-slot')];
+      slots.forEach((s, i) => later(() => { slots.forEach(x => x.classList.remove('on')); s.classList.add('on'); }, i * 380));
+      later(() => say(text), 100);
+      later(() => { FG.round++; if (FG.round >= FG.list.length) gWin(); else sentRound(); }, words.length * 380 + 1500);
+    }
+  });
+  later(() => say(text), 300);
+}
+
+/* =========================================================
+   COMPREHENSION: learner side (Stories tab)
+   Opens after 250 practice words are checked Correct. One story at a time.
+   ========================================================= */
+let CP = null;
+function compCache(lrn, v){ S.compCache = S.compCache || {}; if (v !== undefined){ S.compCache[lrn] = v; persist(); } return S.compCache[lrn]; }
+async function loadComp(){
+  const lrn = TV.learner.lrn, c = compCache(lrn);
+  CP = { lrn, data: c || null, idx: CP && CP.lrn === lrn ? CP.idx : 0, drafts: CP && CP.lrn === lrn ? CP.drafts : {}, rec: null, msg: '' };
+  if (TV.tab === 'comp') renderTeacher();
+  try {
+    const res = await callApi({ action: 'learnerComp', lrn, _wait: 60000 });
+    if (!CP || CP.lrn !== lrn) return;
+    if (res && res.ok){ CP.data = res; compCache(lrn, res); }
+    else if (!CP.data) CP.msg = res && res.error === 'Unknown request.' ? 'Stories need the newest server code. Please tell your teacher.' : (res && res.error) || 'Stories could not be loaded.';
+  } catch(e){ if (CP && !CP.data) CP.msg = 'Stories need the internet the first time. Please connect, then open this tab again.'; }
+  if (TV && TV.tab === 'comp' && !(CP && CP.rec) && safeToRender()) renderTeacher();
+}
+function compSentenceHtml(t, mastered){
+  const m = {}; (mastered || []).forEach(w => { m[w] = true; });
+  return String(t).split(/\s+/).map((w, i) => { const k = w.toLowerCase().replace(/[^a-z']/g, ''); return `<span class="cw${m[k] ? ' known' : ''}" data-cw="${i}">${esc(w)}</span>`; }).join(' ');
+}
+/* Reads the sentence one word at a time, lighting up each word, then reads it all */
+function readAloud(root, text, done){
+  if (!CP) return;
+  const words = String(text).split(/\s+/); let i = 0; const my = (CP.readTok = (CP.readTok || 0) + 1);
+  const spans = root ? [...root.querySelectorAll('.cw')] : [];
+  const step = () => {
+    if (!CP || CP.readTok !== my) return;
+    spans.forEach(s => s.classList.remove('on'));
+    if (i >= words.length){ setTimeout(() => { if (CP && CP.readTok === my){ spans.forEach(s => s.classList.add('all')); say(text); setTimeout(() => spans.forEach(s => s.classList.remove('all')), 2500); if (done) done(); } }, 350); return; }
+    if (spans[i]) spans[i].classList.add('on');
+    const w = words[i].replace(/[^A-Za-z']/g, '');
+    if (w) speakWord(w);
+    i++; setTimeout(step, 520 + w.length * 70);
+  };
+  step();
+}
+function compLocked(d){
+  const pct = Math.min(100, Math.round(d.correct / d.need * 100));
+  if (!d.band) return `<div class="panel" style="text-align:center"><div class="sc-frog" style="width:110px;margin:0 auto">${FROG_SVG}</div><h2>Stories are for Grades 1 to 6 📖</h2><p>Keep practicing your letters and words!</p></div>`;
+  return `<div class="panel comp-lock"><div class="sc-frog" style="width:110px;margin:0 auto">${FROG_SVG}</div>
+    <h2>🔒 Stories open at ${d.need} words!</h2>
+    <p>Read <b>${d.need}</b> practice words correctly to open your first story. Your teacher checks each word.</p>
+    <div class="comp-meter"><i style="width:${pct}%"></i></div>
+    <p class="comp-count"><b>${d.correct}</b> of ${d.need} words correct. ${d.correct < d.need ? `Only <b>${d.need - d.correct}</b> more to go!` : ''}</p>
+    <button type="button" class="btn primary" data-ltab="practice">🎤 Practice My Words</button></div>`;
+}
+function compHtml(){
+  if (!CP) return loaderHtml('Getting your story ready.');
+  const d = CP.data;
+  if (!d) return CP.msg ? `<div class="panel"><p class="msg err">${esc(CP.msg)}</p></div>` : loaderHtml('Getting your story ready.');
+  if (!d.unlocked) return compLocked(d);
+  const fin = (d.finished || []).length ? `<div class="panel"><h3 style="margin-top:0">🏆 My Finished Stories</h3><div class="comp-fin">${d.finished.map(f => `<span class="comp-fin-i">${f.icon} ${esc(f.title)} <b class="star">★ ${f.stars}</b></span>`).join('')}</div></div>` : '';
+  if (!d.story) return `<div class="panel" style="text-align:center"><div class="yehey">Yehey!</div><h2>You finished every story! 🎉</h2><p>New stories are coming. Keep reading every day!</p></div>` + fin;
+  const st = d.story, sents = st.sentences, qs = st.questions;
+  const okS = sents.filter(x => x.status === 'correct').length, allS = okS === sents.length;
+  const okQ = qs.filter(x => x.status === 'correct').length;
+  const head = `<div class="panel comp-head"><div class="comp-cover">${st.icon}</div><div><h2 style="margin:0">${esc(st.title)}</h2>
+    <p class="sub" style="margin:4px 0 0">📖 Sentences: <b>${okS} of ${sents.length}</b> correct${allS ? `. ❓ Questions: <b>${okQ} of ${qs.length}</b> correct` : '. The questions open when every sentence is correct.'}</p>
+    <div class="comp-dots">${sents.map((x, i) => `<button type="button" class="cd ${x.status}" data-cidx="${i}" title="Sentence ${i + 1}">${x.status === 'correct' ? '★' : i + 1}</button>`).join('')}${qs.map(x => `<span class="cd q ${x.status}" title="Question ${x.n}">${x.status === 'correct' ? '★' : x.status === 'locked' ? '🔒' : '?'}</span>`).join('')}</div></div></div>`;
+  if (d.recOff) return head + `<div class="panel">${recRestHtml()}</div>` + (allS ? compOverviewHtml(st) : '') + fin;
+  if (!allS){
+    if (CP.idx >= sents.length) CP.idx = sents.length - 1;
+    const x = sents[CP.idx], dr = CP.drafts[x.id], recording = CP.rec && CP.rec.id === x.id;
+    const note = x.status === 'correct' ? `<div class="fb-learner">⭐ Correct! You earned 2 stars.${x.remark ? ' Teacher says: ' + esc(x.remark) : ''}</div>`
+      : x.status === 'redo' ? `<div class="redo-note"><b>Please read this sentence again.</b>${x.remark ? ' Teacher says: ' + esc(x.remark) : ''}</div>`
+      : x.status === 'submitted' ? '<p class="pnote hint">Sent. Waiting for your teacher to check it. You can still record again.</p>' : '';
+    const waitingAll = sents.every(s => s.status === 'submitted' || s.status === 'correct');
+    return head + `<div class="panel pcard comp-card">
+      <p class="sub">Sentence ${CP.idx + 1} of ${sents.length}</p>${note}
+      <div class="comp-ic">${x.icons || ''}</div>
+      <div class="comp-sent" id="cSent">${compSentenceHtml(x.text, x.mastered)}</div>
+      ${(x.mastered || []).length ? '<p class="sub">🟢 Green words are words you already mastered!</p>' : ''}
+      <div class="print-btns" style="justify-content:center"><button type="button" class="btn primary" id="cListen">🔊 Listen First</button></div>
+      ${x.status === 'correct' ? '' : `<div class="pcol turn" style="text-align:center">
+        <h3>Your Turn: read the sentence</h3>
+        <button type="button" class="mic${recording ? ' rec' : ''}" id="cMic" aria-label="${recording ? 'Stop recording' : 'Record your voice'}">${recording ? STOP_SVG : MIC_SVG}</button>
+        <p class="pnote">${recording ? 'Recording. Read the sentence, then tap to stop.' : dr ? 'Listen to your reading. Send it, or record again.' : 'Tap the microphone, then read the whole sentence out loud.'}</p>
+        ${dr ? `<audio controls src="${dr.url}"></audio><div class="print-btns" style="justify-content:center"><button type="button" class="btn" id="cAgain">Record Again</button><button type="button" class="btn primary" id="cSend">Send to My Teacher</button></div>` : ''}
+      </div>`}
+      <p class="msg" id="compMsg"></p>
+      ${waitingAll && okS < sents.length ? '<p class="hint" style="text-align:center">👏 Great reading! Your teacher will check your sentences. The questions open when every sentence is correct.</p>' : ''}
+      <div class="pnav"><button type="button" class="btn" id="cBack"${CP.idx === 0 ? ' disabled' : ''}>Back</button><button type="button" class="btn" id="cNext"${CP.idx >= sents.length - 1 ? ' disabled' : ''}>Next</button></div>
+    </div>` + fin;
+  }
+  const allDone = okQ === qs.length;
+  return head + compOverviewHtml(st) + (allDone ? `<div class="panel" style="text-align:center"><div class="yehey">Yehey!</div><h2>You finished "${esc(st.title)}"! 🎉</h2>
+      <p>You earned <b class="star">★ ${sents.concat(qs).reduce((t, x) => t + (x.stars || 0), 0)}</b> stars from this story.</p><button type="button" class="btn primary" id="cNextStory">📖 Open My Next Story</button></div>`
+    : `<div class="panel"><h2 style="margin-top:0">❓ Questions</h2><p class="sub">Listen to each question. Then record your answer. Use the sentence starter to help you.</p>
+      ${qs.map(q => compQuestionHtml(q)).join('')}<p class="msg" id="compMsg"></p></div>`) + fin;
+}
+function compOverviewHtml(st){
+  return `<div class="panel"><h2 style="margin-top:0">📖 My Story</h2><p class="sub">Tap 🔊 to hear how you read each sentence.</p>
+    <div class="print-btns"><button type="button" class="btn small primary" id="cPlayAll">▶ Play My Whole Story</button></div>
+    <ol class="comp-story">${st.sentences.map(x => `<li><span class="comp-ic sm">${x.icons || ''}</span><span class="comp-line">${esc(x.text)}</span>
+      ${x.hasAudio ? `<button type="button" class="btn small" data-cmine="${esc(x.id)}" aria-label="Hear my reading">🔊</button>` : ''}</li>`).join('')}</ol>
+    <audio id="cMineAudio" class="hidden"></audio></div>`;
+}
+function compQuestionHtml(q){
+  const dr = CP.drafts[q.id], recording = CP.rec && CP.rec.id === q.id;
+  const badge = `<span class="lvl-badge">${esc(q.level)} • ★ ${q.value}</span>`;
+  const note = q.status === 'correct' ? `<div class="fb-learner">⭐ Correct! You earned ${q.value} star${q.value > 1 ? 's' : ''}.${q.remark ? ' Teacher says: ' + esc(q.remark) : ''}</div>`
+    : q.status === 'redo' ? `<div class="redo-note"><b>Please answer again.</b>${q.remark ? ' Teacher says: ' + esc(q.remark) : ''}</div>`
+    : q.status === 'submitted' ? '<p class="pnote hint">Sent. Waiting for your teacher to check it. You can still record again.</p>' : '';
+  return `<div class="comp-q ${q.status}"><div class="comp-q-h"><b>Question ${q.n}</b> ${badge}</div>
+    <p class="comp-q-t">${esc(q.text)} <button type="button" class="btn small" data-csay="${esc(q.text)}" aria-label="Hear the question">🔊</button></p>
+    ${q.starter ? `<p class="comp-starter">💬 Start like this: <b>${esc(q.starter)}</b> <button type="button" class="btn small" data-csay="${esc(q.starter.replace(/_+/g, 'blank'))}" aria-label="Hear the sentence starter">🔊</button></p>` : ''}
+    ${note}
+    ${q.status === 'correct' ? '' : `<div class="comp-q-rec"><button type="button" class="mic small${recording ? ' rec' : ''}" data-cqmic="${esc(q.id)}" aria-label="Record your answer">${recording ? STOP_SVG : MIC_SVG}</button>
+      <span class="pnote">${recording ? 'Recording. Say your answer, then tap to stop.' : dr ? 'Listen, then send it or record again.' : 'Tap the microphone and say your answer.'}</span>
+      ${dr ? `<audio controls src="${dr.url}"></audio><button type="button" class="btn small primary" data-cqsend="${esc(q.id)}">Send to My Teacher</button>` : ''}</div>`}</div>`;
+}
+function compStartRec(item, maxMs){
+  if (CP.rec) return;
+  const ctlPromise = micRecord((blob, mime) => {
+    const old = CP.drafts[item.id]; if (old){ try { URL.revokeObjectURL(old.url); } catch(e){} }
+    CP.drafts[item.id] = { blob, url: URL.createObjectURL(blob), mime };
+    CP.rec = null; renderTeacher();
+  }, err => { CP.rec = null; setMsg($('compMsg'), err, 'err'); }, maxMs);
+  Promise.resolve(ctlPromise).then(ctl => { if (ctl){ CP.rec = { id: item.id, ctl }; renderTeacher(); } });
+}
+async function compSend(item){
+  const dr = CP.drafts[item.id]; if (!dr) return;
+  if (navigator.onLine === false){ setMsg($('compMsg'), 'Sending needs the internet. Your recording is kept here. Try again when you have signal.', 'err'); return; }
+  setMsg($('compMsg'), 'Sending your reading');
+  try {
+    const res = await callApi({ action: 'compSubmit', lrn: CP.lrn, id: item.id, audio: await blobToBase64(dr.blob), mime: dr.mime, recordedAt: nowIso(), _wait: 90000 });
+    if (res && res.ok){
+      try { URL.revokeObjectURL(dr.url); } catch(e){} delete CP.drafts[item.id];
+      const st = CP.data.story; [st.sentences, st.questions].forEach(list => list.forEach(x => { if (x.id === item.id) Object.assign(x, res.item); }));
+      compCache(CP.lrn, CP.data);
+      if (item.kind === 'sentence'){ const next = st.sentences.findIndex((x, i) => i > CP.idx && x.status !== 'correct' && x.status !== 'submitted'); if (next >= 0) CP.idx = next; }
+      renderTeacher(); setMsg($('compMsg'), 'Sent! Your teacher will check it.', 'good'); return;
+    }
+    if (res && res.recOff){ CP.data.recOff = true; renderTeacher(); return; }
+    setMsg($('compMsg'), (res && res.error) || 'Not sent. Please try again.', 'err');
+  } catch(e){ setMsg($('compMsg'), 'The signal is weak. Your recording is kept here. Please try again.', 'err'); }
+}
+async function compPlayMine(id, onEnd){
+  const el = $('cMineAudio'); if (!el) return;
+  try {
+    let src = (CP.mine || {})[id];
+    if (!src){
+      const r = await callApi({ action: 'compMyAudio', lrn: CP.lrn, id, _wait: 60000 });
+      if (!r || !r.ok){ setMsg($('compMsg'), (r && r.error) || 'Could not open your recording.', 'err'); if (onEnd) onEnd(); return; }
+      src = `data:${r.mime};base64,${r.audio}`; CP.mine = CP.mine || {}; CP.mine[id] = src;
+    }
+    el.src = src; el.onended = () => { if (onEnd) onEnd(); }; safePlay(el, () => { if (onEnd) onEnd(); });
+  } catch(e){ if (onEnd) onEnd(); }
+}
+function bindComp(){
+  const body = $('teacherBody'); if (!CP || !CP.data) return;
+  const st = CP.data.story;
+  body.querySelectorAll('[data-cidx]').forEach(b => b.onclick = () => { if (CP.rec) return; CP.idx = +b.dataset.cidx; renderTeacher(); });
+  if ($('cNextStory')) $('cNextStory').onclick = () => { CP.data = null; compCache(CP.lrn, null); CP.idx = 0; loadComp(); };
+  if (!st) return;
+  const sents = st.sentences, x = sents[CP.idx];
+  if ($('cListen')) $('cListen').onclick = () => { actx(); readAloud($('cSent'), x.text); };
+  if ($('cMic')) $('cMic').onclick = () => { if (CP.rec && CP.rec.id === x.id) CP.rec.ctl.stop(); else compStartRec(x, 25000); };
+  if ($('cAgain')) $('cAgain').onclick = () => compStartRec(x, 25000);
+  if ($('cSend')) $('cSend').onclick = () => compSend(x);
+  if ($('cBack')) $('cBack').onclick = () => { if (CP.rec) CP.rec.ctl.cancel(); CP.rec = null; CP.idx--; renderTeacher(); };
+  if ($('cNext')) $('cNext').onclick = () => { if (CP.rec) CP.rec.ctl.cancel(); CP.rec = null; CP.idx++; renderTeacher(); };
+  body.querySelectorAll('[data-csay]').forEach(b => b.onclick = () => { actx(); say(b.dataset.csay); });
+  body.querySelectorAll('[data-cmine]').forEach(b => b.onclick = () => compPlayMine(b.dataset.cmine));
+  if ($('cPlayAll')) $('cPlayAll').onclick = () => { const ids = sents.filter(s => s.hasAudio).map(s => s.id); let i = 0; const next = () => { if (i < ids.length) compPlayMine(ids[i++], next); }; next(); };
+  body.querySelectorAll('[data-cqmic]').forEach(b => b.onclick = () => { const q = st.questions.find(y => y.id === b.dataset.cqmic); if (CP.rec && CP.rec.id === q.id) CP.rec.ctl.stop(); else compStartRec(q, 60000); });
+  body.querySelectorAll('[data-cqsend]').forEach(b => b.onclick = () => compSend(st.questions.find(y => y.id === b.dataset.cqsend)));
+  // a new sentence is read aloud once by itself
+  if ($('cSent') && x && CP.autoRead !== x.id && x.status !== 'correct'){ CP.autoRead = x.id; setTimeout(() => { if ($('cSent')) readAloud($('cSent'), x.text); }, 500); }
+}
+
+/* =========================================================
+   COMPREHENSION REVIEW (teachers and School Head), separate from Practice Review
+   ========================================================= */
+let CR = null;
+const CR_STATUS = [['submitted', 'Waiting for Review'], ['redo', 'Sent Back for Redo'], ['correct', 'Correct'], ['all', 'All']];
+async function loadCompReview(auth, el){
+  const keep = CR && CR.el === el ? CR : null;
+  const key = 'cr_' + (auth.email || 'head');
+  CR = { auth, el, data: keep ? keep.data : sideGet(key), status: keep ? keep.status : 'submitted', grade: keep ? keep.grade : '', kind: keep ? keep.kind : '', show: 40, view: keep ? keep.view : 'check' };
+  if (CR.data) renderCompReview(); else el.innerHTML = loaderHtml('Getting the story recordings.');
+  try {
+    const res = await callApi(Object.assign({ action: 'compReviewList', _wait: 90000 }, auth));
+    if (!CR || CR.el !== el) return;
+    if (!res || !res.ok){ if (!CR.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc(res && res.error === 'Unknown request.' ? 'This tab needs the newest server code. Please update Code.gs and deploy a new version.' : (res && res.error) || 'Could not load the story recordings.')}</p></div>`; return; }
+    CR.data = res; sideSet(key, res);
+    if (!(AUDIO_BUSY > 0 || audioPlaying(el) || (el.contains(document.activeElement) && /INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))) renderCompReview();
+  } catch(e){ if (!CR.data) el.innerHTML = '<div class="panel"><p class="msg err">This tab needs the internet. Connect, then open it again.</p></div>'; }
+}
+function renderCompReview(){
+  const d = CR.data, el = CR.el;
+  const grades = [...new Set(d.learners.map(l => String(l.grade)))].sort((a, b) => gradeOrder(a) - gradeOrder(b));
+  const items = d.items.filter(x => (CR.status === 'all' || x.status === CR.status) && (!CR.grade || String(x.grade) === CR.grade) && (!CR.kind || x.kind === CR.kind))
+    .sort((a, b) => CR.status === 'submitted' ? String(a.submittedAt).localeCompare(String(b.submittedAt)) : String(b.reviewedAt || b.submittedAt).localeCompare(String(a.reviewedAt || a.submittedAt)));
+  const waiting = d.items.filter(x => x.status === 'submitted').length;
+  const kids = d.learners.filter(l => (!CR.grade || String(l.grade) === CR.grade) && l.band).sort((a, b) => b.correct - a.correct || a.name.localeCompare(b.name));
+  const tag = x => x.status === 'correct' ? '<span class="star">★ Correct</span>' : x.status === 'redo' ? '<span class="tag red">Redo</span>' : '<span class="tag">Waiting</span>';
+  el.innerHTML = `<div class="panel"><h2 style="margin-top:0">📚 Comprehension Review</h2>
+    <p class="sub">Story recordings only. Practice words stay in Practice Review. ${waiting} story recording(s) waiting.</p>
+    <div class="toolbar"><div class="seg"><button type="button" data-crview="check" aria-pressed="${CR.view === 'check'}">🎧 Check Recordings</button><button type="button" data-crview="progress" aria-pressed="${CR.view === 'progress'}">📊 Learner Progress</button></div>
+      ${grades.length > 1 ? `<label>Grade<select id="crGrade"><option value="">All grades</option>${grades.map(g => `<option value="${g}"${g === CR.grade ? ' selected' : ''}>${gradeLabel(g)}</option>`).join('')}</select></label>` : ''}
+      ${CR.view === 'check' ? `<label>Show<select id="crStatus">${CR_STATUS.map(s => `<option value="${s[0]}"${s[0] === CR.status ? ' selected' : ''}>${s[1]}</option>`).join('')}</select></label>
+      <label>Type<select id="crKind"><option value="">Sentences and answers</option><option value="sentence"${CR.kind === 'sentence' ? ' selected' : ''}>Sentences only</option><option value="question"${CR.kind === 'question' ? ' selected' : ''}>Answers only</option></select></label>` : ''}
+      <button type="button" class="btn small" id="crReload">Refresh</button></div></div>
+  ${CR.view === 'progress' ? `<div class="panel"><div class="tablewrap"><table class="stable"><thead><tr><th>Learner</th><th>Grade</th><th>Words Correct</th><th>Current Story</th><th>Finished Stories</th><th>Story ★</th></tr></thead><tbody>
+    ${kids.map(l => { const cur = l.stories.find(s => s.sentencesOk < s.sentences || s.questionsOk < s.questions); const fin = l.stories.filter(s => s.sentencesOk === s.sentences && s.questionsOk === s.questions);
+      return `<tr><td>${esc(l.name)}</td><td>${gradeLabel(l.grade)}</td><td>${l.correct >= d.need ? `✅ ${l.correct}` : `${gpBar(l.correct / d.need * 100)} ${l.correct} of ${d.need}`}</td>
+        <td>${cur ? `${esc(cur.title)}<br><small>Sentences ${cur.sentencesOk}/${cur.sentences}, Questions ${cur.questionsOk}/${cur.questions}</small>` : l.correct >= d.need ? '<small>Opens when the learner visits Stories</small>' : '🔒 Locked'}</td>
+        <td>${fin.length}</td><td class="star">★ ${l.stories.reduce((t, s) => t + s.stars, 0)}</td></tr>`; }).join('') || '<tr><td colspan="6">No learners in Grades 1 to 6.</td></tr>'}</tbody></table></div>
+    <p class="hint">Stories open when a learner has ${d.need} practice words checked Correct. Each correct sentence earns 2 stars. Answers earn stars by question level: Grades 1 to 3 get 1 star for Remember, Understand, and Apply, and 2 stars for Think and Evaluate. Grades 4 to 6 (SOLO) get 1 star for Unistructural, Multistructural, and Relational, and 2 stars for Extended Abstract.</p></div>`
+  : `<div class="panel">${items.length ? items.slice(0, CR.show).map(x => `<div class="rv-item cr-item">
+      <div><div class="cr-kind">${x.kind === 'sentence' ? `📖 Sentence ${x.n} • ★ 2` : `❓ Question ${x.n} • ${esc(x.level)} • ★ ${x.value}`}</div>
+        ${x.kind === 'sentence' ? `<div class="cr-text">${x.icons ? `<span class="comp-ic sm">${x.icons}</span> ` : ''}${esc(x.text)}</div>` : `<div class="cr-text">${esc(x.text)}</div>${x.starter ? `<div class="sub">Starter: ${esc(x.starter)}</div>` : ''}`}
+        <div class="sub">${esc(x.learnerName)}, ${esc(classLabel(x.grade, x.section || ''))}. Story: <b>${esc(x.title)}</b>. ${x.submittedAt ? 'Sent ' + esc(fmtDateTime(x.submittedAt)) : ''}${x.reviewedBy ? '. Checked by ' + esc(x.reviewedBy) : ''}</div></div>
+      <div>${tag(x)}</div>
+      <div class="rv-actions">${x.hasAudio ? playBtn(x.id, 'data-crplay') : ''}
+        <input data-crrem="${esc(x.id)}" placeholder="Remark (optional)" value="${esc(x.remark || '')}">
+        <button type="button" class="btn small primary" data-crok="${esc(x.id)}">★ Correct</button><button type="button" class="btn small" data-crredo="${esc(x.id)}">Redo</button>
+        <span class="msg" data-crmsg="${esc(x.id)}"></span></div></div>`).join('')
+      + (items.length > CR.show ? `<button type="button" class="btn" id="crMore">Show ${Math.min(40, items.length - CR.show)} more (${items.length - CR.show} left)</button>` : '')
+    : '<p class="hint">Nothing here right now.</p>'}</div>`}`;
+  wireAudio(el);
+  el.querySelectorAll('[data-crview]').forEach(b => b.onclick = () => { CR.view = b.dataset.crview; renderCompReview(); });
+  const on = (id, ev, f) => { const x = $(id); if (x) x[ev] = f; };
+  on('crGrade', 'onchange', e => { CR.grade = e.target.value; CR.show = 40; renderCompReview(); });
+  on('crStatus', 'onchange', e => { CR.status = e.target.value; CR.show = 40; renderCompReview(); });
+  on('crKind', 'onchange', e => { CR.kind = e.target.value; CR.show = 40; renderCompReview(); });
+  on('crReload', 'onclick', () => loadCompReview(CR.auth, CR.el));
+  on('crMore', 'onclick', () => { CR.show += 40; renderCompReview(); });
+  el.querySelectorAll('[data-crplay]').forEach(b => b.onclick = () => playInto(b.dataset.crplay, b, CR.auth, el, 'compAudio'));
+  const judgeC = async (id, verdict) => {
+    const rem = el.querySelector(`[data-crrem="${id}"]`).value.trim(), m = el.querySelector(`[data-crmsg="${id}"]`);
+    if (verdict === 'redo' && !rem && !ask('Send this back for redo without a remark?')) return;
+    setMsg(m, 'Saving');
+    try {
+      const r = await callApi(Object.assign({ action: 'compReview', id, verdict, remark: rem }, CR.auth));
+      if (!r || !r.ok){ setMsg(m, (r && r.error) || 'Not saved.', 'err'); return; }
+      const x = CR.data.items.find(i => i.id === id); if (x) Object.assign(x, r.item);
+      renderCompReview();
+      const m2 = el.querySelector(`[data-crmsg="${id}"]`);
+      if (m2) setMsg(m2, verdict === 'correct' ? (r.questionsOpened ? 'Correct! Every sentence is done, so the questions are now open for the learner.' : 'Correct! The learner earned the stars.') : 'Sent back to the learner to record again.', 'good');
+      else tell(verdict === 'correct' ? (r.questionsOpened ? 'Correct! The questions are now open for the learner.' : 'Marked correct.') : 'Sent back for redo.');
+    } catch(e){ setMsg(m, 'No internet. Try again when you are online.', 'err'); }
+  };
+  el.querySelectorAll('[data-crok]').forEach(b => b.onclick = () => judgeC(b.dataset.crok, 'correct'));
+  el.querySelectorAll('[data-crredo]').forEach(b => b.onclick = () => judgeC(b.dataset.crredo, 'redo'));
+}
+
+/* =========================================================
    STAR STANDINGS AND WEEKLY RANKINGS (School Head and advisers)
    ========================================================= */
 let SD = null;
@@ -5189,7 +5806,7 @@ function renderReviewView(){
   const isAdviser = d.role === 'adviser';
   const hfCount = (d.headFeedback || []).filter(x => !x.seen).length;
   if (!REV.view) REV.view = isAdviser ? 'home' : 'practice';
-  const tabs = isAdviser ? `<div class="rtabs"><button type="button" class="ltab" data-rview="home" aria-selected="${REV.view === 'home'}">\uD83C\uDFE0 Home</button><button type="button" class="ltab" data-rview="results" aria-selected="${REV.view === 'results'}">\uD83D\uDCD6 Reading Assessment Results</button><button type="button" class="ltab" data-rview="practice" aria-selected="${REV.view === 'practice'}">\uD83C\uDFA7 Practice Review${hfCount ? ` <span class="tab-badge">${hfCount}</span>` : ''}</button><button type="button" class="ltab" data-rview="bank" aria-selected="${REV.view === 'bank'}">\uD83D\uDD24 Word Bank</button><button type="button" class="ltab" data-rview="rank" aria-selected="${REV.view === 'rank'}">\u2B50 Star Rankings</button><button type="button" class="ltab" data-rview="act" aria-selected="${REV.view === 'act'}">\uD83D\uDCF1 Learner Activity</button><button type="button" class="ltab" data-rview="nb" aria-selected="${REV.view === 'nb'}">\uD83D\uDCD2 Learner Notebooks</button></div>` : '';
+  const tabs = isAdviser ? `<div class="rtabs"><button type="button" class="ltab" data-rview="home" aria-selected="${REV.view === 'home'}">\uD83C\uDFE0 Home</button><button type="button" class="ltab" data-rview="results" aria-selected="${REV.view === 'results'}">\uD83D\uDCD6 Reading Assessment Results</button><button type="button" class="ltab" data-rview="practice" aria-selected="${REV.view === 'practice'}">\uD83C\uDFA7 Practice Review${hfCount ? ` <span class="tab-badge">${hfCount}</span>` : ''}</button><button type="button" class="ltab" data-rview="bank" aria-selected="${REV.view === 'bank'}">\uD83D\uDD24 Word Bank</button><button type="button" class="ltab" data-rview="rank" aria-selected="${REV.view === 'rank'}">\u2B50 Star Rankings</button><button type="button" class="ltab" data-rview="act" aria-selected="${REV.view === 'act'}">\uD83D\uDCF1 Learner Activity</button><button type="button" class="ltab" data-rview="nb" aria-selected="${REV.view === 'nb'}">\uD83D\uDCD2 Learner Notebooks</button><button type="button" class="ltab" data-rview="games" aria-selected="${REV.view === 'games'}">\uD83C\uDFAE Game Progress</button><button type="button" class="ltab" data-rview="comp" aria-selected="${REV.view === 'comp'}">\uD83D\uDCDA Comprehension Review</button></div>` : '';
   if (isAdviser && REV.view === 'home'){
     const hfNew = (d.headFeedback || []).filter(x => !x.seen).length;
     const hfBar = hfNew ? `<div class="panel hf-card new"><b>\uD83D\uDCEC The School Head sent you ${hfNew} ${hfNew === 1 ? 'note' : 'notes'} about recordings you checked.</b> <button type="button" class="btn small primary" id="hfGo">Read Now</button></div>` : '';
@@ -5197,6 +5814,18 @@ function renderReviewView(){
     el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
     if ($('hfGo')) $('hfGo').onclick = () => { REV.view = 'practice'; renderReview(); const c = el.querySelector('.hf-card'); if (c && c.scrollIntoView) c.scrollIntoView({ behavior: 'smooth', block: 'start' }); };
     loadHome(REV.auth, $('homeHost'));
+    return;
+  }
+  if (isAdviser && REV.view === 'comp'){
+    el.innerHTML = `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1>` + tabs + '<div id="crHost"></div>';
+    el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
+    loadCompReview(REV.auth, $('crHost'));
+    return;
+  }
+  if (isAdviser && REV.view === 'games'){
+    el.innerHTML = `<h1>Hello, ${esc(d.reviewer)} <span class="star">\u2605 ${d.myStars || 0}</span></h1>` + tabs + '<div id="gpHost"></div>';
+    el.querySelectorAll('[data-rview]').forEach(b => b.onclick = () => { REV.view = b.dataset.rview; renderReview(); });
+    loadGameProg(REV.auth, $('gpHost'));
     return;
   }
   if (isAdviser && REV.view === 'nb'){
@@ -5310,11 +5939,11 @@ function renderReviewView(){
    right beside the Play button. */
 const AUDIO = {}, AUDIO_ORDER = [];
 let AUDIO_BUSY = 0;
-async function fetchAudio(id, auth){
+async function fetchAudio(id, auth, action){
   if (AUDIO[id]) return AUDIO[id];
   let res;
-  try { res = await callApi(Object.assign({ action: 'getAudio', id, _wait: 60000 }, auth)); }
-  catch(e){ res = await callApi(Object.assign({ action: 'getAudio', id, _wait: 120000 }, auth)); }
+  try { res = await callApi(Object.assign({ action: action || 'getAudio', id, _wait: 60000 }, auth)); }
+  catch(e){ res = await callApi(Object.assign({ action: action || 'getAudio', id, _wait: 120000 }, auth)); }
   if (!res || !res.ok) throw new Error((res && res.error) || 'Could not open the recording.');
   AUDIO[id] = `data:${res.mime || 'audio/webm'};base64,${res.audio}`;
   AUDIO_ORDER.push(id);
@@ -5324,11 +5953,11 @@ async function fetchAudio(id, auth){
 function audioTag(id, auto){ return `<audio controls${auto ? ' autoplay' : ''} preload="auto" src="${AUDIO[id]}" data-aid="${esc(id)}"></audio>`; }
 function playBtn(id, attr){ return AUDIO[id] ? `<span class="aud">${audioTag(id)}</span>` : `<button type="button" class="btn small" ${attr}="${esc(id)}">\u25B6 Play</button><span class="aud" data-audio="${esc(id)}"></span>`; }
 function audioPlaying(el){ return [...el.querySelectorAll('audio')].some(a => !a.paused && !a.ended); }
-async function playInto(id, btn, auth, root){
+async function playInto(id, btn, auth, root, action){
   const slot = root.querySelector(`[data-audio="${id}"]`) || btn.nextElementSibling;
   btn.disabled = true; btn.textContent = 'Loading\u2026'; AUDIO_BUSY++;
   try {
-    await fetchAudio(id, auth);
+    await fetchAudio(id, auth, action);
     if (slot){ slot.innerHTML = audioTag(id, true); wireAudio(slot); }
     btn.remove();
   } catch(e){
@@ -6072,6 +6701,126 @@ function renderChecked(){
   });
 }
 
+
+
+/* =========================================================
+   GAME PROGRESS: who finished each game and each level (School Head and teachers)
+   ========================================================= */
+let GP = null;
+function gpCatalog(grade, lists){
+  const ks = keyStage(grade) || 1;
+  const out = GAMES.filter(g => !g.grades || g.grades.indexOf(String(grade)) >= 0).map(g => ({ id: g.id, title: g.title, levels: g.levels, kind: 'letter' }));
+  (lists || []).filter(x => String(x.ks).split(',').indexOf(String(ks)) >= 0 && x.n >= 3).forEach(c => {
+    WORD_GAMES.forEach(w => out.push({ id: `w.${w.id}.${wslug(c.category)}`, type: w.id, title: w.title, cat: c.category, group: c.group, levels: Math.max(1, Math.ceil(c.n / 5)), kind: 'word' }));
+  });
+  return out;
+}
+function gpDone(l, g){ const p = (l.progress || {})[g.id] || []; let n = 0; for (let i = 1; i <= g.levels; i++) if (p.indexOf(i) >= 0) n++; return n; }
+function gpStats(l, lists){
+  const cat = gpCatalog(l.grade, lists), st = { letter: { lv: 0, all: 0, fin: 0, n: 0 }, word: { lv: 0, all: 0, fin: 0, n: 0 } };
+  cat.forEach(g => { const d = gpDone(l, g), b = st[g.kind]; b.lv += d; b.all += g.levels; b.n++; if (d >= g.levels) b.fin++; });
+  const all = st.letter.all + st.word.all;
+  st.pct = all ? Math.round((st.letter.lv + st.word.lv) / all * 100) : 0;
+  st.cat = cat;
+  return st;
+}
+function gpBar(pct){ return `<span class="gp-bar"><i style="width:${Math.max(0, Math.min(100, pct))}%"></i></span>`; }
+async function loadGameProg(auth, el){
+  const keep = GP && GP.el === el ? GP : null;
+  const key = 'gp_' + (auth.email || 'head');
+  GP = { auth, el, data: keep ? keep.data : sideGet(key), view: keep ? keep.view : 'learners', cls: keep ? keep.cls : '', q: keep ? keep.q : '', sort: keep ? keep.sort : 'high', game: keep ? keep.game : 'frog', wtype: keep ? keep.wtype : 'build', wcat: keep ? keep.wcat : '', who: keep ? keep.who : '' };
+  if (GP.data) renderGameProg(); else el.innerHTML = loaderHtml('Getting the game progress of every learner.');
+  try {
+    const res = await callApi(Object.assign({ action: 'gameProgress', _wait: 90000 }, auth));
+    if (!GP || GP.el !== el) return;
+    if (!res || !res.ok){ if (!GP.data) el.innerHTML = `<div class="panel"><p class="msg err">${esc(res && res.error === 'Unknown request.' ? 'Game Progress needs the newest server code. Please ask the School Head to update Code.gs and deploy a new version.' : (res && res.error) || 'Could not load the game progress.')}</p></div>`; return; }
+    GP.data = res; sideSet(key, res);
+    if (!(el.contains(document.activeElement) && /INPUT|SELECT/.test(document.activeElement.tagName))) renderGameProg();
+  } catch(e){ if (!GP.data) el.innerHTML = '<div class="panel"><p class="msg err">Game Progress needs the internet. Connect, then open it again.</p></div>'; }
+}
+function renderGameProg(){
+  const d = GP.data, lists = d.lists || [];
+  const classes = [...new Set(d.learners.map(l => l.grade + '|' + l.section))].sort((a, b) => gradeOrder(a.split('|')[0]) - gradeOrder(b.split('|')[0]) || a.localeCompare(b));
+  const q = GP.q.trim().toLowerCase();
+  const rows = d.learners.filter(l => (!GP.cls || l.grade + '|' + l.section === GP.cls) && (!q || l.name.toLowerCase().indexOf(q) >= 0))
+    .map(l => Object.assign({ st: gpStats(l, lists) }, l));
+  if (GP.sort === 'high') rows.sort((a, b) => b.st.pct - a.st.pct || a.name.localeCompare(b.name));
+  else if (GP.sort === 'low') rows.sort((a, b) => a.st.pct - b.st.pct || a.name.localeCompare(b.name));
+  else rows.sort((a, b) => a.name.localeCompare(b.name));
+  const views = [['learners', '👧 By Learner'], ['game', '🎮 By Game']];
+  let body = '';
+  if (GP.who){
+    const l = rows.find(x => x.id === GP.who) || d.learners.map(x => Object.assign({ st: gpStats(x, lists) }, x)).find(x => x.id === GP.who);
+    if (l){
+      const letters = l.st.cat.filter(g => g.kind === 'letter'), words = l.st.cat.filter(g => g.kind === 'word');
+      const cats = [...new Set(words.map(g => g.cat))];
+      body = `<div class="panel"><button type="button" class="btn small" id="gpBack">← Back</button>
+        <h2>${esc(l.name)} <span class="sub">${esc(classLabel(l.grade, l.section))}</span></h2>
+        <p>${gpBar(l.st.pct)} <b>${l.st.pct}%</b> of all levels done. 🔤 ${l.st.letter.fin} of ${l.st.letter.n} letter games finished. 🧱 ${l.st.word.fin} of ${l.st.word.n} word game sets finished. ★ ${l.games} game stars.</p>
+        <h3>🔤 Letter Games</h3>
+        ${letters.map(g => { const p = (l.progress || {})[g.id] || []; const n = gpDone(l, g);
+          return `<div class="gp-lg"><div class="gp-lg-h"><b>${esc(g.title)}</b> <span class="sub">${n} of ${g.levels} levels</span> ${n >= g.levels ? '<span class="tag ok">✓ Finished</span>' : ''}</div>
+            <div class="gp-dots">${Array.from({ length: g.levels }, (_, i) => `<span class="${p.indexOf(i + 1) >= 0 ? 'on' : ''}" title="Level ${i + 1}: ${esc(levelLabel(GAME(g.id), i + 1))}">${esc(levelLabel(GAME(g.id), i + 1)).slice(0, 2)}</span>`).join('')}</div></div>`; }).join('')}
+        <h3>🧱 Word Games</h3>
+        ${cats.length ? `<div class="tablewrap"><table class="stable gp-wt"><thead><tr><th>Word set</th>${WORD_GAMES.map(w => `<th title="${esc(w.title)}">${w.icon}<br><small>${esc(w.title)}</small></th>`).join('')}</tr></thead>
+          <tbody>${cats.map(c => `<tr><td><b>${esc(c)}</b></td>${WORD_GAMES.map(w => { const g = words.find(x => x.cat === c && x.type === w.id); const n = gpDone(l, g);
+            return `<td class="${n >= g.levels ? 'fin' : n ? 'part' : ''}">${n >= g.levels ? '✓' : n + '/' + g.levels}</td>`; }).join('')}</tr>`).join('')}</tbody></table></div>
+          <p class="hint">✓ means every level is done. A number like 2/4 means 2 of 4 levels are done.</p>` : '<p class="hint">No word sets for this grade yet.</p>'}
+      </div>`;
+    }
+  } else if (GP.view === 'learners'){
+    body = `<div class="panel"><div class="tablewrap"><table class="stable gp-table"><thead><tr><th>Learner</th><th>Class</th><th>🔤 Letter Games</th><th>🧱 Word Games</th><th>Overall</th></tr></thead>
+      <tbody>${rows.map(l => `<tr data-gpwho="${esc(l.id)}" class="gp-row"><td><b>${esc(l.name)}</b></td><td>${esc(classLabel(l.grade, l.section))}</td>
+        <td>${gpBar(l.st.letter.all ? l.st.letter.lv / l.st.letter.all * 100 : 0)} <small>${l.st.letter.fin} of ${l.st.letter.n} games finished<br>${l.st.letter.lv} of ${l.st.letter.all} levels</small></td>
+        <td>${gpBar(l.st.word.all ? l.st.word.lv / l.st.word.all * 100 : 0)} <small>${l.st.word.fin} of ${l.st.word.n} sets finished<br>${l.st.word.lv} of ${l.st.word.all} levels</small></td>
+        <td><b class="gp-pct">${l.st.pct}%</b></td></tr>`).join('') || '<tr><td colspan="5">No learners.</td></tr>'}</tbody></table></div>
+      <p class="hint">Tap a learner to see every game and level. Letter games have one level per letter. Each word game has a set for every word family or pattern, with 5 words per level.</p></div>`;
+  } else {
+    const ks1 = lists.filter(x => x.n >= 3);
+    const wcats = [...new Set(ks1.map(x => x.category))];
+    if (!GP.wcat || wcats.indexOf(GP.wcat) < 0) GP.wcat = wcats[0] || '';
+    const isWord = GP.game === 'word';
+    const pick = isWord ? `<label>Word game<select id="gpWType">${WORD_GAMES.map(w => `<option value="${w.id}"${w.id === GP.wtype ? ' selected' : ''}>${esc(w.title)}</option>`).join('')}</select></label>
+      <label>Word set<select id="gpWCat">${wcats.map(c => `<option value="${esc(c)}"${c === GP.wcat ? ' selected' : ''}>${esc(c)}</option>`).join('')}</select></label>` : '';
+    const groups = { done: [], part: [], none: [], na: [] };
+    rows.forEach(l => {
+      const g = isWord ? l.st.cat.find(x => x.kind === 'word' && x.type === GP.wtype && x.cat === GP.wcat) : l.st.cat.find(x => x.id === GP.game);
+      if (!g){ groups.na.push({ l }); return; }
+      const n = gpDone(l, g);
+      groups[n >= g.levels ? 'done' : n ? 'part' : 'none'].push({ l, n, of: g.levels });
+    });
+    groups.part.sort((a, b) => b.n - a.n);
+    const col = (title, list, cls, showN) => `<div class="gp-col ${cls}"><h3>${title} <span class="sub">(${list.length})</span></h3>${list.map(x => `<button type="button" class="gp-chip" data-gpwho="${esc(x.l.id)}">${esc(x.l.name)}${showN ? ` <small>${x.n}/${x.of}</small>` : ''}</button>`).join('') || '<p class="hint">None</p>'}</div>`;
+    body = `<div class="panel"><div class="toolbar"><label>Game<select id="gpGame">${GAMES.map(g => `<option value="${g.id}"${g.id === GP.game ? ' selected' : ''}>🔤 ${esc(g.title)}</option>`).join('')}<option value="word"${isWord ? ' selected' : ''}>🧱 A word game</option></select></label>${pick}</div>
+      <div class="gp-cols">${col('✅ Finished', groups.done, 'done')}${col('⏳ In Progress', groups.part, 'part', true)}${col('⚪ Not Started', groups.none, 'none')}</div>
+      ${groups.na.length ? `<p class="hint">${groups.na.length} learner(s) do not have this word set for their grade.</p>` : ''}</div>`;
+  }
+  const avg = rows.length ? Math.round(rows.reduce((t, l) => t + l.st.pct, 0) / rows.length) : 0;
+  const allLetters = rows.filter(l => l.st.letter.fin >= l.st.letter.n).length;
+  GP.el.innerHTML = `<div class="panel"><h2 style="margin-top:0">🎮 Game Progress</h2>
+    <p class="sub">Who finished each game and each level. Updated ${esc(fmtDateTime(d.at))}.</p>
+    <div class="ins-sums"><div class="ins-sum"><span>👧</span><b>${rows.length}</b><small>Learners</small></div>
+      <div class="ins-sum"><span>📊</span><b>${avg}%</b><small>Average levels done</small></div>
+      <div class="ins-sum"><span>🔤</span><b>${allLetters}</b><small>Finished all letter games</small></div>
+      <div class="ins-sum"><span>⏳</span><b>${rows.filter(l => l.st.pct > 0 && l.st.pct < 100).length}</b><small>In progress</small></div>
+      <div class="ins-sum"><span>⚪</span><b>${rows.filter(l => l.st.pct === 0).length}</b><small>Not started</small></div></div>
+    ${GP.who ? '' : `<div class="toolbar" style="margin-top:10px"><div class="seg">${views.map(v => `<button type="button" data-gpview="${v[0]}" aria-pressed="${GP.view === v[0]}">${v[1]}</button>`).join('')}</div>
+      ${classes.length > 1 ? `<label>Class<select id="gpCls"><option value="">All classes</option>${classes.map(c => `<option value="${esc(c)}"${c === GP.cls ? ' selected' : ''}>${esc(classLabel(c.split('|')[0], c.split('|')[1]))}</option>`).join('')}</select></label>` : ''}
+      <label>Search<input id="gpQ" value="${esc(GP.q)}" placeholder="Learner name"></label>
+      ${GP.view === 'learners' ? `<label>Sort<select id="gpSort"><option value="high"${GP.sort === 'high' ? ' selected' : ''}>Most done first</option><option value="low"${GP.sort === 'low' ? ' selected' : ''}>Least done first</option><option value="name"${GP.sort === 'name' ? ' selected' : ''}>By name</option></select></label>` : ''}
+      <button type="button" class="btn small" id="gpReload">Refresh</button></div>`}</div>${body}`;
+  const on = (id, ev, f) => { const x = $(id); if (x) x[ev] = f; };
+  GP.el.querySelectorAll('[data-gpview]').forEach(b => b.onclick = () => { GP.view = b.dataset.gpview; renderGameProg(); });
+  GP.el.querySelectorAll('[data-gpwho]').forEach(b => b.onclick = () => { GP.who = b.dataset.gpwho; renderGameProg(); GP.el.scrollIntoView && GP.el.scrollIntoView(); });
+  on('gpBack', 'onclick', () => { GP.who = ''; renderGameProg(); });
+  on('gpCls', 'onchange', e => { GP.cls = e.target.value; renderGameProg(); });
+  on('gpSort', 'onchange', e => { GP.sort = e.target.value; renderGameProg(); });
+  on('gpGame', 'onchange', e => { GP.game = e.target.value; renderGameProg(); });
+  on('gpWType', 'onchange', e => { GP.wtype = e.target.value; renderGameProg(); });
+  on('gpWCat', 'onchange', e => { GP.wcat = e.target.value; renderGameProg(); });
+  on('gpReload', 'onclick', () => loadGameProg(GP.auth, GP.el));
+  on('gpQ', 'oninput', e => { GP.q = e.target.value; clearTimeout(GP.qt); GP.qt = setTimeout(() => { renderGameProg(); const f = $('gpQ'); if (f){ f.focus(); f.setSelectionRange(f.value.length, f.value.length); } }, 300); });
+}
 
 /* =========================================================
    LEARNER INSIGHTS AND MESSAGES (School Head only)
