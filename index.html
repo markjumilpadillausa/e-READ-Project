@@ -118,6 +118,7 @@
   /* School Head feedback for teachers */
   .hf-card{border-left:6px solid var(--gold)}
   .msg-tab{color:var(--ink)!important;font-weight:800}
+  .test-box{border-left:6px solid #00897B;background:#F2FBFA}.test-acc{display:flex;gap:16px;flex-wrap:wrap;margin:6px 0;font-size:1.05rem}
   .num-head{display:flex;gap:14px;align-items:center}.num-ico{font-size:3rem}
   .num-days{display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap}.num-days span{width:30px;height:30px;border-radius:50%;background:#eef2ef;display:inline-flex;align-items:center;justify-content:center;font-weight:800}.num-days span.on{background:#fff3c4}.num-days small{color:var(--muted)}
   .num-start{text-align:center}
@@ -1271,7 +1272,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/e-READ-Project/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '5.6';
+const APP_VERSION = '5.7';
 const APP_UPDATED = 'September 26, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1436,7 +1437,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '5.6';
+const NEED_SERVER = '5.7';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
@@ -2832,7 +2833,7 @@ function bindResults(){
   $('padSave').onclick = saveSignature;
 }
 
-const LTABS = [['practice','\uD83C\uDFA4 Practice Words'],['games','\uD83C\uDFAE Games'],['prizes','\uD83C\uDF81 Prizes'],['notebook','\uD83D\uDCD2 My Notebook'],['tasks','\uD83D\uDCD6 Reading Assessment Tasks'],['results','\uD83C\uDFC5 Results'],['comp','\uD83D\uDCDA Stories'],['num','\uD83D\uDD22 Numeracy']];
+const LTABS = [['practice','\uD83C\uDFA4 Practice Words'],['games','\uD83D\uDD24 Literacy Games'],['ngames','\uD83D\uDD22 Numeracy Games'],['prizes','\uD83C\uDF81 Prizes'],['notebook','\uD83D\uDCD2 My Notebook'],['tasks','\uD83D\uDCD6 Reading Assessment Tasks'],['results','\uD83C\uDFC5 Results'],['comp','\uD83D\uDCDA Stories'],['num','\uD83D\uDD22 Numeracy']];
 /* ---------- Prizes ----------
    A prize can need Total stars, Practice Word stars, and Game stars (0 means not needed).
    Stars keep adding up. Qualifying for a prize does not use up any stars. */
@@ -2900,6 +2901,7 @@ function renderTeacher(){
   else if (TV.tab === 'prizes') main = prizesHtml();
   else if (TV.tab === 'comp') main = compHtml();
   else if (TV.tab === 'num') main = numHtml();
+  else if (TV.tab === 'ngames') main = numGamesHtml();
   else main = resultsHtml();
   body.innerHTML = head + main;
   body.querySelectorAll('[data-ltab]').forEach(b => b.onclick = () => { recCancel(); if (CP && CP.rec){ CP.rec.ctl.cancel(); CP.rec = null; } TV.tab = b.dataset.ltab; if (TV.tab === 'comp' && (!CP || CP.lrn !== TV.learner.lrn || !CP.loadedAt || Date.now() - CP.loadedAt > 30000)){ loadComp(); if (CP) CP.loadedAt = Date.now(); }
@@ -2912,6 +2914,7 @@ function renderTeacher(){
   else if (TV.tab === 'results') bindResults();
   else if (TV.tab === 'comp') bindComp();
   else if (TV.tab === 'num') bindNum();
+  else if (TV.tab === 'ngames') bindGames();
 }
 
 /* =========================================================
@@ -3742,7 +3745,7 @@ function exitGame(){
   const wasNum = !!(FG && FG.g && FG.g.num);
   stopGame(); FG = null;
   try { speechSynthesis.cancel(); } catch(e){}
-  show('viewTeacher'); TV.tab = wasNum ? 'num' : 'games'; if (wasNum && NM) NM.sub = 'games'; renderTeacher();
+  show('viewTeacher'); TV.tab = wasNum ? 'ngames' : 'games'; renderTeacher();
 }
 
 /* Floating letters, used by Froggy's Letters and Listen and Catch */
@@ -5776,7 +5779,8 @@ function numHtml(){
     <h2>🧮 Numeracy Check</h2><p>Let's find the best place for you to start! Answer some number questions. Some are easy and some are harder. Just do your best.</p>
     <p class="sub">It takes about 5 to 10 minutes. You earn 3 stars for finishing.</p>
     <button type="button" class="btn primary big" id="nCheckGo">▶ Start the Numeracy Check</button></div>`;
-  const subs = [['practice', '🧮 Number Practice'], ['wp', '📝 Word Problems'], ['games', '🎮 Number Games'], ['progress', '📈 My Progress']];
+  const subs = [['practice', '🧮 Number Practice'], ['wp', '📝 Word Problems'], ['progress', '📈 My Progress']];
+  if (NM.sub === 'games') NM.sub = 'practice';
   let body = '';
   if (NM.sub === 'practice'){
     const left = Math.max(0, d.dayLimit - d.starsToday);
@@ -5787,7 +5791,6 @@ function numHtml(){
       <button type="button" class="btn primary big" id="nPracGo">▶ Start Practice</button>
       ${Object.keys(S.numQueue || {}).length ? '<p class="hint">Some practice is saved on this device and will be sent when the internet is back.</p>' : ''}</div>`;
   } else if (NM.sub === 'wp') body = wpHtml(d);
-  else if (NM.sub === 'games') body = `<div class="panel gsection"><h2>Number Games</h2><p class="sub">Extra fun with numbers. Each level you pass earns 1 star.</p></div>${NUM_GAMES.map(g => gameCardHtml(g).replace('</h2>', `</h2><p class="sub">\u2B50 Best for ${esc(g.best)}</p>`)).join('')}`;
   else body = `<div class="panel"><h2 style="margin-top:0">📈 My Skills</h2>
       <div class="num-skills">${d.skills.filter(s => s.i <= d.top).map(s => `<div class="num-sk ${s.mastered ? 'done' : s.i === d.current ? 'now' : 'later'}"><span class="num-sk-i">${s.mastered ? '✅' : s.i === d.current ? '👉' : '🔒'}</span>
         <span><b>${esc(s.title)}</b>${s.i === d.current && !s.mastered ? `<br><small>${s.good} of ${d.goodDays} good days</small>` : ''}${s.tried ? `<br><small>${s.right} of ${s.tried} correct</small>` : ''}</span></div>`).join('')}</div></div>` + myStarsCard();
@@ -5944,7 +5947,13 @@ function bindNum(){
   body.querySelectorAll('[data-wpc]').forEach(b => b.onclick = () => wpChoose((w.current || w.next).problemId, b.dataset.wpc));
   if ($('wpMic')) $('wpMic').onclick = () => wpRec(w.current);
   if ($('wpSend')) $('wpSend').onclick = () => wpSend(w.current);
-  if (NM.sub === 'games') bindGames();
+}
+/* Numeracy Games: their own learner tab, open to everyone (no Numeracy Check needed) */
+function numGamesHtml(){
+  const b = (S.rewards[TV.learner.lrn] || {}).breakdown;
+  return `<div class="panel"><div class="stats"><div class="stat"><b class="star">\u2605 ${myRewards().total}</b><span>My Stars</span></div>${b ? `<div class="stat"><b>${b.numGames}</b><span>Stars From Number Games</span></div>` : ''}</div></div>
+    <div class="panel gsection"><h2>\uD83D\uDD22 Numeracy Games</h2><p class="sub">Fun games with numbers. Each level you pass earns 1 star. Try the games for your grade first!</p></div>
+    ${NUM_GAMES.map(g => gameCardHtml(g).replace('</h2>', `</h2><p class="sub">\u2B50 Best for ${esc(g.best)}</p>`)).join('')}`;
 }
 /* ---------- My Stars: Literacy and Numeracy ---------- */
 function myStarsCard(){
@@ -6133,18 +6142,34 @@ function renderNumReview(){
         <div class="sub">${x.submittedAt ? 'Sent ' + esc(fmtDateTime(x.submittedAt)) : ''}${x.reviewedBy ? '. Checked by ' + esc(x.reviewedBy) : ''}</div></div>`).join('')
       + (items.length > NR.show ? `<button type="button" class="btn" id="nrMore">Show ${Math.min(40, items.length - NR.show)} more</button>` : '') : '<p class="hint">Nothing here right now.</p>'}</div>`;
   }
+  const testBox = head ? `<div class="panel test-box"><b>🧪 Test Accounts</b> <span class="sub">Try everything as a learner without touching real learners.</span>
+      <div class="test-acc"><span>Grade 3: LRN <b>333333333333</b></span><span>Grade 5: LRN <b>555555555555</b></span></div>
+      <p class="sub" style="margin:4px 0">Each test account starts with 500 practice words already correct, so Stories open right away. Test accounts do not appear in rankings, Home numbers, or Learner Insights.</p>
+      <div class="print-btns"><button type="button" class="btn small primary" id="tCreate">Create Test Accounts</button><button type="button" class="btn small" id="tRemove">Remove Test Accounts</button><span class="msg" id="tMsg"></span></div></div>` : '';
   el.innerHTML = `<div class="panel"><h2 style="margin-top:0">🔢 Numeracy Review</h2>
     <p class="sub">Number Practice and the Numeracy Check are checked by the system. Teachers only check the word problem explanations here. ${waiting} explanation(s) waiting.</p>
     <div class="toolbar"><div class="seg"><button type="button" data-nrview="check" aria-pressed="${NR.view === 'check'}">🎧 Check Explanations</button><button type="button" data-nrview="progress" aria-pressed="${NR.view === 'progress'}">📊 Numeracy Progress</button></div>
       ${grades.length > 1 ? `<label>Grade<select id="nrGrade"><option value="">All grades</option>${grades.map(g => `<option value="${g}"${g === NR.grade ? ' selected' : ''}>${gradeLabel(g)}</option>`).join('')}</select></label>` : ''}
       ${NR.view === 'check' ? `<label>Show<select id="nrStatus">${CR_STATUS.map(s => `<option value="${s[0]}"${s[0] === NR.status ? ' selected' : ''}>${s[1]}</option>`).join('')}</select></label>` : ''}
-      <button type="button" class="btn small" id="nrReload">Refresh</button></div></div>${body}`;
+      <button type="button" class="btn small" id="nrReload">Refresh</button></div></div>${testBox}${body}`;
   wireAudio(el);
   const on = (id, ev, f) => { const x = $(id); if (x) x[ev] = f; };
   el.querySelectorAll('[data-nrview]').forEach(b => b.onclick = () => { NR.view = b.dataset.nrview; renderNumReview(); });
   on('nrGrade', 'onchange', e => { NR.grade = e.target.value; renderNumReview(); });
   on('nrStatus', 'onchange', e => { NR.status = e.target.value; NR.show = 40; renderNumReview(); });
   on('nrReload', 'onclick', () => loadNumReview(NR.auth, NR.el));
+  const testAct = async mode => {
+    if (mode === 'remove' && !ask('Remove the test accounts and everything they did?')) return;
+    setMsg($('tMsg'), mode === 'create' ? 'Creating the test accounts. This can take a minute.' : 'Removing');
+    try {
+      const r = await callApi({ action: 'testAccounts', pin: S.pin, mode, _wait: 120000 });
+      if (!r || !r.ok){ setMsg($('tMsg'), r && r.error === 'Unknown request.' ? 'This needs the newest server code.' : (r && r.error) || 'Not done.', 'err'); return; }
+      setMsg($('tMsg'), mode === 'create' ? 'Ready! Open the learner page and type LRN 333333333333 or 555555555555.' : 'The test accounts are removed.', 'good');
+      pullAdmin(true);
+    } catch(e){ setMsg($('tMsg'), 'No internet. Try again.', 'err'); }
+  };
+  on('tCreate', 'onclick', () => testAct('create'));
+  on('tRemove', 'onclick', () => testAct('remove'));
   on('nrMore', 'onclick', () => { NR.show += 40; renderNumReview(); });
   el.querySelectorAll('[data-nrplay]').forEach(b => b.onclick = () => playInto(b.dataset.nrplay, b, NR.auth, el, 'numAudio'));
   el.querySelectorAll('[data-nreset]').forEach(b => b.onclick = async () => {
