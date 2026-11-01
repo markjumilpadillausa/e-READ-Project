@@ -1429,7 +1429,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/e-READ-Project/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '5.10';
+const APP_VERSION = '5.11';
 const APP_UPDATED = 'November 1, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1594,7 +1594,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '5.10';
+const NEED_SERVER = '5.11';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
