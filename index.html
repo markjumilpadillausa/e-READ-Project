@@ -1429,7 +1429,7 @@ const PRACTICE_URL = 'https://markjumilpadillausa.github.io/e-READ-Project/';
 
 const SBRA = 'School-based Reading Assessment';
 const APP_CREATED = 'September 25, 2026';
-const APP_VERSION = '5.11';
+const APP_VERSION = '5.12';
 const APP_UPDATED = 'November 1, 2026';
 const STORE_KEY = 'baluyanAssess_v1';
 const DRAFT_KEY = 'baluyanAssess_draft_v2';
@@ -1594,7 +1594,7 @@ function sigsFor(recordId, base){
    SERVER CONNECTION AND SYNC
    ========================================================= */
 /* Server version check: if the Apps Script code is older than this page, the School Head is told how to fix it */
-const NEED_SERVER = '5.11';
+const NEED_SERVER = '5.12';
 function verNum(v){ const p = String(v || '0').split('.'); return (+p[0] || 0) * 1000 + (+p[1] || 0); }
 function noteServer(v){ if (S.serverVer !== v){ S.serverVer = v; persist(); } serverBanner(); }
 function serverOld(){ return !S.serverVer || verNum(S.serverVer) < verNum(NEED_SERVER); }
@@ -6896,6 +6896,7 @@ function renderAralGroups(){
     L.filter(l => !q || l.name.toLowerCase().indexOf(q) >= 0).forEach(l => { (byClass[cls(l)] = byClass[cls(l)] || []).push(l); });
     editor = `<div class="panel ag-edit"><h3 style="margin-top:0">${ed.id ? 'Change the Group' : 'New Learner Group'}</h3>
       <div class="fields"><label>Group Name<input id="agName" maxlength="60" value="${esc(ed.name || '')}" placeholder="Example: Reading Group A"></label>
+        ${head ? `<label>Who Will Use This Group<select id="agOwner"><option value="school head"${ed.owner === 'school head' ? ' selected' : ''}>Me (School Head)</option>${(d.staff || []).map(t => `<option value="${esc(t.email)}"${ed.owner === t.email ? ' selected' : ''}>${esc(t.name)}${t.tutor ? ' (ARAL Tutor)' : ''}</option>`).join('')}</select></label>` : ''}
         <label>Search<input id="agQ" value="${esc(ed.q || '')}" placeholder="Learner name"></label></div>
       <p class="sub"><b>${ed.ids.size}</b> learner${ed.ids.size === 1 ? '' : 's'} chosen. Tick the learners in this group. You can choose learners from different grades and sections.</p>
       <div class="ag-list">${Object.keys(byClass).map(k => `<div class="ag-cls"><b>${esc(k)}</b> <button type="button" class="linkbtn edit" data-agall="${esc(k)}">Tick all</button>
@@ -6903,10 +6904,10 @@ function renderAralGroups(){
       <div class="print-btns"><button type="button" class="btn primary" id="agSave">Save Group</button><button type="button" class="btn" id="agCancel">Cancel</button><span class="msg" id="agMsg"></span></div></div>`;
   }
   el.innerHTML = `<div class="panel"><h2 style="margin-top:0">🍎 ARAL Sessions</h2>${aralViewSeg()}
-    <p class="sub">Make a group when your ARAL learners come from different grades or sections, like some learners from Grade 5 and some from Grade 6. After a session, choose the group and tag who was present or absent in one list.</p>
+    <p class="sub">Make a group when your ARAL learners come from different grades or sections, like some learners from Grade 5 and some from Grade 6. After a session, choose the group and tag who was present or absent in one list.${head ? ' <b>School Head:</b> choose who will use each group. The group then shows in that tutor\'s ARAL Sessions, ready for attendance and notes.' : ''}</p>
     ${!ed ? `<button type="button" class="btn primary" id="agNew">➕ New Learner Group</button>` : ''}</div>
     ${editor}
-    <div class="panel">${G.length ? G.map(g => `<div class="ag-row"><div><b>${esc(g.name)}</b>${head && !g.mine ? ` <span class="sub">by ${esc(g.teacher)}</span>` : ''}
+    <div class="panel">${G.length ? G.map(g => `<div class="ag-row"><div><b>${esc(g.name)}</b>${head ? ` <span class="tag${g.mine ? '' : ' ok'}">${g.mine ? 'Not given to a tutor yet' : 'Used by ' + esc(g.teacher)}</span>` : ''}
         <div class="sub">${g.learners.length} learner${g.learners.length === 1 ? '' : 's'}: ${g.learners.map(id => byId[id] ? esc(byId[id].name) + ' <small>(' + esc(gradeLabel(byId[id].grade)) + ')</small>' : '').filter(Boolean).join(', ')}</div></div>
         ${g.mine || head ? `<div class="rec-btns"><button type="button" class="btn small" data-agedit="${esc(g.id)}">Change</button><button type="button" class="btn small" data-agdel="${esc(g.id)}">Remove</button></div>` : ''}</div>`).join('')
       : '<p class="hint">No learner groups yet.</p>'}</div>`;
@@ -6916,20 +6917,22 @@ function renderAralGroups(){
     if (!name){ setMsg(m, 'Type a name for the group.', 'err'); return; }
     if (!ed.ids.size){ setMsg(m, 'Tick at least one learner.', 'err'); return; }
     setMsg(m, 'Saving');
-    try { const r = await callApi(Object.assign({ action: 'aralGroupSave', id: ed.id || '', name, learners: [...ed.ids] }, ARAL.auth));
+    const extra = head ? { owner: ($('agOwner') || {}).value || 'school head' } : {};
+    try { const r = await callApi(Object.assign({ action: 'aralGroupSave', id: ed.id || '', name, learners: [...ed.ids] }, extra, ARAL.auth));
       if (!r || !r.ok){ setMsg(m, (r && r.error === 'Unknown request.') ? 'Please ask the School Head to update the server code first.' : (r && r.error) || 'Not saved.', 'err'); return; }
       ARAL_DATA.groups = r.groups; sideSet(aralKey(ARAL.auth), ARAL_DATA); ARAL.gedit = null; renderAral(); }
     catch(e){ setMsg(m, 'No internet. Try again.', 'err'); }
   };
-  if ($('agNew')) $('agNew').onclick = () => { ARAL.gedit = { id: '', name: '', ids: new Set(), q: '' }; renderAral(); };
+  if ($('agNew')) $('agNew').onclick = () => { ARAL.gedit = { id: '', name: '', ids: new Set(), q: '', owner: 'school head' }; renderAral(); };
   if (ed){
     $('agName').oninput = e => { ed.name = e.target.value; };
+    if ($('agOwner')) $('agOwner').onchange = e => { ed.owner = e.target.value; };
     $('agQ').oninput = e => { ed.q = e.target.value; clearTimeout(ARAL.qt); ARAL.qt = setTimeout(() => { renderAral(); const f = $('agQ'); f.focus(); f.setSelectionRange(f.value.length, f.value.length); }, 300); };
     el.querySelectorAll('[data-agpick]').forEach(c => c.onchange = () => { c.checked ? ed.ids.add(c.dataset.agpick) : ed.ids.delete(c.dataset.agpick); const s = el.querySelector('.ag-edit .sub b'); if (s) s.textContent = ed.ids.size; });
     el.querySelectorAll('[data-agall]').forEach(b => b.onclick = () => { L.filter(l => cls(l) === b.dataset.agall).forEach(l => ed.ids.add(l.id)); renderAral(); });
     $('agSave').onclick = save; $('agCancel').onclick = () => { ARAL.gedit = null; renderAral(); };
   }
-  el.querySelectorAll('[data-agedit]').forEach(b => b.onclick = () => { const g = G.find(x => x.id === b.dataset.agedit); ARAL.gedit = { id: g.id, name: g.name, ids: new Set(g.learners), q: '' }; renderAral(); });
+  el.querySelectorAll('[data-agedit]').forEach(b => b.onclick = () => { const g = G.find(x => x.id === b.dataset.agedit); ARAL.gedit = { id: g.id, name: g.name, ids: new Set(g.learners), q: '', owner: g.owner || 'school head' }; renderAral(); });
   el.querySelectorAll('[data-agdel]').forEach(b => b.onclick = async () => {
     if (!confirm('Remove this group? Sessions already saved stay saved.')) return;
     try { const r = await callApi(Object.assign({ action: 'aralGroupRemove', id: b.dataset.agdel }, ARAL.auth)); if (r && r.ok){ ARAL_DATA.groups = r.groups; sideSet(aralKey(ARAL.auth), ARAL_DATA); renderAral(); } else alert((r && r.error) || 'Not removed.'); }
